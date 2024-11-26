@@ -5,10 +5,10 @@ import { redirect } from "next/navigation"; // Import redirect
 
 export default function Home() {
   // Simulate checking auth (Replace with actual auth logic)
-  const isAuthenticated = false; // Update this logic to match your authentication state
-  if (!isAuthenticated) {
-    redirect("/auth/signin"); // Redirect to login page if not authenticated
-  }
+  // const isAuthenticated = false; // Update this logic to match your authentication state
+  // if (!isAuthenticated) {
+  //   redirect("/auth/signin"); // Redirect to login page if not authenticated
+  // }
 
   return (
     <>

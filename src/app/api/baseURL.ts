@@ -1,2 +1,2 @@
-const baseURL="https://your-api-base-url.com/api"
+const baseURL="http://3.109.158.140:7012/"
 export default baseURL;

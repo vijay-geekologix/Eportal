@@ -6,11 +6,11 @@ import DefaultSelectOption from "@/components/SelectOption/DefaultSelectOption";
 const ChartTwo: React.FC = () => {
   const series = [
     {
-      name: "In",
+      name: "Present",
       data: [44, 55, 41, 67, 22, 43, 65],
     },
     {
-      name: "Out",
+      name: "Absent",
       data: [13, 23, 20, 8, 13, 27, 15],
     },
   ];

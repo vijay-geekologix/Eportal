@@ -17,17 +17,17 @@ export default function Clock() {
 
   return (
     <div
-    className="relative  w-40 h-40 sm:w-48 sm:h-48 md:w-56 md:h-56 rounded-full bg-white border-[8px] border-orange-300 shadow-md"
+    className="relative  w-40 h-40 sm:w-48 sm:h-48 md:w-56 md:h-56 rounded-full bg-white border-[8px] border-indigo-300 shadow-md"
   >
     {/* Clock Numbers */}
     {[...Array(12)].map((_, i) => {
       const angle = ((i + 1) * 30 * Math.PI) / 180 - Math.PI / 2;
-      const x = 50 + 42 * Math.cos(angle);
+      const x = 50 + 42 * Math.cos(angle);  
       const y = 50 + 42 * Math.sin(angle);
       return (
         <div
           key={i}
-          className=" absolute text-sm md:text-base font-semibold text-orange-800"
+          className=" absolute text-sm md:text-base font-semibold text-indigo-800"
           style={{
             left: `${x}%`,
             top: `${y}%`,

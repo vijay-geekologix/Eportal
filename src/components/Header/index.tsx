@@ -96,8 +96,8 @@ const Header = (props: {
       //     </div>
       //   </div>
       // </header>
-
-      <header className="sticky top-0 z-50 w-full bg-gradient-to-r from-orange-500 via-orange-400 to-orange-500 text-white shadow-md">
+      // sticky top-0 z-50 w-full bg-gradient-to-r from-orange-500 via-orange-400 to-orange-500 text-white shadow-md
+      <header className="sticky top-0 z-50 w-full bg-gradient-to-r from-indigo-800 via-indigo-600 to-indigo-400 text-white shadow-md">
       <div className="flex w-full items-center justify-between px-4 py-3 md:px-6 md:py-4">
         {/* Left Section - Logo and Hamburger Menu */}
         <div className="flex items-center gap-4">
@@ -131,34 +131,34 @@ const Header = (props: {
 
           {/* Logo */}
           <Link href="/" className="flex items-center">
-            <Image
+            {/* <Image
               src="/images/logo/NWLogo-1-300x73.png"
               alt="Logo"
               width={40}
               height={40}
               className="mr-2"
-            />
-            <span className="hidden text-lg font-bold tracking-wide sm:block">
+            /> */}
+            {/* <span className="hidden text-lg font-bold tracking-wide sm:block">
               Now A Wave
-            </span>
+            </span> */}
           </Link>
         </div>
 
         {/* Center Section - Title */}
-        <div className="hidden xl:flex flex-col items-center text-center">
+        {/* <div className="hidden xl:flex flex-col items-center text-center">
           <h1 className="text-lg font-semibold tracking-wide">
             Dashboard
           </h1>
           <p className="text-sm font-medium text-orange-100">
             Now A Wave Private Limited
           </p>
-        </div>
+        </div> */}
 
         {/* Right Section - Utilities */}
         <div className="flex items-center gap-4">
           {/* Clock */}
           <div className="hidden xl:flex">
-            <div className="relative w-25 mt-6 h-10 w-10 rounded-full bg-white shadow-md flex items-center justify-center">
+            <div className="relative w-25 mt-6 h-10 rounded-full bg-white shadow-md flex items-center justify-center">
               <span className="text-sm font-semibold text-orange-500">
                 {new Date().toLocaleTimeString([], {
                   hour: "2-digit",

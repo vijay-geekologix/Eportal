@@ -15,7 +15,7 @@ const Profile = () => {
         <Breadcrumb pageName="Profile" />
 
         <ProfileBox />
-      </div>
+      </div>  
     </DefaultLayout>
   );
 };
