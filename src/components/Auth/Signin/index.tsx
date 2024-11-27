@@ -1,7 +1,8 @@
 'use client'
 import { useState, useEffect } from 'react'
 import Image from 'next/image'
-import login from '@/app/api/user'
+import { login } from '@/app/api/user'
+// import login from '@/app/api/user'
 import toast from 'react-hot-toast'
 import { useRouter } from "next/navigation";
 const images = [
@@ -119,7 +120,7 @@ export default function Signin() {
                     </a>
                   </div>
                 </div>
-                <div>
+                <div> 
                   <button
                     type="submit"
                     className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-400 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500 transition duration-150 ease-in-out"
