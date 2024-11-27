@@ -1,174 +1,212 @@
-import { ApexOptions } from "apexcharts";
+
 import React from "react";
-import ReactApexChart from "react-apexcharts";
-import DefaultSelectOption from "@/components/SelectOption/DefaultSelectOption";
+import dayjs from "dayjs";
+import Badge from "@mui/material/Badge";
+import Tooltip from "@mui/material/Tooltip";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { PickersDay } from "@mui/x-date-pickers/PickersDay";
+import { DateCalendar } from "@mui/x-date-pickers/DateCalendar";
+import { DayCalendarSkeleton } from "@mui/x-date-pickers/DayCalendarSkeleton";
 
-const ChartOne: React.FC = () => {
-  const series = [
-    {
-      name: "Received Amount",
-      data: [0, 20, 35, 45, 35, 55, 65, 50, 65, 75, 60, 75],
-    },
-    {
-      name: "Due Amount",
-      data: [15, 9, 17, 32, 25, 68, 80, 68, 84, 94, 74, 62],
-    },
-  ];
+function getRandomNumber(min, max) {
+  return Math.round(Math.random() * (max - min) + min);
+}
 
-  const options: ApexOptions = {
-    legend: {
-      show: false,
-      position: "top",
-      horizontalAlign: "left",
-    },
-    colors: ["#5750F1", "#0ABEF9"],
-    chart: {
-      fontFamily: "Satoshi, sans-serif",
-      height: 310,
-      type: "area",
-      toolbar: {
-        show: false,
-      },
-    },
-    fill: {
-      gradient: {
-        opacityFrom: 0.55,
-        opacityTo: 0,
-      },
-    },
-    responsive: [
-      {
-        breakpoint: 1024,
-        options: {
-          chart: {
-            height: 300,
-          },
-        },
-      },
-      {
-        breakpoint: 1366,
-        options: {
-          chart: {
-            height: 320,
-          },
-        },
-      },
-    ],
-    stroke: {
-      curve: "smooth",
-    },
+function fakeFetch(date, { signal }) {
+  return new Promise((resolve, reject) => {
+    const timeout = setTimeout(() => {
+      const daysInMonth = date.daysInMonth();
+      const daysToHighlight = [1, 2, 3].map(() => getRandomNumber(1, daysInMonth));
 
-    markers: {
-      size: 0,
-    },
-    grid: {
-      strokeDashArray: 5,
-      xaxis: {
-        lines: {
-          show: false,
-        },
-      },
-      yaxis: {
-        lines: {
-          show: true,
-        },
-      },
-    },
-    dataLabels: {
-      enabled: false,
-    },
-    tooltip: {
-      fixed: {
-        enabled: !1,
-      },
-      x: {
-        show: !1,
-      },
-      y: {
-        title: {
-          formatter: function (e) {
-            return "";
-          },
-        },
-      },
-      marker: {
-        show: !1,
-      },
-    },
-    xaxis: {
-      type: "category",
-      categories: [
-        "Sep",
-        "Oct",
-        "Nov",
-        "Dec",
-        "Jan",
-        "Feb",
-        "Mar",
-        "Apr",
-        "May",
-        "Jun",
-        "Jul",
-        "Aug",
-      ],
-      axisBorder: {
-        show: false,
-      },
-      axisTicks: {
-        show: false,
-      },
-    },
-    yaxis: {
-      title: {
-        style: {
-          fontSize: "0px",
-        },
-      },
-    },
+      resolve({ daysToHighlight });
+    }, 500);
+
+    signal.onabort = () => {
+      clearTimeout(timeout);
+      reject(new DOMException("aborted", "AbortError"));
+    };
+  });
+}
+
+const initialValue = dayjs("2022-04-17");
+
+function ServerDay(props) {
+  const { highlightedDays = [], day, outsideCurrentMonth, workingHours, ...other } =
+    props;
+
+  const isSelected =
+    !outsideCurrentMonth && highlightedDays.indexOf(day.date()) >= 0;
+  const workHours = workingHours[day.date()] || "No data";
+  return (
+    <Tooltip title={workHours} arrow>
+      <Badge
+        key={day.toString()}
+        overlap="circular"
+        // badgeContent={isSelected ? "🔴" : undefined}
+      >
+        <PickersDay
+          {...other}
+          outsideCurrentMonth={outsideCurrentMonth}
+          day={day}
+          sx={{
+            backgroundColor: workHours == 'absent'  ? "rgba(255, 0, 0, 0.8)" : undefined,
+            color: workHours == 'absent'  ? "white" : "black",
+            "&:hover": { backgroundColor: workHours == 'absent'  ? "rgba(255, 0, 0, 0.7)" : "#f0f0f0" },
+            margin: "6px",
+
+          }}
+        />
+      </Badge>
+    </Tooltip>
+  );
+}
+
+export default function CalenderBiometric() {
+  const requestAbortController = React.useRef(null);
+  const [isLoading, setIsLoading] = React.useState(false);
+  const [highlightedDays, setHighlightedDays] = React.useState([1, 2, 15]);
+  const [workingHours, setWorkingHours] = React.useState({
+    1: "9:00 AM - 5:00 PM",
+    2: "10:00 AM - 6:00 PM",
+    3: "9:00 AM - 5:00 PM",
+    4: "10:00 AM - 6:00 PM",
+    5: "absent",
+    6: "9:00 AM - 5:00 PM",
+    7: "10:00 AM - 6:00 PM",
+    8: "9:00 AM - 5:00 PM",
+    9: "10:00 AM - 6:00 PM",
+    10: "10:00 AM - 6:00 PM",
+    11: "9:00 AM - 5:00 PM",
+    12: "10:00 AM - 6:00 PM",
+    13: "9:00 AM - 5:00 PM",
+    14: "10:00 AM - 6:00 PM",
+    15: "10:00 AM - 6:00 PM",
+    16:'absent',
+    17: "9:00 AM - 5:00 PM",
+    18: "10:00 AM - 6:00 PM",
+    19: "9:00 AM - 5:00 PM",
+    20: "10:00 AM - 6:00 PM",
+    21: "absent",
+    22: "9:00 AM - 5:00 PM",
+    23: "10:00 AM - 6:00 PM",
+    24: "9:00 AM - 5:00 PM",
+    25: "10:00 AM - 6:00 PM",    
+    26:"10:00 AM - 6:00 PM",
+    27: "9:00 AM - 5:00 PM",
+    28: "10:00 AM - 6:00 PM",
+    29: "9:00 AM - 5:00 PM",
+    30: "10:00 AM - 6:00 PM",
+    31: "10:00 AM - 6:00 PM",
+  });
+
+  const fetchHighlightedDays = (date) => {
+    const controller = new AbortController();
+    fakeFetch(date, {
+      signal: controller.signal,
+    })
+      .then(({ daysToHighlight }) => {
+        setHighlightedDays(daysToHighlight);
+        setIsLoading(false);
+      })
+      .catch((error) => {
+        if (error.name !== "AbortError") {
+          throw error;
+        }
+      });
+
+    requestAbortController.current = controller;
+  };
+
+  React.useEffect(() => {
+    fetchHighlightedDays(initialValue);
+    return () => requestAbortController.current?.abort();
+  }, []);
+
+  const handleMonthChange = (date) => {
+    if (requestAbortController.current) {
+      requestAbortController.current.abort();
+    }
+
+    setIsLoading(true);
+    setHighlightedDays([]);
+    fetchHighlightedDays(date);
   };
 
   return (
-    <div className="col-span-12 rounded-[10px] bg-white px-7.5 pb-6 pt-7.5 shadow-1 dark:bg-gray-dark dark:shadow-card xl:col-span-7">
-      <div className="mb-3.5 flex flex-col gap-2.5 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <h4 className="text-body-2xlg font-bold text-dark dark:text-white">
-            Project Overview
-          </h4>
-        </div>
-        <div className="flex items-center gap-2.5">
-          <p className="font-medium uppercase text-dark dark:text-dark-6">
-            Short by:
-          </p>
-          <DefaultSelectOption options={["Monthly", "Yearly"]} />
-        </div>
-      </div>
-      <div>
-        <div className="-ml-4 -mr-5">
-          <ReactApexChart
-            options={options}
-            series={series}
-            type="area"
-            height={310}
-          />
-        </div>
-      </div>
-
-      <div className="flex flex-col gap-2 text-center xsm:flex-row xsm:gap-0">
-        <div className="border-stroke dark:border-dark-3 xsm:w-1/2 xsm:border-r">
-          <p className="font-medium">Received Amount</p>
-          <h4 className="mt-1 text-xl font-bold text-dark dark:text-white">
-            $45,070.00
-          </h4>
-        </div>
-        <div className="xsm:w-1/2">
-          <p className="font-medium">Due Amount</p>
-          <h4 className="mt-1 text-xl font-bold text-dark dark:text-white">
-            $32,400.00
-          </h4>
-        </div>
-      </div>
-    </div>
+<div className="col-span-12 rounded-[10px] bg-white px-7.5 pb-6 pt-7.5 shadow-1 dark:bg-gray-dark dark:shadow-card xl:col-span-4">
+<LocalizationProvider dateAdapter={AdapterDayjs}>
+  <DateCalendar
+    defaultValue={initialValue}
+    loading={isLoading}
+    onMonthChange={handleMonthChange}
+    renderLoading={() => <DayCalendarSkeleton />}
+    slots={{
+      day: ServerDay,
+    }}
+    slotProps={{
+      day: {
+        highlightedDays,
+        workingHours,
+      },
+    }}
+    sx={{
+      width: "100%",
+      maxWidth: "900px",
+      marginTop: "20px",
+      "& .MuiPickersDay-root": {
+        fontSize: "1rem",
+      },
+      "& .MuiPickersYear-yearButton": {
+        fontSize: "1rem",
+        fontWeight: "bold",
+        padding: "10px",
+        borderRadius: "8px",
+        "&.Mui-selected": {
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          backgroundColor: "rgb(255, 119, 41)",
+          color: "#ffffff",
+        },
+        "&:hover": {
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          backgroundColor: "#E0E7FF",
+        },
+      },
+      "& .MuiPickersCalendarViewTransitionContainer-root": {
+        overflow: "hidden",
+      },
+      "& .MuiDayCalendar-root": {
+        overflow: "hidden",
+      },
+      "& .MuiDayCalendar-root::-webkit-scrollbar": {
+        display: "none",
+      },
+      // "& .MuiDayCalendar-root":{
+      //   msOverflowStyle: "none",
+      //   scrollbarWidth: "none",
+      // },
+      "& .MuiPickersSlideTransition-root":{
+        height:'100%',
+        overflow:"hidden",
+        marginBottom:'100px',
+      },
+      "& .MuiDayCalendar-weekDayLabel":{
+        margin:'7px',
+        fontSize:"15px",
+      },
+      "& .MuiDayCalendar-weekContainer":{
+        width:"100%",
+      },
+      "& .MuiBadge-root":{
+        minWidth:"50px",
+      },
+    }}
+  />
+</LocalizationProvider>
+</div>
   );
-};
-
-export default ChartOne;
+}
