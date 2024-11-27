@@ -2,7 +2,7 @@ import axios, { InternalAxiosRequestConfig, AxiosResponse } from "axios";
 import baseURL from "./baseURL";
 
 const httpClient = axios.create({
-  baseURL: "https://1pqbgqn7-4000.inc1.devtunnels.ms/",
+  baseURL: "https://p4h4d07h-4000.inc1.devtunnels.ms/",
   headers: {
     "Content-Type": "application/json",
   },
@@ -12,7 +12,6 @@ httpClient.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
     const authToken = localStorage.getItem("authToken"); // Or fetch from cookies
     if (authToken) {
-      // Ensure headers are defined and modify them safely
       config.headers = config.headers || {}; // Initialize headers if undefined
       config.headers.Authorization = `Bearer ${authToken}`;
     }
@@ -32,5 +31,5 @@ const api = {
   delete: <T>(url: string): Promise<AxiosResponse<T>> =>
     httpClient.delete<T>(url),
 };
-
+  
 export default api;

@@ -21,4 +21,20 @@ const login =async (data :any) : Promise<void> =>   {
     }
 }
 
-export default login
+// get Project List
+
+ const ProjectList = async (): Promise<any> => {
+    try {
+      const response = await api.get("admin/projectDetails/getProjectDetails");
+      console.log("Full Response:", response);
+      return response.data; 
+    } catch (error) {
+      console.error("Error fetching project list:", error);
+      throw error;
+    }
+  };
+
+
+
+
+export  {login, ProjectList}
