@@ -2,7 +2,7 @@ import axios, { InternalAxiosRequestConfig, AxiosResponse } from "axios";
 import baseURL from "./baseURL";
 
 const httpClient = axios.create({
-  baseURL: "https://1pqbgqn7-4000.inc1.devtunnels.ms/",
+  baseURL: "https://p4h4d07h-4000.inc1.devtunnels.ms/",
   headers: {
     "Content-Type": "application/json",
   },
@@ -27,7 +27,7 @@ const api = {
     httpClient.get<T>(url, { params }),
   post: <T>(url: string, data: unknown): Promise<AxiosResponse<T>> =>
     httpClient.post<T>(url, data),
-  put: <T>(url: string, data: unknown): Promise<AxiosResponse<T>> =>
+  put: <T>(url: string, data: unknown): Promise<AxiosResponse<T>> =>  
     httpClient.put<T>(url, data),
   delete: <T>(url: string): Promise<AxiosResponse<T>> =>
     httpClient.delete<T>(url),

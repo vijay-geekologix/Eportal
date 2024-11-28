@@ -1,131 +1,103 @@
-import { BRAND } from "@/types/brand";
 import Image from "next/image";
 
-const brandData: BRAND[] = [
+const employeeData = [
   {
-    logo: "/images/brand/brand-01.svg",
-    name: "Google",
-    visitors: 3.5,
-    revenues: "5,768",
-    sales: 590,
-    conversion: 4.8,
+    name: "John Doe",
+    jobTitle: "Software Engineer",
+    workingHours: 40,
+    status: "Active",
+    avatar: "/images/user/user-01.png",
   },
   {
-    logo: "/images/brand/brand-02.svg",
-    name: "X.com",
-    visitors: 2.2,
-    revenues: "4,635",
-    sales: 467,
-    conversion: 4.3,
+    name: "Jane Smith",
+    jobTitle: "Product Manager",
+    workingHours: 38,
+    status: "On Leave",
+    avatar: "/images/user/user-02.png",
   },
   {
-    logo: "/images/brand/brand-03.svg",
-    name: "Github",
-    visitors: 2.1,
-    revenues: "4,290",
-    sales: 420,
-    conversion: 3.7,
+    name: "Alice Brown",
+    jobTitle: "Designer",
+    workingHours: 42,
+    status: "Active",
+    avatar: "/images/user/user-03.png",
   },
   {
-    logo: "/images/brand/brand-04.svg",
-    name: "Vimeo",
-    visitors: 1.5,
-    revenues: "3,580",
-    sales: 389,
-    conversion: 2.5,
+    name: "Bob Johnson",
+    jobTitle: "Developer",
+    workingHours: 35,
+    status: "Active",
+    avatar: "/images/user/user-05.png",
   },
   {
-    logo: "/images/brand/brand-05.svg",
-    name: "Facebook",
-    visitors: 1.2,
-    revenues: "2,740",
-    sales: 230,
-    conversion: 1.9,
+    name: "Charlie White",
+    jobTitle: "HR Manager",
+    workingHours: 40,
+    status: "Inactive",
+    avatar: "/images/user/user-06.png",
   },
 ];
 
-const TableOne = () => {
+const EmployeeTable = () => {
   return (
-    <div className="rounded-[10px] bg-white px-7.5 pb-4 pt-7.5 shadow-1 dark:bg-gray-dark dark:shadow-card">
-      <h4 className="mb-5.5 text-body-2xlg font-bold text-dark dark:text-white">
-        Employee
+    <div className="rounded-lg bg-white p-6 shadow-lg dark:bg-gray-dark dark:shadow-xl">
+      <h4 className="mb-4 text-2xl font-semibold text-gray-800 dark:text-white">
+        Employee Directory
       </h4>
 
-      <div className="flex flex-col">
-        <div className="grid grid-cols-3 sm:grid-cols-5">
-          <div className="px-2 pb-3.5">
-            <h5 className="text-sm font-medium uppercase xsm:text-base">
-              Source
-            </h5>
-          </div>
-          <div className="px-2 pb-3.5 text-center">
-            <h5 className="text-sm font-medium uppercase xsm:text-base">
-              Visitors
-            </h5>
-          </div>
-          <div className="px-2 pb-3.5 text-center">
-            <h5 className="text-sm font-medium uppercase xsm:text-base">
-              Revenues
-            </h5>
-          </div>
-          <div className="hidden px-2 pb-3.5 text-center sm:block">
-            <h5 className="text-sm font-medium uppercase xsm:text-base">
-              Sales
-            </h5>
-          </div>
-          <div className="hidden px-2 pb-3.5 text-center sm:block">
-            <h5 className="text-sm font-medium uppercase xsm:text-base">
-              Conversion
-            </h5>
-          </div>
-        </div>
-
-        {brandData.map((brand, key) => (
-          <div
-            className={`grid grid-cols-3 sm:grid-cols-5 ${
-              key === brandData.length - 1
-                ? ""
-                : "border-b border-stroke dark:border-dark-3"
-            }`}
-            key={key}
-          >
-            <div className="flex items-center gap-3.5 px-2 py-4">
-              <div className="flex-shrink-0">
-                <Image src={brand.logo} alt="Brand" width={48} height={48} />
-              </div>
-              <p className="hidden font-medium text-dark dark:text-white sm:block">
-                {brand.name}
-              </p>
-            </div>
-
-            <div className="flex items-center justify-center px-2 py-4">
-              <p className="font-medium text-dark dark:text-white">
-                {brand.visitors}K
-              </p>
-            </div>
-
-            <div className="flex items-center justify-center px-2 py-4">
-              <p className="font-medium text-green-light-1">
-                ${brand.revenues}
-              </p>
-            </div>
-
-            <div className="hidden items-center justify-center px-2 py-4 sm:flex">
-              <p className="font-medium text-dark dark:text-white">
-                {brand.sales}
-              </p>
-            </div>
-
-            <div className="hidden items-center justify-center px-2 py-4 sm:flex">
-              <p className="font-medium text-dark dark:text-white">
-                {brand.conversion}%
-              </p>
-            </div>
-          </div>
-        ))}
+      <div className="overflow-x-auto">
+        <table className="min-w-full table-auto">
+          <thead>
+            <tr className="text-left">
+              <th className="px-4 py-2 text-sm font-semibold text-gray-700 dark:text-gray-300">Avatar</th>
+              <th className="px-4 py-2 text-sm font-semibold text-gray-700 dark:text-gray-300">Name</th>
+              <th className="px-4 py-2 text-sm font-semibold text-gray-700 dark:text-gray-300">Job Title</th>
+              <th className="px-4 py-2 text-sm font-semibold text-gray-700 dark:text-gray-300">Working Hours</th>
+              <th className="px-4 py-2 text-sm font-semibold text-gray-700 dark:text-gray-300">Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            {employeeData.map((employee, index) => (
+              <tr
+                key={index}
+                className={`border-b border-gray-200 dark:border-gray-600 ${
+                  index % 2 === 0 ? "bg-gray-50 dark:bg-gray-800" : "bg-white dark:bg-gray-700"
+                }`}
+              >
+                <td className="px-4 py-4">
+                  <div className="flex items-center space-x-3">
+                    <Image
+                      src={employee.avatar}
+                      alt={employee.name}
+                      width={36}
+                      height={36}
+                      className="rounded-full"
+                    />
+                  </div>
+                </td>
+                <td className="px-4 py-4 text-sm text-gray-800 dark:text-white">{employee.name}</td>
+                <td className="px-4 py-4 text-sm text-gray-600 dark:text-gray-300">{employee.jobTitle}</td>
+                <td className="px-4 py-4 text-sm text-gray-800 dark:text-white">{employee.workingHours} hrs</td>
+                <td className="px-4 py-4 text-sm">
+                  <span
+                    className={`inline-block px-3 py-1 text-sm font-semibold rounded-full ${
+                      employee.status === "Active"
+                        ? "bg-green-100 text-green-800"
+                        : employee.status === "On Leave"
+                        ? "bg-yellow-100 text-yellow-800"
+                        : "bg-red-100 text-red-800"
+                    }`}
+                  >
+                    {employee.status}
+                  </span>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
     </div>
   );
 };
 
-export default TableOne;
+export default EmployeeTable;
