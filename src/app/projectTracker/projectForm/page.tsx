@@ -1,38 +1,41 @@
 'use client'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import DefaultLayout from '@/components/Layouts/DefaultLaout'
 import Breadcrumb from '@/components/Breadcrumbs/Breadcrumb'
 import Select from 'react-select';
+import { ProjectList } from '@/app/api/user'
 
 const ProjectForm = () => {
     const [step, setStep] = useState(1)
     const [formData, setFormData] = useState({
         personalInfo: { selectProject: '', projectName: '', projectType: '', source: '', representiveName: '', clientName: '', personName: '', personNumber: '', date1talk: '', details: '', sendEmail: false, sendWhatsapp: '' },
-
         address: { MSA: false, DSA: false, NONSOLICITATION: false, date1: '', date2: '', date3: '', projectDetails: '' },
-
         education: { poc: '', noresource: '', startDate: '', endDate: '', assigneTo: '', remarks: '' },
-
-
         workExperience: { company: '', position: '', yearsOfExperience: '' },
         skills: { skillList: '' }
     })
 
     const [selectedOptions, setSelectedOptions] = useState([]);
+    // Options for the select dropdown
+    const [options, setOptions] = useState([])
+
 
     const handleChange = (selected: any) => {
         setSelectedOptions(selected);
     };
 
-    // Options for the select dropdown
-    const options = [
-        { value: 'apple', label: 'Apple' },
-        { value: 'banana', label: 'Banana' },
-        { value: 'cherry', label: 'Cherry' },
-        { value: 'date', label: 'Date' },
-        { value: 'elderberry', label: 'Elderberry' },
-    ];
+    const projectListDetails = async () => {
+        const response = await ProjectList()
+        const formattedOptions = response.data.map((project: any) => ({
+            value: project._id,
+            label: project.projectName,
+        }));
+        setOptions(formattedOptions)
+    }
+    useEffect(() => {
+        projectListDetails()
+    }, [options])
 
     const updateFormData = (step: string, field: string, value: string) => {
         setFormData(prevData => ({
@@ -63,24 +66,19 @@ const ProjectForm = () => {
                         <h2 className="text-2xl font-bold mb-4">1st Talk</h2>
                         <label htmlFor="">Select Existing Project</label>
                         <select name="" className='w-full p-2 border rounded' id="">
-                            <option value="">Select</option>
-                            <option value="tester1">Tester1</option>
-                            <option value="tester2">Tester2</option>
+                            {options.map((option: any) => (
+                                <option key={option.value} value={option.value}>
+                                    {option.label}
+                                </option>
+                            ))}
 
                         </select>
-                        {/* <input
-                            type="text"
-                            placeholder="Name"
-                            className="w-full p-2 border rounded"
-                            value={formData.personalInfo.selectProject}
-                            onChange={(e) => updateFormData('personalInfo', 'selectProject', e.target.value)}
-                        /> */}
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
                                 <label htmlFor="">Project Name</label>
                                 <input
                                     type="text"
-                                    placeholder="Email"
+                                    placeholder="Project Name"
                                     className="w-full p-2 border rounded"
                                     value={formData.personalInfo.personName}
                                     onChange={(e) => updateFormData('personalInfo', 'personName', e.target.value)}
@@ -88,10 +86,10 @@ const ProjectForm = () => {
                             </div>
                             <div>
                                 <label htmlFor="">Project Type</label>
-
+                            
                                 <input
                                     type="text"
-                                    placeholder="Phone"
+                                    placeholder="Project Type"
                                     className="w-full p-2 border rounded"
                                     value={formData.personalInfo.projectType}
                                     onChange={(e) => updateFormData('personalInfo', 'projectType', e.target.value)}
@@ -105,7 +103,7 @@ const ProjectForm = () => {
 
                                 <input
                                     type="text"
-                                    placeholder="Phone"
+                                    placeholder="source of project"
                                     className="w-full p-2 border rounded"
                                     value={formData.personalInfo.source}
                                     onChange={(e) => updateFormData('personalInfo', 'source', e.target.value)}
@@ -116,7 +114,7 @@ const ProjectForm = () => {
 
                                 <input
                                     type="text"
-                                    placeholder="Phone"
+                                    placeholder="Representive Name"
                                     className="w-full p-2 border rounded"
                                     value={formData.personalInfo.representiveName}
                                     onChange={(e) => updateFormData('personalInfo', 'representiveName', e.target.value)}
@@ -132,7 +130,7 @@ const ProjectForm = () => {
 
                                 <input
                                     type="text"
-                                    placeholder="Phone"
+                                    placeholder="Client Name"
                                     className="w-full p-2 border rounded"
                                     value={formData.personalInfo.clientName}
                                     onChange={(e) => updateFormData('personalInfo', 'clientName', e.target.value)}
@@ -268,13 +266,6 @@ const ProjectForm = () => {
                                         }),
                                     }}
                                 />
-                                {/* <input
-                                    type="text"
-                                    placeholder="Degree"
-                                    className="w-full p-2 border rounded"
-                                    value={formData.education.poc}
-                                    onChange={(e) => updateFormData('education', 'poc', e.target.value)}
-                                /> */}
                             </div>
                             <div>
                                 <label htmlFor="">No Of Resource</label>
@@ -303,11 +294,13 @@ const ProjectForm = () => {
 
 
                             <div>
-                                <label htmlFor=""> Select Employee</label>
+                                <label htmlFor=""> assigneTo</label>
                                 <select name="" className='w-full p-2 border rounded' id="">
-                                    <option value="">Select</option>
-                                    <option value="tester1">Tester1</option>
-                                    <option value="tester2">Tester2</option>
+                                    {options.map((option: any) => (
+                                        <option key={option.value} value={option.value}>
+                                            {option.label}
+                                        </option>
+                                    ))}
                                 </select>
                             </div>
 
