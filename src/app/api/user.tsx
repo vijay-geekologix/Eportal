@@ -1,3 +1,4 @@
+// import { error } from "console";
 import api from "./httpClient"
 
 
@@ -93,5 +94,24 @@ const CreateAttrition = async (data: any): Promise<any> => {
   }
 }
 
+  //leave Post Api 
 
-export { login, ProjectList, EmployeeList, AttritionList, CreateAttrition, CreateEmployee, DeleteEmployee }
+  const CreateLeave = async (data:any): Promise<any>=>{
+    try{
+      const response = await api.post("leave/applyleave", data)
+      return response.data;
+    }catch(err){
+      console.log('Error during creating leave',err);
+    } 
+  }
+
+  const getLeaveData = async():Promise<any>=>{
+    try{
+      const response = await api.get("leave/allLeavelist")
+      return response.data;
+    }catch(err){
+      console.log('Error during get leave',err);
+    }
+  }
+
+export  {login, ProjectList , CreateLeave , getLeaveData};
