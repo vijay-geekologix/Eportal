@@ -1,14 +1,37 @@
+import React from "react";
+import {useEffect , useState} from "react";
+import axios from "axios";
 import Link from "next/link";
 import DarkModeSwitcher from "./DarkModeSwitcher";
 import DropdownNotification from "./DropdownNotification";
 import DropdownUser from "./DropdownUser";
 import Image from "next/image";
 import SearchForm from "@/components/Header/SearchForm";
-
+import BiometricWorkingHour from '@/components/Header/BiometricWorkingHour'
 const Header = (props: {
   sidebarOpen: string | boolean | undefined;
   setSidebarOpen: (arg0: boolean) => void;
 }) => {
+
+  // biometric ---------> 
+    const [biometricData , setBiometricData] = useState([]);    
+    useEffect(()=>{
+      const fetch_Biometric_Data = async ()=>{
+      try{
+       let response  = await axios.get('http://localhost:9000/biometric/xmlapi');
+       setBiometricData(response.data);
+      }catch(err){
+       console.log('ERROR OCCURE During Fetching Biometric Data',err);
+      }
+    }
+    // fetch_Biometric_Data();
+    // const interval = setInterval(()=>{
+    //    fetch_Biometric_Data();
+    // },1000);
+    // return () => clearInterval(interval);  
+    },[]);
+
+
   return (
       // <header className="sticky top-0 z-999 flex w-full border-b border-stroke bg-orange-500  dark:border-stroke-dark dark:bg-gray-dark">
       //   <div className="flex flex-grow items-center justify-between px-4 py-5 shadow-2 md:px-5 2xl:px-10">
@@ -160,10 +183,12 @@ const Header = (props: {
           <div className="hidden xl:flex">
             <div className="relative w-25 mt-6 h-10 rounded-full bg-white shadow-md flex items-center justify-center">
               <span className="text-sm font-semibold text-orange-500">
-                {new Date().toLocaleTimeString([], {
+                {/* {new Date().toLocaleTimeString([], {
                   hour: "2-digit",
                   minute: "2-digit",
-                })}
+                })} */}
+               {/* <BiometricWorkingHour biometricApiData={biometricData}/> */}
+               11:11
               </span>
             </div>
           </div>
