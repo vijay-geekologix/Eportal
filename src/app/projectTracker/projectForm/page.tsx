@@ -5,11 +5,52 @@ import DefaultLayout from '@/components/Layouts/DefaultLaout'
 import Breadcrumb from '@/components/Breadcrumbs/Breadcrumb'
 import Select from 'react-select';
 import { ProjectList } from '@/app/api/user'
+interface FormData {
+    personalInfo: {
+        selectProject: string
+        projectName: string
+        projectType: string
+        source: string
+        representative: string
+        clientName: string
+        personName: string
+        personNumber: string
+        date1talk: string
+        details: string
+        sendEmail: boolean
+        sendWhatsapp: boolean
+    }
+    address: {
+        MSA: boolean
+        DSA: boolean
+        NONSOLICITATION: boolean
+        date1: string
+        date2: string
+        date3: string
+        projectDetails: string
+    }
+    education: {
+        poc: string
+        noresource: string
+        startDate: string
+        endDate: string
+        assigneTo: string
+        remarks: string
+    }
+    workExperience: {
+        company: string
+        position: string
+        yearsOfExperience: string
+    }
+    skills: {
+        skillList: string
+    }
+}
 
 const ProjectForm = () => {
     const [step, setStep] = useState(1)
-    const [formData, setFormData] = useState({
-        personalInfo: { selectProject: '', projectName: '', projectType: '', source: '', representiveName: '', clientName: '', personName: '', personNumber: '', date1talk: '', details: '', sendEmail: false, sendWhatsapp: '' },
+    const [formData, setFormData] = useState<FormData>({
+        personalInfo: { selectProject: '', projectName: '', projectType: '', source: '', representative: '', clientName: '', personName: '', personNumber: '', date1talk: '', details: '', sendEmail: false, sendWhatsapp: false },
         address: { MSA: false, DSA: false, NONSOLICITATION: false, date1: '', date2: '', date3: '', projectDetails: '' },
         education: { poc: '', noresource: '', startDate: '', endDate: '', assigneTo: '', remarks: '' },
         workExperience: { company: '', position: '', yearsOfExperience: '' },
@@ -30,21 +71,77 @@ const ProjectForm = () => {
         const formattedOptions = response.data.map((project: any) => ({
             value: project._id,
             label: project.projectName,
-        }));
+        }))
         setOptions(formattedOptions)
     }
     useEffect(() => {
         projectListDetails()
-    }, [options])
+    }, [])
 
-    const updateFormData = (step: string, field: string, value: string) => {
+    const updateFormData = (step: keyof FormData, field: string, value: any) => {
         setFormData(prevData => ({
             ...prevData,
             [step]: {
-                ...prevData[step as keyof typeof prevData],
+                ...prevData[step],
                 [field]: value
             }
         }))
+    }
+
+    const handleProjectSelection = async (selectedProjectId: string) => {
+        try {
+            const response = await ProjectList()
+            const selectedProject = response.data.find((project: any) => project._id === selectedProjectId)
+            console.log("testing", selectedProject)
+            if (selectedProject) {
+                setFormData(prevData => ({
+                    ...prevData,
+                    personalInfo: {
+                        ...prevData.personalInfo,
+                        selectProject: selectedProjectId,
+                        projectName: selectedProject.projectName || '',
+                        projectType: selectedProject.projectType || '',
+                        source: selectedProject.source || '',
+                        representative: selectedProject.representative || '',
+                        clientName: selectedProject.clientName || '',
+                        personName: selectedProject.personName || '',
+                        personNumber: selectedProject.personNumber || '',
+                        date1talk: selectedProject.date1talk || '',
+                        details: selectedProject.details || '',
+                        sendEmail: selectedProject.sendEmail || false,
+                        sendWhatsapp: selectedProject.sendWhatsapp || false,
+                        MSA: selectedProject.agreements.msa || false,
+                        DSA: selectedProject.agreements.dsa || false,
+                        NONSOLICITATION: selectedProject.agreements.NONSOLICITATION || false
+                    }
+                }))
+            }
+            else {
+                setFormData(prevData => ({
+                    ...prevData,
+                    personalInfo: {
+                        ...prevData.personalInfo,
+                        selectProject: '',
+                        projectName: '',
+                        projectType: '',
+                        source: '',
+                        representative: '',
+                        clientName: '',
+                        personName: '',
+                        personNumber: '',
+                        date1talk: '',
+                        details: '',
+                        sendEmail: false,
+                        sendWhatsapp: false,
+                        MSA: false,
+                        DSA: false,
+                        NONSOLICITATION: false
+                    }
+                }))
+            }
+        } catch (error) {
+            console.error('Error fetching project details:', error)
+        }
     }
 
     const nextStep = () => setStep(step < 5 ? step + 1 : step)
@@ -58,36 +155,67 @@ const ProjectForm = () => {
         { number: 5, title: 'Complete' },
     ]
 
+
+    //multple form
+    const [forms,setForms]= useState([{id:Date.now(), date:{}}])
+
+    //Add New Form
+    const addForm = ()=> {
+        setForms([...forms, {id:Date.now(), date:{}}])
+    }
+    //remove Form
+    const removeForm = (id:number) => {
+        setForms(forms.filter((form)=> form.id !== id))
+    }
+
+    //Handle input changes
+    const handleInputChange = (id: number, field: string, value: string) => {
+        setForms(forms.map((form:any) =>
+            form.id === id
+                ? { ...form, data: { ...form.data, [field]: value } }
+                : form
+        ));
+    };
+
     const renderStep = () => {
         switch (step) {
             case 1:
                 return (
                     <div className="space-y-4">
-                        <h2 className="text-2xl font-bold mb-4">1st Talk</h2>
-                        <label htmlFor="">Select Existing Project</label>
-                        <select name="" className='w-full p-2 border rounded' id="">
+                        {/* <h2 className="text-2xl font-bold mb-4">1st Talk</h2> */}
+                        <label htmlFor="selectProject">Select Existing Project</label>
+                        <select
+                            id="selectProject"
+                            className='w-full p-2 border rounded'
+                            value={formData.personalInfo.selectProject}
+                            onChange={(e) => {
+                                updateFormData('personalInfo', 'selectProject', e.target.value)
+                                handleProjectSelection(e.target.value)
+                            }}
+                        >
+                            <option value="none">None</option>
                             {options.map((option: any) => (
                                 <option key={option.value} value={option.value}>
                                     {option.label}
                                 </option>
                             ))}
-
                         </select>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
-                                <label htmlFor="">Project Name</label>
+                                <label htmlFor="projectName">Project Name</label>
                                 <input
+                                    id="projectName"
                                     type="text"
                                     placeholder="Project Name"
                                     className="w-full p-2 border rounded"
-                                    value={formData.personalInfo.personName}
-                                    onChange={(e) => updateFormData('personalInfo', 'personName', e.target.value)}
-                                />``
+                                    value={formData.personalInfo.projectName}
+                                    onChange={(e) => updateFormData('personalInfo', 'projectName', e.target.value)}
+                                />
                             </div>
                             <div>
-                                <label htmlFor="">Project Type</label>
-                            
+                                <label htmlFor="projectType">Project Type</label>
                                 <input
+                                    id="projectType"
                                     type="text"
                                     placeholder="Project Type"
                                     className="w-full p-2 border rounded"
@@ -96,39 +224,35 @@ const ProjectForm = () => {
                                 />
                             </div>
                         </div>
-
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
-                                <label htmlFor="">Source of Project  </label>
-
+                                <label htmlFor="source">Source of Project</label>
                                 <input
+                                    id="source"
                                     type="text"
-                                    placeholder="source of project"
+                                    placeholder="Source of project"
                                     className="w-full p-2 border rounded"
                                     value={formData.personalInfo.source}
                                     onChange={(e) => updateFormData('personalInfo', 'source', e.target.value)}
                                 />
                             </div>
                             <div>
-                                <label htmlFor="">Representive Name</label>
-
+                                <label htmlFor="representative">Representative Name</label>
                                 <input
+                                    id="representative"
                                     type="text"
-                                    placeholder="Representive Name"
+                                    placeholder="Representative Name"
                                     className="w-full p-2 border rounded"
-                                    value={formData.personalInfo.representiveName}
-                                    onChange={(e) => updateFormData('personalInfo', 'representiveName', e.target.value)}
+                                    value={formData.personalInfo.representative}
+                                    onChange={(e) => updateFormData('personalInfo', 'representative', e.target.value)}
                                 />
                             </div>
-
-
                         </div>
-
                         <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
                             <div>
-                                <label htmlFor="">Client Name</label>
-
+                                <label htmlFor="clientName">Client Name</label>
                                 <input
+                                    id="clientName"
                                     type="text"
                                     placeholder="Client Name"
                                     className="w-full p-2 border rounded"
@@ -136,54 +260,42 @@ const ProjectForm = () => {
                                     onChange={(e) => updateFormData('personalInfo', 'clientName', e.target.value)}
                                 />
                             </div>
-
-
                             <div>
-                                <label htmlFor="">Date of 1st Talk </label>
-
+                                <label htmlFor="date1talk">Date of 1st Talk</label>
                                 <input
+                                    id="date1talk"
                                     type="date"
-                                    placeholder="Phone"
                                     className="w-full p-2 border rounded"
                                     value={formData.personalInfo.date1talk}
                                     onChange={(e) => updateFormData('personalInfo', 'date1talk', e.target.value)}
                                 />
                             </div>
-
                         </div>
                         <div>
-                            <label htmlFor="">Send Message on Email to Client</label>
                             <input
                                 type="checkbox"
-                                placeholder="Phone"
-                                className="ms-13 mt-2  border rounded"
-                                // value={formData.personalInfo.sendEmail}
-                                onChange={(e) => updateFormData('personalInfo', 'sendEmail', e.target.value)}
+                                id={''}
+                                className="form-checkbox h-3 w-5 text-blue-600 transition duration-150 ease-in-out"
+                                checked={formData.personalInfo.sendEmail}
+                                onChange={(e) => updateFormData('personalInfo', 'sendEmail', e.target.checked)}
                             />
+                            <span className="text-gray-400  ms-4 font-medium">{'Send Message on Email to Client'} </span>
                         </div>
-
-
                         <div>
-                            <label htmlFor="">Send Message on WhatsApp to Client</label>
-
                             <input
                                 type="checkbox"
-                                placeholder="Phone"
-                                className="ms-4 mt-2  border rounded"
-                                // value={formData.personalInfo.sendWhatsapp}
-                                onChange={(e) => updateFormData('personalInfo', 'sendWhatsapp', e.target.value)}
+                                id={''}
+                                className="form-checkbox h-3 w-5 text-blue-600 transition duration-150 ease-in-out"
+                                checked={formData.personalInfo.sendWhatsapp}
+                                onChange={(e) => updateFormData('personalInfo', 'sendWhatsapp', e.target.checked)}
                             />
+                            <span className="text-gray-400  ms-4 font-medium">{'Send Message on WhatsApp to Client'} </span>
                         </div>
-
-
-
-
                     </div>
                 )
             case 2:
                 return (
                     <div className="space-y-6">
-                        <h2 className="text-2xl font-bold mb-4">Project Creation</h2>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div className="space-y-4">
                                 <h3 className="text-lg font-semibold">Agreements</h3>
@@ -232,7 +344,6 @@ const ProjectForm = () => {
             case 3:
                 return (
                     <div className="space-y-4">
-                        <h2 className="text-2xl font-bold mb-4">Resources Planning</h2>
                         <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
                             <div>
                                 <label htmlFor=""> POC </label>
@@ -336,8 +447,7 @@ const ProjectForm = () => {
             case 4:
                 return (
                     <div className="space-y-4">
-                        <h2 className="text-2xl font-bold mb-4">Work Experience</h2>
-                        <input
+                        {/* <input
                             type="text"
                             placeholder="Company"
                             className="w-full p-2 border rounded"
@@ -357,14 +467,16 @@ const ProjectForm = () => {
                             className="w-full p-2 border rounded"
                             value={formData.workExperience.yearsOfExperience}
                             onChange={(e) => updateFormData('workExperience', 'yearsOfExperience', e.target.value)}
-                        />
+                        /> */}
+                            <div className="container mx-auto px-4 py-6">
+                
+        </div>
                     </div>
                 )
             case 5:
                 return (
                     <div className="space-y-4">
                         <div className="bg-gray-100 p-4 rounded">
-                            <h3 className="text-lg font-semibold mb-2">Project  Summary :</h3>
                             <div className="max-h-95 overflow-auto bg-gray-200 p-2 rounded border">
                                 <pre className="whitespace-pre-wrap break-words">
                                     {JSON.stringify(formData, null, 2)}
@@ -413,11 +525,29 @@ const ProjectForm = () => {
                                         </div>
                                     </div>
                                 </div>
-                                <div className="min-h-[500px] sm:min-h-[600px] lg:min-h-[500px] flex flex-col justify-between">
-                                    {renderStep()}
+                                {/* { number: 1, title: '1st Talk' },
+        { number: 2, title: 'Project Creation' },
+        { number: 3, title: 'Resource Planning' },
+        { number: 4, title: 'Running' },
+        { number: 5, title: 'Complete' }, */}
+                                <div className="min-h-[400px] sm:min-h-[600px] lg:min-h-[400px] flex flex-col justify-between">
+                                    <div>
+                                        <h2 className="text-2xl mb-6 font-bold">
+                                            {step === 1
+                                                ? "1st Talk"
+                                                : step === 2
+                                                    ? "Project Creation"
+                                                    : step === 3
+                                                        ? "Resource Planning"
+                                                        : step === 4
+                                                            ? "Running"
+                                                            : "Complete"}
+                                        </h2>
+                                        {renderStep()}
+                                    </div>
                                 </div>
                                 {/* {renderStep()} */}
-                                <div className="flex justify-between mt-6">
+                                <div className="flex justify-between">
                                     <button
                                         onClick={prevStep}
                                         disabled={step === 1}

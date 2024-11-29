@@ -5,6 +5,8 @@ import Breadcrumb from '@/components/Breadcrumbs/Breadcrumb';
 import { ChevronRight } from 'lucide-react';
 import { ProjectList } from '@/app/api/user';
 import toast from 'react-hot-toast';
+import { MdDelete, MdDeleteForever } from "react-icons/md";
+import Link from 'next/link';
 
 const ProjectList4 = () => {
   const [projectData, setProjectData] = useState<any[]>([]);  // Holds the project list from the API
@@ -83,7 +85,7 @@ const ProjectList4 = () => {
                     <th className="px-6 py-3 text-left text-sm font-medium text-gray-600">Client Name</th>
                     <th className="px-6 py-3 text-left text-sm font-medium text-gray-600">Project Type</th>
                     <th className="px-6 py-3 text-left text-sm font-medium text-gray-600">Status</th>
-                    <th className="px-6 py-3 text-left text-sm font-medium text-gray-600">Deadline</th>
+                    <th className="px-6 py-3 text-left text-sm font-medium text-gray-600">Actions</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -91,13 +93,25 @@ const ProjectList4 = () => {
                     <tr key={item.id} className="border-t">
                       {/* Adjust the ID based on currentPage */}
                       <td className="px-6 py-4 text-sm text-gray-700">{startIndex + index + 1}</td>
-                      <td className="px-6 py-4 text-sm text-gray-700">{item.projectName}</td>
+                      <td className="px-6 py-4 text-sm text-gray-700">{item.projectName}
+                        <Link
+                          href={{
+                            pathname: '/projectTracker/projectForm',
+                            query: {
+                              projectId: item.projectId,
+                              projectName: item.projectName,
+                            },
+                          }}
+                        >
+                        </Link>
+
+                      </td>
                       {/* <td className="px-6 py-4 text-sm text-gray-700">{item.projectDetails}</td> */}
                       <td className="px-6 py-4 text-sm text-gray-700">{formatWithDots(item.projectDetails)}</td>
                       <td className="px-6 py-4 text-sm text-gray-700">{item.clientName}</td>
                       <td className="px-6 py-4 text-sm text-gray-700">{item.projectType}</td>
                       <td className="px-6 py-4 text-sm text-gray-700">{item.status}</td>
-                      <td className="px-6 py-4 text-sm text-gray-700">{item.deadline}</td>
+                      <td className="px-6 py-4 text-sm text-gray-700"><  MdDelete className='text-red text-2xl font-bold' /></td>
                     </tr>
                   ))}
                 </tbody>
