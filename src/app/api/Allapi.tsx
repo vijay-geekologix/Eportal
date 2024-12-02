@@ -127,6 +127,7 @@ const AttritionList = async (): Promise<any> => {
 const DeleteAttrition = async (data: any): Promise<any> => {
   try {
     const response = await api.post("/Employee/deleteAttrition", data)
+    return response.data
   } catch (error) {
     console.error("Error fetching project list:", error);
     throw error;
