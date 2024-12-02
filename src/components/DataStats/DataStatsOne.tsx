@@ -404,7 +404,8 @@ import Clock from "../Clock/clock";
 // import Clock from "@/components/Clock"; // Ensure the correct path to the Clock component
 import { dataStats } from "@/types/dataStats";
 import { BombIcon as Balloon, PartyPopperIcon as Party, Gift, Cake } from 'lucide-react'
-
+ const userRole = localStorage.getItem('user_role')
+ console.log("userrole", userRole)
 const dataStatsList = [
   {
     icon: (
@@ -475,12 +476,18 @@ const dataStatsList = [
   //   growthRate: -0.95,
   // },
 ];
+const attendanceData = [
+  // { day: "Yesterday", absents: 5, color: "red" },
+  // { day: "Today", absents: 3, color: "yellow" },
+  { day: "Tomorrow", absents: 2, color: "blue" },
+];
 
 const DataStatsOne: React.FC<dataStats> = () => {
   return (
     <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-4">
       {/* Card 1 */}
-      <div className="max-w-md w-full mx-auto rounded-lg shadow-lg bg-gradient-to-r from-blue-50 to-blue-100 border border-blue-200">
+{userRole=='employee' ? (
+  <div className="max-w-md w-full mx-auto rounded-lg shadow-lg bg-gradient-to-r from-blue-50 to-blue-100 border border-blue-200">
   <div className="px-6 py-5">
     <h1 className="font-bold text-2xl text-blue-800 mb-4">Important Notice</h1>
     <p className="text-gray-700 text-base leading-relaxed mb-6">
@@ -501,8 +508,40 @@ const DataStatsOne: React.FC<dataStats> = () => {
     </button>
   </div>
 </div>
+)
 
+: (
+  <div className="max-w-md w-full mx-auto bg-gradient-to-r from-blue-50 to-blue-100 border border-blue-200">
+    <div className="max-w-4xl mx-auto my-1 p-6   rounded-lg">
+      <div className="grid gap-6 md:grid-cols-1">
+        {attendanceData.map(({ day, absents, color }) => (
+          <div
+            key={day}
+            className={`bg-${color}-50 border-l-4 border-${color}-500 rounded-lg p-4`}
+          >
+            <h2 className={`text-xl font-semibold text-${color}-600`}>{'Employee Attendence'}</h2>
+            <p className={`my-5 bg-${color}-50 border-l-4 border-${color}-500 rounded-lg p-4`}>
+              Absent Yesterday : <span className="font-medium">{absents}</span>
+            </p>
+            <p className={`my-5 bg-${color}-50 border-l-4 border-${color}-500 rounded-lg p-4`}>
+              Absent Today : <span className="font-medium">{absents}</span>
+            </p>
+            <p className={`my-5 bg-${color}-50 border-l-4 border-${color}-500 rounded-lg p-4`}>
+              Absent Tomorrow : <span className="font-medium">{absents}</span>
+            </p>
+            <button
+              className={`mt-4 bg-${color}-500 text-white py-2 px-4 rounded-lg text-sm font-medium hover:bg-${color}-600 focus:outline-none focus:ring-2 focus:ring-${color}-300`}
+            >
+              View Details
+            </button>
+          </div>
+        ))}
+      </div>
+    </div>
+</div>
+)
 
+}
       {/* Card 2 */}
       <div className="max-w-sm w-full mx-auto rounded-xl overflow-hidden shadow-lg bg-gradient-to-b from-yellow-50 to-yellow-100 border border-yellow-300">
   <div className="px-6 py-5">
@@ -568,9 +607,9 @@ const DataStatsOne: React.FC<dataStats> = () => {
 
           {/* Decorative Elements */}
           <div className="flex justify-around my-8">
-            <div className="animate-bounce delay-100">
+            {/* <div className="animate-bounce delay-100">
               <Balloon className="w-10 h-10 text-indigo-400" />
-            </div>
+            </div> */}
             <div className="animate-bounce delay-200">
               <Party className="w-10 h-10 text-indigo-500" />
             </div>
@@ -583,7 +622,7 @@ const DataStatsOne: React.FC<dataStats> = () => {
           </div>
 
           {/* Party Hats */}
-          <div className="flex justify-end space-x-2 mb-4">
+          {/* <div className="flex justify-end space-x-2 mb-4">
             {[...Array(2)].map((_, i) => (
               <div key={i} className="relative">
                 <div className="w-16 h-16 bg-gradient-to-br from-indigo-400 to-indigo-600 rounded-full transform -rotate-45">
@@ -597,10 +636,10 @@ const DataStatsOne: React.FC<dataStats> = () => {
                 </div>
               </div>
             ))}
-          </div>
+          </div> */}
 
           {/* Balloons */}
-          <div className="flex justify-start space-x-4 mt-4">
+          {/* <div className="flex justify-start space-x-4 mt-4">
             {[...Array(3)].map((_, i) => (
               <div
                 key={i}
@@ -609,11 +648,11 @@ const DataStatsOne: React.FC<dataStats> = () => {
                 } transform hover:scale-110 transition-transform duration-200`}
               />
             ))}
-          </div>
+          </div> */}
         </div>
 
         {/* Bottom Section */}
-        <div className="px-6 py-4 bg-gradient-to-r from-indigo-500 to-indigo-600">
+        {/* <div className="px-6 py-4 bg-gradient-to-r from-indigo-500 to-indigo-600">
           <div className="flex flex-wrap justify-center gap-2">
             <span className="inline-block bg-white bg-opacity-20 rounded-full px-3 py-1 text-sm font-semibold text-white">
               #happybirthday
@@ -622,7 +661,7 @@ const DataStatsOne: React.FC<dataStats> = () => {
               #celebration
             </span>
           </div>
-        </div>
+        </div> */}
       </div>
     </div>
     </div>

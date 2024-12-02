@@ -2,7 +2,7 @@
 import Breadcrumb from "@/components/Breadcrumbs/Breadcrumb";
 import DefaultLayout from "@/components/Layouts/DefaultLaout";
 import React, { useEffect, useState } from "react";
-import { EmployeeList, DeleteEmployee } from "@/app/api/user";
+import { EmployeeList, DeleteEmployee } from "@/app/api/Allapi";
 import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
 
@@ -60,7 +60,7 @@ const EmployeeTable = () => {
     const handleCheckboxChange = (id: number) => {
         setSelectedEmployeeIds((prevSelected: any) => {
             if (prevSelected.includes(id)) {
-                return prevSelected.filter((selectedId: any) => selectedId !== id); 
+                return prevSelected.filter((selectedId: any) => selectedId !== id);
             } else {
                 return [...prevSelected, id];
             }
@@ -129,25 +129,39 @@ const EmployeeTable = () => {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {currentRows.map((employee: any, index: number) => (
-                                        <tr key={employee.id} className="hover:bg-gray-50">
-                                            <td className="border text-center">
-                                                {(currentPage - 1) * rowsPerPage + index + 1}
-                                            </td>
-                                            <td className="border px-4 py-2 text-center">
-                                                <input
-                                                    type="checkbox"
-                                                    onChange={() => handleCheckboxChange(employee._id)}
-                                                />
+
+                                    {currentRows.length === 0 ? (
+                                        <tr>
+                                            <td colSpan={7} className="border text-center py-4 text-gray-500">
+                                                No data available! Please check back later.
                                             </td>
 
-                                            <td className="border px-4 py-2">{employee.firstName}</td>
-                                            <td className="border px-4 py-2">{employee.user_role}</td>
-                                            <td className="border px-4 py-2">{employee.email}</td>
-                                            <td className="border px-4 py-2">{employee.probationMonths}</td>
-                                            <td className="border px-4 py-2">{employee.mobileNumber}</td>
                                         </tr>
-                                    ))}
+                                    ) : (
+                                        currentRows.map((employee: any, index: number) => (
+                                            <tr key={employee.id} className="hover:bg-gray-50">
+                                                <td className="border text-center">
+                                                    {(currentPage - 1) * rowsPerPage + index + 1}
+                                                </td>
+                                                <td className="border px-4 py-2 text-center">
+                                                    <input
+                                                        type="checkbox"
+                                                        onChange={() => handleCheckboxChange(employee._id)}
+                                                    />
+                                                </td>
+
+                                                <td className="border px-4 py-2">{employee.firstName}</td>
+                                                <td className="border px-4 py-2">{employee.user_role}</td>
+                                                <td className="border px-4 py-2">{employee.email}</td>
+                                                <td className="border px-4 py-2">{employee.probationMonths}</td>
+                                                <td className="border px-4 py-2">{employee.mobileNumber}</td>
+                                            </tr>
+                                        ))
+                                    )
+                                    }
+
+
+
                                 </tbody>
                             </table>
                         </div>

@@ -91,11 +91,11 @@ const menuGroups = [
           </svg>
         ),
         label: "Projects",
-        route: "#",
-        children: [
-          { label: "Add Project", route: "/projectTracker/projectForm" },
-          { label: "Project List", route: "/projectTracker/projectList" },
-        ],
+        route: "/projectTracker/projectList",
+        // children: [
+        //   { label: "Add Project", route: "/projectTracker/projectForm" },
+        //   { label: "Project List", route: "/projectTracker/projectList" },
+        // ],
       },
       {
         icon: (
@@ -141,6 +141,10 @@ const menuGroups = [
         ),
         label: "Attendence",
         route: "/attendence",
+           children: [  
+          { label: "My Attendence", route: "/attendence/myattendence" },
+          { label: "View Attendence", route: "/attendence/viewattendence" },
+        ],
       },
       // {
       //   icon: (

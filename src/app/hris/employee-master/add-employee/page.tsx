@@ -4,9 +4,10 @@ import React, { useState } from 'react'
 import { Camera, Upload, Plus, Minus } from 'lucide-react'
 import DefaultLayout from '@/components/Layouts/DefaultLaout'
 import Breadcrumb from '@/components/Breadcrumbs/Breadcrumb'
-import { CreateEmployee } from '@/app/api/user'
-import { toast } from "react-toastify";   
+import { CreateEmployee } from '@/app/api/Allapi'
+// import { toast } from "react-toastify";   
 import { useRouter } from 'next/navigation'
+import toast from 'react-hot-toast'
 
 interface PersonalInfo {
   firstName: string
@@ -154,35 +155,22 @@ const EmployeeProfile: React.FC = () => {
             },
         ],
     };
-
+    // router.push('/hris/employee-master')
     try {
         const response = await CreateEmployee(formData);
-        // if (response) { // Assuming `response.ok` indicates a successful request
-            const result = await response.json();
-
-            // if (result.statusCode === 201) {
+            if ( response.statusCode === 201) {
+              router.push('/hris/employee-master')
                 toast.success("Employee created successfully!", {
                     position: "top-right",
-                    autoClose: 3000, // 3 seconds
-                    hideProgressBar: false,
-                    closeOnClick: true,
-                    pauseOnHover: true,
-                    draggable: true,
+                    
                 });
-
-                console.log("Form submitted successfully:", result);
-
-                // Redirect after toast
-                setTimeout(() => {
-                    router.push("/employee-master");
-                }, 3000); // Delay redirect until after the toast disappears
-            // }
-        // } 
+              }
+        
     } catch (error) {
         console.error("Error submitting form:", error);
         toast.error("An error occurred while submitting the form. Please try again.", {
             position: "top-right",
-            autoClose: 3000,
+            
         });
     }
 };

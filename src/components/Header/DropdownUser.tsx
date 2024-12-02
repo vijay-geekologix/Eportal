@@ -70,6 +70,7 @@ const DropdownUser = () => {
               />
 
               <span className="absolute bottom-0 right-0 h-3 w-3 rounded-full border-2 border-white bg-green dark:border-gray-dark"></span>
+              
             </span>
 
             <span className="block">
@@ -78,6 +79,9 @@ const DropdownUser = () => {
               </span>
               <span className="block font-medium text-dark-5 dark:text-dark-6">
                 jonson@nextadmin.com
+              </span>
+              <span className="block mt-2 font-medium text-dark-5 dark:text-dark-6">
+                Employee code -12345
               </span>
             </span>
           </div>

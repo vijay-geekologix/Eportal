@@ -3,12 +3,14 @@ import React, { useEffect, useState } from 'react';
 import DefaultLayout from '@/components/Layouts/DefaultLaout';
 import Breadcrumb from '@/components/Breadcrumbs/Breadcrumb';
 import { ChevronRight } from 'lucide-react';
-import { ProjectList } from '@/app/api/user';
+import { ProjectList } from '@/app/api/Allapi';
 import toast from 'react-hot-toast';
 import { MdDelete, MdDeleteForever } from "react-icons/md";
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
 const ProjectList4 = () => {
+  const router = useRouter()
   const [projectData, setProjectData] = useState<any[]>([]);  // Holds the project list from the API
   const [currentPage, setCurrentPage] = useState(1);  // Track current page
   const [totalPages, setTotalPages] = useState(1);  // Track total pages
@@ -76,6 +78,15 @@ const ProjectList4 = () => {
               </div>
 
               {/* Table for displaying projects */}
+              <div className="text-right space-y-4 sm:space-y-0 sm:space-x-4  flex-col sm:flex-row">
+                <button onClick={()=> router.push('/projectTracker/projectForm')} className="px-6 py-2 rounded-lg border border-transparent bg-sky-600 text-white hover:bg-sky-700 focus:ring-2 focus:ring-sky-500 transition-all duration-300">
+                  Create Project
+                </button>
+                <button className="px-6 py-2 rounded-lg border border-gray-300 bg-red text-white hover:bg-red-600 focus:ring-2 focus:ring-gray-400 transition-all duration-300">
+                  Delete
+                </button>
+              </div>
+
               <table className="min-w-full bg-white border border-gray-200 rounded-lg shadow-md">
                 <thead className="bg-gray-100">
                   <tr>
@@ -89,31 +100,35 @@ const ProjectList4 = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {paginatedData.map((item: any, index: number) => (
-                    <tr key={item.id} className="border-t">
-                      {/* Adjust the ID based on currentPage */}
-                      <td className="px-6 py-4 text-sm text-gray-700">{startIndex + index + 1}</td>
-                      <td className="px-6 py-4 text-sm text-gray-700">{item.projectName}
-                        <Link
-                          href={{
-                            pathname: '/projectTracker/projectForm',
-                            query: {
-                              projectId: item.projectId,
-                              projectName: item.projectName,
-                            },
-                          }}
-                        >
-                        </Link>
 
-                      </td>
-                      {/* <td className="px-6 py-4 text-sm text-gray-700">{item.projectDetails}</td> */}
-                      <td className="px-6 py-4 text-sm text-gray-700">{formatWithDots(item.projectDetails)}</td>
-                      <td className="px-6 py-4 text-sm text-gray-700">{item.clientName}</td>
-                      <td className="px-6 py-4 text-sm text-gray-700">{item.projectType}</td>
-                      <td className="px-6 py-4 text-sm text-gray-700">{item.status}</td>
-                      <td className="px-6 py-4 text-sm text-gray-700"><  MdDelete className='text-red text-2xl font-bold' /></td>
-                    </tr>
-                  ))}
+                  {
+                    paginatedData.length === 0 ? (
+                      <tr>
+                        <td colSpan={7} className="border-t text-center py-4 text-gray-500">
+                          No data available! Please check back later.
+                        </td>
+
+                      </tr>
+                    ) : (
+                      paginatedData.map((item: any, index: number) => (
+                        <tr key={item.id} className="border-t">
+                          {/* Adjust the ID based on currentPage */}
+                          <td className="px-6 py-4 text-sm text-gray-700">{startIndex + index + 1}</td>
+                          <td className="px-6 py-4 text-sm text-gray-700"
+                          onClick={() => router.push(`/projectTracker/projectForm?projectName=${(item._id)}`)}
+                           >{item.projectName} 
+                            </td>
+                          <td className="px-6 py-4 text-sm text-gray-700">{formatWithDots(item.projectDetails)}</td>
+                          <td className="px-6 py-4 text-sm text-gray-700">{item.clientName}</td>
+                          <td className="px-6 py-4 text-sm text-gray-700">{item.projectType}</td>
+                          <td className="px-6 py-4 text-sm text-gray-700">{item.status}</td>
+                          <td className="px-6 py-4 text-sm text-gray-700"><  MdDelete className='text-red text-2xl font-bold' /></td>
+                        </tr>
+                      ))
+                    )
+                  }
+
+
                 </tbody>
               </table>
             </div>
@@ -127,9 +142,9 @@ const ProjectList4 = () => {
               >
                 Previous
               </button>
-              <span className="text-sm font-medium text-gray-700">
+              {/* <span className="text-sm font-medium text-gray-700">
                 Page {currentPage} of {totalPages}
-              </span>
+              </span> */}
               <button
                 className="px-4 py-2 text-sm font-medium text-white bg-blue-500 rounded-md hover:bg-blue-600 disabled:bg-gray-300"
                 onClick={handleNext}
