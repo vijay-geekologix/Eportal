@@ -4,7 +4,9 @@ import { ChevronLeft, ChevronRight } from 'lucide-react'
 import DefaultLayout from '@/components/Layouts/DefaultLaout'
 import Breadcrumb from '@/components/Breadcrumbs/Breadcrumb'
 import Select from 'react-select';
-import { ProjectList } from '@/app/api/user'
+import { CreateProject, ProjectList } from '@/app/api/Allapi'
+import { toast } from 'react-toastify'
+import { useRouter } from 'next/navigation'
 interface FormData {
     personalInfo: {
         selectProject: string
@@ -48,6 +50,7 @@ interface FormData {
 }
 
 const ProjectForm = () => {
+    const router = useRouter()
     const [step, setStep] = useState(1)
     const [formData, setFormData] = useState<FormData>({
         personalInfo: { selectProject: '', projectName: '', projectType: '', source: '', representative: '', clientName: '', personName: '', personNumber: '', date1talk: '', details: '', sendEmail: false, sendWhatsapp: false },
@@ -157,25 +160,101 @@ const ProjectForm = () => {
 
 
     //multple form
-    const [forms,setForms]= useState([{id:Date.now(), date:{}}])
+    const [forms, setForms] = useState([{ id: 1, data: {} }]);
 
-    //Add New Form
-    const addForm = ()=> {
-        setForms([...forms, {id:Date.now(), date:{}}])
-    }
-    //remove Form
-    const removeForm = (id:number) => {
-        setForms(forms.filter((form)=> form.id !== id))
-    }
+    // Add a new form
+    const addForm = () => {
+        setForms([...forms, { id: forms.length + 1, data: {} }]);
+    };
+
+    // Remove a form by ID
+    const removeForm = (id: any) => {
+        setForms(forms.filter((form) => form.id !== id));
+    };
 
     //Handle input changes
-    const handleInputChange = (id: number, field: string, value: string) => {
-        setForms(forms.map((form:any) =>
-            form.id === id
-                ? { ...form, data: { ...form.data, [field]: value } }
-                : form
-        ));
+    const handleInputChange = (id: any, field: any, value: any) => {
+        setForms(
+            forms.map((form) =>
+                form.id === id
+                    ? { ...form, data: { ...form.data, [field]: value } }
+                    : form
+            )
+        );
     };
+
+    const createProjectData = async () => {
+        await CreateProject(formData)
+    }
+
+    const handleSubmit = async (event: React.FormEvent) => {
+        event.preventDefault();
+
+        // Transform formData into the desired JSON format
+        const transformedData = {
+            projectName: formData.personalInfo.projectName,
+            projectType: formData.personalInfo.projectType,
+            source: formData.personalInfo.source,
+            representative: formData.personalInfo.representative,
+            clientName: formData.personalInfo.clientName,
+            projectDetails: formData.address.projectDetails,
+            contactPerson: formData.personalInfo.personName,
+            contactNumber: formData.personalInfo.personNumber,
+            firstTalkDate: formData.personalInfo.date1talk,
+            sendEmail: formData.personalInfo.sendEmail,
+            interested: formData.personalInfo.sendWhatsapp, // Assuming this represents "interested"
+            resultFirstTalk: formData.personalInfo.details, // Assuming this represents "resultFirstTalk"
+            resources: [
+                {
+                    assignedTo: formData.education.assigneTo,
+                    numberOfResources: formData.education.noresource,
+                    startDate: formData.education.startDate,
+                    expectedEndDate: formData.education.endDate,
+                    remarks: formData.education.remarks,
+                },
+            ],
+            agreements: {
+                msa: { checked: formData.address.MSA, dateTime: formData.address.date1 },
+                dsa: { checked: formData.address.DSA, dateTime: formData.address.date2 },
+                nonSolicitation: { checked: formData.address.NONSOLICITATION, dateTime: formData.address.date3 },
+            },
+        };
+
+        try {
+            console.log("Transformed Data:", transformedData);
+
+            // Call the CreateProject API
+            const response = await CreateProject(transformedData);
+
+            if (response.ok) {
+                const result = await response.json();
+
+                toast.success("Projects created successfully!", {
+                    position: "top-right",
+                    autoClose: 3000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                });
+
+                console.log("Form submitted successfully:", result);
+                // Navigate to the project tracker page after submission
+                router.push("projectTracker/projectList");
+            } else {
+                throw new Error("Failed to create the project");
+            }
+        } catch (error) {
+            console.error("Error submitting form:", error);
+            toast.error("An error occurred while submitting the form. Please try again.", {
+                position: "top-right",
+                autoClose: 3000,
+            });
+        }
+    };
+
+
+
 
     const renderStep = () => {
         switch (step) {
@@ -468,9 +547,144 @@ const ProjectForm = () => {
                             value={formData.workExperience.yearsOfExperience}
                             onChange={(e) => updateFormData('workExperience', 'yearsOfExperience', e.target.value)}
                         /> */}
-                            <div className="container mx-auto px-4 py-6">
-                
-        </div>
+                        <div className="container mx-auto px-4">
+                            {/* <h1 className="text-2xl font-bold mb-4 text-center">Dynamic Multi Form</h1> */}
+                            <div className=''>
+                                <div>
+                                    Actual Start Date -<input
+                                        type="date"
+                                        placeholder="Actual Start Date"
+                                        // onChange={(e) =>
+                                        //     handleInputChange(form.id, "milestoneName", e.target.value)
+                                        // }
+                                        className="p-2 border rounded-lg focus:outline-none focus:ring focus:ring-blue-300"
+                                    />
+                                </div>
+                                <div>
+                                    Actual End Date -<input
+                                        type="date"
+                                        placeholder="Actual End  Date"
+                                        // onChange={(e) =>
+                                        //     handleInputChange(form.id, "milestoneName", e.target.value)
+                                        // }
+                                        className="p-2 border rounded-lg focus:outline-none focus:ring focus:ring-blue-300"
+                                    />
+                                </div>
+                            </div>
+                            <div className=" flex justify-start mt-4">
+                                <button
+                                    onClick={addForm}
+                                    className="px-6 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition"
+                                >
+                                    +
+                                </button>
+                            </div>
+                            <div className="space-y-6">
+                                {forms.map((form) => (
+                                    <div
+                                        key={form.id}
+                                        className="bg-white shadow-md rounded-lg p-4 space-y-4"
+                                    >
+                                        {/* First Row: Milestone Name, Assigned, Start Date, Due Date */}
+                                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                                            <input
+                                                type="text"
+                                                placeholder="Milestone Name"
+                                                onChange={(e) =>
+                                                    handleInputChange(form.id, "milestoneName", e.target.value)
+                                                }
+                                                className="p-2 border rounded-lg focus:outline-none focus:ring focus:ring-blue-300"
+                                            />
+                                            <input
+                                                type="text"
+                                                placeholder="Assigned"
+                                                onChange={(e) =>
+                                                    handleInputChange(form.id, "assigned", e.target.value)
+                                                }
+                                                className="p-2 border rounded-lg focus:outline-none focus:ring focus:ring-blue-300"
+                                            />
+                                            <input
+                                                type="date"
+                                                placeholder="Start Date"
+                                                onChange={(e) =>
+                                                    handleInputChange(form.id, "startDate", e.target.value)
+                                                }
+                                                className="p-2 border rounded-lg focus:outline-none focus:ring focus:ring-blue-300"
+                                            />
+                                            <input
+                                                type="date"
+                                                placeholder="Due Date"
+                                                onChange={(e) =>
+                                                    handleInputChange(form.id, "dueDate", e.target.value)
+                                                }
+                                                className="p-2 border rounded-lg focus:outline-none focus:ring focus:ring-blue-300"
+                                            />
+                                        </div>
+                                        {/* Second Row: Actual Start Date, Actual End Date, Assign To */}
+                                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                                            <input
+                                                type="date"
+                                                placeholder="Actual Start Date"
+                                                onChange={(e) =>
+                                                    handleInputChange(form.id, "actualStartDate", e.target.value)
+                                                }
+                                                className="p-2 border rounded-lg focus:outline-none focus:ring focus:ring-blue-300"
+                                            />
+                                            <input
+                                                type="date"
+                                                placeholder="Actual End Date"
+                                                onChange={(e: any) =>
+                                                    handleInputChange(form.id, "actualEndDate", e.target.value)
+                                                }
+                                                className="p-2 border rounded-lg focus:outline-none focus:ring focus:ring-blue-300"
+                                            />
+                                            <select
+                                                onChange={(e: any) =>
+                                                    handleInputChange(form.id, "assignTo", e.target.value)
+                                                }
+                                                className="p-2 border rounded-lg focus:outline-none focus:ring focus:ring-blue-300"
+                                            >
+                                                <option value="">Assign To</option>
+                                                <option value="John">John</option>
+                                                <option value="Jane">Jane</option>
+                                                <option value="Doe">Doe</option>
+                                            </select>
+                                            <button
+                                                onClick={() => removeForm(form.id)}
+                                                className="  w-10 bg-red-500 text-white rounded-lg hover:bg-red-600 transition"
+                                            >
+                                                -
+                                            </button>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+
+                            <div className='d-flex mt-4' >
+                                <label htmlFor="" className='mb-5'> Project Demo ivitiated</label>
+                                <label key={''} className="flex justify-between items-center space-x-3 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition duration-150 ease-in-out">
+                                    <div>
+                                        <input
+                                            type="checkbox"
+                                            id={''}
+                                            className="form-checkbox  h-3.5 w-5 text-blue-600 transition duration-150 ease-in-out"
+                                        // checked={formData.address[agreement as keyof typeof formData.address] as boolean}
+                                        // onChange={(e: any) => updateFormData('address', agreement, e.target.checked)}
+                                        />
+                                        <span className="ms-5 text-gray-900 font-medium">Save Date & time</span>
+                                    </div>
+                                    <div>
+                                        <button className='bg-green-500 px-4 py-1 text-white rounded-lg hover:bg-red-600 transition'> Save</button>
+                                    </div>
+
+
+                                </label>
+
+
+                            </div>
+
+                        </div>
+
                     </div>
                 )
             case 5:
@@ -525,11 +739,6 @@ const ProjectForm = () => {
                                         </div>
                                     </div>
                                 </div>
-                                {/* { number: 1, title: '1st Talk' },
-        { number: 2, title: 'Project Creation' },
-        { number: 3, title: 'Resource Planning' },
-        { number: 4, title: 'Running' },
-        { number: 5, title: 'Complete' }, */}
                                 <div className="min-h-[400px] sm:min-h-[600px] lg:min-h-[400px] flex flex-col justify-between">
                                     <div>
                                         <h2 className="text-2xl mb-6 font-bold">
@@ -557,27 +766,69 @@ const ProjectForm = () => {
                                             }`}
                                     >
                                         <ChevronLeft className="w-5 h-5 mr-1" />
-                                        Previous
+                                        Back
                                     </button>
-                                    {step == 1 || step == 2 || step == 3 || step == 4 ? (
-                                        <button
-                                            // onClick={""}
-                                            className={`flex items-center px-4 py-2 border rounded-md text-sm font-medium ${'bg-indigo-500 text-white cursor-not-allowed'}`}
-                                        >
-                                            Save
-                                        </button>
-                                    ) : null}
 
-                                    <button
-                                        onClick={nextStep}
-                                        className={`flex items-center px-4 py-2 border rounded-md text-sm font-medium ${step === 5
-                                            ? 'bg-green-500 text-white hover:bg-green-600'
-                                            : 'bg-blue-500 text-white hover:bg-blue-600'
-                                            }`}
-                                    >
-                                        {step === 5 ? 'Submit' : 'Next'}
-                                        {step !== 5 && <ChevronRight className="w-5 h-5 ml-1" />}
-                                    </button>
+
+                                    {step == 1 || step == 2 || step == 3 ? (
+                                        <div className='flex'>
+                                            <button
+                                                onClick={handleSubmit}
+                                                className={"items-end px-4 py-2 me-2 border bg-green text-white rounded-md text-sm font-medium"}
+                                            >
+                                                Save
+                                            </button>
+                                            <button
+                                                onClick={nextStep}
+                                                className={` items-end px-4 py-2 border rounded-md text-sm font-medium ${'bg-indigo-500 text-white cursor-not-allowed'}`}
+                                            >
+                                                Next
+                                            </button>
+                                        </div>
+                                    )
+                                        :
+                                        step == 4 ? (
+                                            <div className='flex'>
+                                                <button
+                                                    onClick={handleSubmit}
+                                                    className={"items-end px-4 py-2 me-2 border bg-green text-white rounded-md text-sm font-medium"}
+                                                >
+                                                    Close complete
+                                                </button>
+                                                <button
+                                                    onClick={nextStep}
+                                                    className={` items-end px-4 py-2 border rounded-md text-sm font-medium ${'bg-indigo-500 text-white cursor-not-allowed'}`}
+                                                >
+                                                    Close incomplete
+                                                </button>
+                                            </div>
+                                        )
+
+                                            : (
+                                                <button
+                                                    onClick={()=> {nextStep(), router.push('/projectTracker/projectList')}}
+                                                    className={`flex items-center px-4 py-2 border rounded-md text-sm font-medium ${step === 5
+                                                        ? 'bg-green-500 text-white hover:bg-green-600'
+                                                        : 'bg-blue-500 text-white hover:bg-blue-600'
+                                                        }`}
+                                                >
+                                                    {step === 5 ? 'Submit' : null}
+                                                    {step !== 5 && <ChevronRight className="w-5 h-5 ml-1" />}
+                                                </button>
+                                            )}
+
+                                    {/* <div>
+                                        <button
+                                            onClick={nextStep}
+                                            className={`flex items-center px-4 py-2 border rounded-md text-sm font-medium ${step === 5
+                                                ? 'bg-green-500 text-white hover:bg-green-600'
+                                                : 'bg-blue-500 text-white hover:bg-blue-600'
+                                                }`}
+                                        >
+                                            {step === 5 ? 'Submit' : 'Next'}
+                                            {step !== 5 && <ChevronRight className="w-5 h-5 ml-1" />}
+                                        </button>
+                                    </div> */}
                                 </div>
                             </div>
                         </div>

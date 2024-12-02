@@ -5,7 +5,7 @@ import DefaultLayout from "@/components/Layouts/DefaultLaout"
 import Breadcrumb from "@/components/Breadcrumbs/Breadcrumb"
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import {CreateLeave} from '@/app/api/user'
+import {CreateLeave} from '@/app/api/Allapi'
 
 function LeaveForm(){
   const router = useRouter();

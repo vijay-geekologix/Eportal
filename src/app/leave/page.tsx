@@ -196,7 +196,7 @@
 
 'use client'
 import React, { useEffect, useState } from 'react';
-import {getLeaveData} from '@/app/api/user';
+import {getLeaveData} from '@/app/api/Allapi';
 import DefaultLayout from "@/components/Layouts/DefaultLaout"
 import Breadcrumb from "@/components/Breadcrumbs/Breadcrumb"
 import { useRouter} from 'next/navigation';
@@ -259,7 +259,7 @@ const Table = () => {
           </thead>
           <tbody>
             {data.length > 0 ? (
-              data.map((item, index) => (
+              data.map((item:any, index:any) => (
                 <tr key={index} className="hover:bg-gray-50">
                   <td className="border border-gray-300 px-4 py-2">{item.applyDate || 'N/A'}</td>
                   <td className="border border-gray-300 px-4 py-2">{item.forPeriod || 'N/A'}</td>
@@ -288,7 +288,7 @@ const Table = () => {
             ) : (
               <tr>
                 <td
-                  colSpan="9"
+                  colSpan={9}
                   className="border border-gray-300 px-4 py-2 text-center text-gray-500"
                 >
                   No records found.

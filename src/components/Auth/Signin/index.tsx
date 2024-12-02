@@ -1,7 +1,7 @@
 'use client'
 import { useState, useEffect } from 'react'
 import Image from 'next/image'
-import { login } from '@/app/api/user'
+import { login } from '@/app/api/Allapi'
 // import login from '@/app/api/user'
 import toast from 'react-hot-toast'
 import { useRouter } from "next/navigation";
@@ -29,12 +29,12 @@ export default function Signin() {
     console.log('Login attempted with:', email, password)
     try {
       const loginData = { email, password }
-      await login(loginData)
+       await login(loginData)
       toast.success("Login successful! 🎉");
       router.push('/dashboard')
     } catch (error) {
       console.log("Login error:", error);
-      toast.error("Login error")
+      toast.error("Invalid Credentials")
     }
 
 
