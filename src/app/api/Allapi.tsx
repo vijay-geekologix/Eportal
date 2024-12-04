@@ -80,16 +80,17 @@ const DeleteEmployee = async (data: any): Promise<any> => {
 }
 
 const AttendenceList = async (
-  userid?: string,
+  userESSLid?: string,
   startDate?: string,
   endDate?: string
 ): Promise<any> => {
   try {
     const params: Record<string, any> = {};
-    if (userid) params.userid = userid;
+    if (userESSLid) params.userESSLid = userESSLid;
     if (startDate) params.startDate = startDate;
     if (endDate) params.endDate = endDate;
     const response = await api.get('/Employee/totalDuration', params);
+    console.log('lkl',response)
     return response;
   } catch (error) {
     console.error("Error fetching attendance list:", error);

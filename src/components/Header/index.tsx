@@ -24,7 +24,7 @@ const Header = (props: {
        console.log('ERROR OCCURE During Fetching Biometric Data',err);
       }
     }
-    // fetch_Biometric_Data();
+    fetch_Biometric_Data();
     // const interval = setInterval(()=>{
     //    fetch_Biometric_Data();
     // },1000);

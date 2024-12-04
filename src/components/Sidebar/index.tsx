@@ -140,7 +140,7 @@ const menuGroups = [
           </svg>
         ),
         label: "Attendence",
-        route: "/attendence",
+        route: "#",
            children: [  
           { label: "My Attendence", route: "/attendence/myattendence" },
           { label: "View Attendence", route: "/attendence/viewattendence" },

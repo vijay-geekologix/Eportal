@@ -120,7 +120,7 @@ export default function AttendanceModule() {
             <div className="bg-white rounded-lg shadow-md p-6">
               {/* Filter Section */}
               <div className="mb-6 grid gap-4 md:grid-cols-4">
-                <div>
+                {/* <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">User ID</label>
                   <input
                     type="text"
@@ -129,7 +129,7 @@ export default function AttendanceModule() {
                     className="w-full rounded-md border px-3 py-2"
                     placeholder="Enter User ID"
                   />
-                </div>
+                </div> */}
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Start Date</label>
                   <input
