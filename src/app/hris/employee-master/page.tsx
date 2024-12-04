@@ -89,6 +89,10 @@ const EmployeeTable = () => {
         }
     };
 
+    const handleUserNameClick = () =>{
+
+    }
+
     return (
         <DefaultLayout>
             <div className="mx-auto max-w-10xl px-4 md:px-6 ">
@@ -135,7 +139,6 @@ const EmployeeTable = () => {
                                             <td colSpan={7} className="border text-center py-4 text-gray-500">
                                                 No data available! Please check back later.
                                             </td>
-
                                         </tr>
                                     ) : (
                                         currentRows.map((employee: any, index: number) => (
@@ -150,7 +153,7 @@ const EmployeeTable = () => {
                                                     />
                                                 </td>
 
-                                                <td className="border px-4 py-2">{employee.firstName}</td>
+                                                <td className="border px-4 py-2" onClick={handleUserNameClick}><a className="">{employee.firstName}</a></td>
                                                 <td className="border px-4 py-2">{employee.user_role}</td>
                                                 <td className="border px-4 py-2">{employee.email}</td>
                                                 <td className="border px-4 py-2">{employee.probationMonths}</td>

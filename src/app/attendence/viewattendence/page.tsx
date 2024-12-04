@@ -3,10 +3,11 @@ import { useState, useEffect } from "react"
 import { ChevronRight, ChevronDown, X, Search } from 'lucide-react'
 import DefaultLayout from "@/components/Layouts/DefaultLaout"
 import Breadcrumb from "@/components/Breadcrumbs/Breadcrumb"
-import { AttendenceList } from "@/app/api/Allapi"
+import { AttendenceList, EmployeeList } from "@/app/api/Allapi"
 import { toast } from "react-toastify"
 export default function AttendanceModule() {
   const [attendanceData, setAttendanceData] = useState<any[]>([]);
+  const [employeeData , setEmployeeData] = useState([]);
   const [userId, setUserId] = useState("");
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
@@ -22,18 +23,31 @@ export default function AttendanceModule() {
   });
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  
+  useEffect(()=>{
+    const fetchEmployeeData = async()=>{
+     try{
+       const response = await EmployeeList();
+       console.log('dggd',response);
+       setEmployeeData(response.data);
+     }catch(err){
+      console.error("Error Employee Data data:", err);
+      setError("No data found");
+      toast.error("Failed to fetch Employee Name and ID. Please try again.");
+     } 
+    }
+    fetchEmployeeData();
+  },[]);
 
-  useEffect(() => {
-    fetchAttendanceData();
-  }, []);
-
+  
   const fetchAttendanceData = async () => {
     setIsLoading(true);
     setError(null);
     try {
       const response = await AttendenceList(userId, startDate, endDate);
-      setAttendanceData(response.data.attendances);
-      if (response.data.attendances.length === 0) {
+      setAttendanceData(response.data.result);
+      console.log('attendance ',response.data.result);
+      if (response.data.result.length === 0) {
         setError("No data found");
       }
     } catch (error) {
@@ -44,6 +58,11 @@ export default function AttendanceModule() {
       setIsLoading(false);
     }
   };
+
+  useEffect(() => {
+    console.log('employeeData',employeeData);
+    fetchAttendanceData();
+  }, [employeeData]);
 
   const handleFilter = () => {
     fetchAttendanceData();
@@ -87,14 +106,20 @@ export default function AttendanceModule() {
               {/* Filter Section */}
               <div className="mb-6 grid gap-4 md:grid-cols-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">User ID</label>
-                  <input
-                    type="text"
+                  <label className="block text-sm font-medium text-gray-700 mb-1">User Name</label>
+                  <select
                     value={userId}
                     onChange={(e) => setUserId(e.target.value)}
                     className="w-full rounded-md border px-3 py-2"
-                    placeholder="Enter User ID"
-                  />
+                  >
+                    <option value="">Select Employee</option>
+                    {employeeData.map((user) => (
+                      <option key={user._id} value={user.esslId}>
+                       {user.firstName}
+                      </option>
+                    ))}
+                  </select>
+
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Start Date</label>
@@ -177,10 +202,10 @@ export default function AttendanceModule() {
                               {row.date}
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{row.day}</td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{row.sessions[0].checkIn}</td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{row.sessions[0].checkOut}</td>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{row.records[0].time}</td>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{row.records[row.records.length-1].time}</td>
                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                              {row.userType1 === "PH" && (
+                              {/* {row.userType1 === "PH" && (
                                 <div className="flex items-center gap-2">
                                   <div className="h-3 w-3 rounded-full bg-gray-300" />
                                   <span>PH</span>
@@ -192,9 +217,9 @@ export default function AttendanceModule() {
                                   <span>WO</span>
                                 </div>
                               )}
-                              {row.userType1 === "DP" && <span>DP</span>}
+                              {row.userType1 === "DP" && <span>DP</span>} */}
                             </td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{row.totalDuration}</td>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{row.records[row.records.length-1].time - row.records[0].time}</td>
                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{row.lateMark}</td>
                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                               <button
@@ -205,17 +230,17 @@ export default function AttendanceModule() {
                               </button>
                             </td>
                           </tr>
-                          {expandedDate === row.date && (
+                          {expandedDate === attendanceData[0].date && (
                             <tr>
                               <td colSpan={8}>
                                 <div className="px-6 py-4 bg-gray-50">
                                   <h4 className="font-semibold mb-2">Session Details</h4>
                                   <div className="max-h-48 overflow-y-auto pr-2 space-y-2 custom-scrollbar">
-                                    {row.sessions.map((session: any, index: number) => (
+                                    {attendanceData.map((row: any, index: number) => (
                                       <div key={index} className="bg-white p-3 rounded-md shadow-sm">
-                                        <p className="font-medium">Session {index + 1}</p>
-                                        <p>Check In: {session.checkIn || 'N/A'}</p>
-                                        <p>Check Out: {session.checkOut || 'N/A'}</p>
+                                        <p className="font-medium">Session{index + 1}</p>
+                                        <p>Check In: {row.records[0].time || 'N/A'}</p>
+                                        <p>Check Out: {row.records[row.records.length-1].time || 'N/A'}</p>
                                       </div>
                                     ))}
                                   </div>
