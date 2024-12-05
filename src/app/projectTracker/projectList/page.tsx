@@ -69,6 +69,8 @@ const ProjectList4 = () => {
         <div className="mx-auto max-w-10xl px-4 md:px-6 ">
           <Breadcrumb pageName="Project List" />
           <div className="w-full bg-indigo-50 p-4 md:p-6 shadow-md">
+           <div className="bg-white shadow-lg rounded-lg p-6">
+
             <div className="overflow-x-auto">
               {/* Header */}
               <div className="flex mb-5 items-center gap-2 text-xl text-gray-600">
@@ -78,7 +80,7 @@ const ProjectList4 = () => {
               </div>
 
               {/* Table for displaying projects */}
-              <div className="text-right space-y-4 sm:space-y-0 sm:space-x-4  flex-col sm:flex-row">
+              <div className="text-right space-y-4 sm:space-y-0 sm:space-x-4  flex-col sm:flex-row mb-2">
                 <button onClick={()=> router.push('/projectTracker/projectForm')} className="px-6 py-2 rounded-lg border border-transparent bg-sky-600 text-white hover:bg-sky-700 focus:ring-2 focus:ring-sky-500 transition-all duration-300">
                   Create Project
                 </button>
@@ -90,13 +92,13 @@ const ProjectList4 = () => {
               <table className="min-w-full bg-white border border-gray-200 rounded-lg shadow-md">
                 <thead className="bg-gray-100">
                   <tr>
-                    <th className="px-6 py-3 text-left text-sm font-medium text-gray-600">ID</th>
-                    <th className="px-6 py-3 text-left text-sm font-medium text-gray-600">Project Name</th>
-                    <th className="px-6 py-3 text-left text-sm font-medium text-gray-600">Project Details</th>
-                    <th className="px-6 py-3 text-left text-sm font-medium text-gray-600">Client Name</th>
-                    <th className="px-6 py-3 text-left text-sm font-medium text-gray-600">Project Type</th>
-                    <th className="px-6 py-3 text-left text-sm font-medium text-gray-600">Status</th>
-                    <th className="px-6 py-3 text-left text-sm font-medium text-gray-600">Actions</th>
+                    <th className="border px-6 py-3 text-left text-sm font-medium text-gray-600">ID</th>
+                    <th className="border px-6 py-3 text-left text-sm font-medium text-gray-600">Project Name</th>
+                    <th className="border px-6 py-3 text-left text-sm font-medium text-gray-600">Project Details</th>
+                    <th className="border px-6 py-3 text-left text-sm font-medium text-gray-600">Client Name</th>
+                    <th className="border px-6 py-3 text-left text-sm font-medium text-gray-600">Project Type</th>
+                    <th className="border px-6 py-3 text-left text-sm font-medium text-gray-600">Status</th>
+                    {/* <th className="px-6 py-3 text-left text-sm font-medium text-gray-600">Actions</th> */}
                   </tr>
                 </thead>
                 <tbody>
@@ -113,16 +115,16 @@ const ProjectList4 = () => {
                       paginatedData.map((item: any, index: number) => (
                         <tr key={item.id} className="border-t">
                           {/* Adjust the ID based on currentPage */}
-                          <td className="px-6 py-4 text-sm text-gray-700">{startIndex + index + 1}</td>
-                          <td className="px-6 py-4 text-sm text-gray-700"
+                          <td className="border px-6 py-4 text-sm text-gray-700">{startIndex + index + 1}</td>
+                          <td className="border px-6 py-4 text-sm underline text-blue-500 hover:text-blue-700" 
                           onClick={() => router.push(`/projectTracker/projectForm?projectName=${(item._id)}`)}
                            >{item.projectName} 
                             </td>
-                          <td className="px-6 py-4 text-sm text-gray-700">{formatWithDots(item.projectDetails)}</td>
-                          <td className="px-6 py-4 text-sm text-gray-700">{item.clientName}</td>
-                          <td className="px-6 py-4 text-sm text-gray-700">{item.projectType}</td>
-                          <td className="px-6 py-4 text-sm text-gray-700">{item.status}</td>
-                          <td className="px-6 py-4 text-sm text-gray-700"><  MdDelete className='text-red text-2xl font-bold' /></td>
+                          <td className="border px-6 py-4 text-sm text-gray-700">{formatWithDots(item.projectDetails)}</td>
+                          <td className="border px-6 py-4 text-sm text-gray-700">{item.clientName}</td>
+                          <td className="border px-6 py-4 text-sm text-gray-700">{item.projectType}</td>
+                          <td className="border px-6 py-4 text-sm text-gray-700">{item.status}</td>
+                          {/* <td className="px-6 py-4 text-sm text-gray-700"><  MdDelete className='text-red text-2xl font-bold' /></td> */}
                         </tr>
                       ))
                     )
@@ -154,6 +156,7 @@ const ProjectList4 = () => {
               </button>
             </div>
           </div>
+         </div>
         </div>
       </DefaultLayout>
     </>

@@ -9,7 +9,7 @@ import { toast } from "react-toastify"
 
 export default function AttendanceModule() {
   const [attendanceData, setAttendanceData] = useState<any[]>([]);
-  const [userId, setUserId] = useState("");
+  const [userId, setUserId] = useState((localStorage.getItem('userId')));
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
   const [month, setMonth] = useState("November")
@@ -33,10 +33,16 @@ export default function AttendanceModule() {
   const fetchAttendanceData = async () => {
     setIsLoading(true);
     setError(null);
+    console.log('userid',userId)
     try {
-      const response = await AttendenceList(userId, startDate, endDate);
-      setAttendanceData(response.data.attendances);
-      if (response.data.attendances.length === 0) {
+      
+      const date = new Date();
+      const startDate2 = startDate != '' ? startDate : '2024-11-20';
+      const endDate2 = endDate != '' ? endDate : `${date.getFullYear}-${date.getMonth}-${date.getDate}`   
+      const response = await AttendenceList(userId, startDate2, endDate2);
+      setAttendanceData(response.data.result);
+      console.log('sgsgdgs',response.data.result);
+      if (response.data.result.length === 0) {
         setError("No data found");
       }
     } catch (error) {
@@ -66,7 +72,6 @@ export default function AttendanceModule() {
         if (res.isHoliday) totalCounts.isHoliday++;
         if (res.isWeekend) totalCounts.isWeekend++;
         if (res.isAbsent) totalCounts.isAbsent++;
-
       });
       setTotalCounts(totalCounts)
     } catch (error) {
@@ -103,6 +108,8 @@ export default function AttendanceModule() {
     setShowRegularizeModal(false);
   };
 
+
+
   return (
     <DefaultLayout>
       <div className="mx-auto max-w-10xl px-4 md:px-6">
@@ -120,16 +127,6 @@ export default function AttendanceModule() {
             <div className="bg-white rounded-lg shadow-md p-6">
               {/* Filter Section */}
               <div className="mb-6 grid gap-4 md:grid-cols-4">
-                {/* <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">User ID</label>
-                  <input
-                    type="text"
-                    value={userId}
-                    onChange={(e) => setUserId(e.target.value)}
-                    className="w-full rounded-md border px-3 py-2"
-                    placeholder="Enter User ID"
-                  />
-                </div> */}
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Start Date</label>
                   <input
@@ -206,13 +203,14 @@ export default function AttendanceModule() {
                     ) : (
                       attendanceData.map((row) => (
                         <>
-                          <tr key={row.date}>
+                        {console.log('llll',row)}
+                          <tr key={row._id}>
                             <td className="px-6 py-4 whitespace-nowrap text-sm text-blue-600 cursor-pointer" onClick={() => toggleSessionDetails(row.date)}>
                               {row.date}
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{row.day}</td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{row.sessions[0].checkIn}</td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{row.sessions[0].checkOut}</td>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{row.records[0].time}</td>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{row.records[row.records.length-1].time}</td>
                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                               {row.userType1 === "PH" && (
                                 <div className="flex items-center gap-2">
@@ -228,7 +226,7 @@ export default function AttendanceModule() {
                               )}
                               {row.userType1 === "DP" && <span>DP</span>}
                             </td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{row.totalDuration}</td>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{row.workingHour}</td>
                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{row.lateMark}</td>
                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                               <button

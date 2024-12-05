@@ -7,29 +7,29 @@ import DropdownNotification from "./DropdownNotification";
 import DropdownUser from "./DropdownUser";
 import Image from "next/image";
 import SearchForm from "@/components/Header/SearchForm";
-import BiometricWorkingHour from '@/components/Header/BiometricWorkingHour'
+// import BiometricWorkingHour from '@/components/Header/BiometricWorkingHour'
 const Header = (props: {
   sidebarOpen: string | boolean | undefined;
   setSidebarOpen: (arg0: boolean) => void;
 }) => {
 
-  // biometric ---------> 
-    const [biometricData , setBiometricData] = useState([]);    
-    useEffect(()=>{
-      const fetch_Biometric_Data = async ()=>{
-      try{
-       let response  = await axios.get('http://localhost:9000/biometric/xmlapi');
-       setBiometricData(response.data);
-      }catch(err){
-       console.log('ERROR OCCURE During Fetching Biometric Data',err);
-      }
-    }
-    fetch_Biometric_Data();
-    // const interval = setInterval(()=>{
-    //    fetch_Biometric_Data();
-    // },1000);
-    // return () => clearInterval(interval);  
-    },[]);
+  // // biometric ---------> 
+  //   const [biometricData , setBiometricData] = useState([]);    
+  //   useEffect(()=>{
+  //     const fetch_Biometric_Data = async ()=>{
+  //     try{
+  //      let response  = await axios.get('http://localhost:9000/biometric/xmlapi');
+  //      setBiometricData(response.data);
+  //     }catch(err){
+  //      console.log('ERROR OCCURE During Fetching Biometric Data',err);
+  //     }
+  //   }
+  //   fetch_Biometric_Data();
+  //   // const interval = setInterval(()=>{
+  //   //    fetch_Biometric_Data();
+  //   // },1000);
+  //   // return () => clearInterval(interval);  
+  //   },[]);
 
 
   return (

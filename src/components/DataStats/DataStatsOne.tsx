@@ -404,8 +404,12 @@ import Clock from "../Clock/clock";
 // import Clock from "@/components/Clock"; // Ensure the correct path to the Clock component
 import { dataStats } from "@/types/dataStats";
 import { BombIcon as Balloon, PartyPopperIcon as Party, Gift, Cake } from 'lucide-react'
- const userRole = localStorage.getItem('user_role')
- console.log("userrole", userRole)
+import { useEffect,useState } from "react";
+import BiometricWorkingHour from '@/components/BiometricWorkingHour/BiometricWorkingHour'
+import axios from "axios";
+
+const userRole = localStorage.getItem('user_role')
+console.log("userrole", userRole)
 const dataStatsList = [
   {
     icon: (
@@ -483,10 +487,30 @@ const attendanceData = [
 ];
 
 const DataStatsOne: React.FC<dataStats> = () => {
-  return (
-    <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-4">
-      {/* Card 1 */}
-{userRole=='employee' ? (
+    
+    // biometric ---------> 
+    const [biometricData , setBiometricData] = useState([]);    
+    useEffect(()=>{
+      const fetch_Biometric_Data = async ()=>{
+      try{
+       let response  = await axios.get('http://localhost:9000/biometric/xmlapi');
+       console.log('workinghour',response);
+       setBiometricData(response.data);
+      }catch(err){
+       console.log('ERROR OCCURE During Fetching Biometric Data',err);
+      }
+    }
+    fetch_Biometric_Data();
+    const interval = setInterval(()=>{
+       fetch_Biometric_Data();
+    },1000);
+    return () => clearInterval(interval);  
+    },[]);
+
+return (
+<div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-4">
+       {/* Card 1 */}
+   {userRole=='employee' ? (
   <div className="max-w-md w-full mx-auto rounded-lg shadow-lg bg-gradient-to-r from-blue-50 to-blue-100 border border-blue-200">
   <div className="px-6 py-5">
     <h1 className="font-bold text-2xl text-blue-800 mb-4">Important Notice</h1>
@@ -569,11 +593,25 @@ const DataStatsOne: React.FC<dataStats> = () => {
 
 
       {/* Clock Section */}
-      <div className="bg-white mx-auto max-w-sm w-full rounded overflow-hidden shadow-lg">
-        <div className="col-span-1 mt-20 xl:col-span-1 flex justify-center items-center">
+      {/* <div className="bg-white mx-auto max-w-sm w-full rounded overflow-hidden shadow-lg">
+        <div className="col-span-1 mt-20 xl:col-span-1 flex-col align-center justify-center items-center">
           <Clock />
+          <h1>helllo</h1>
         </div>
+      </div> */}
+
+    <div className="bg-white mx-auto max-w-sm w-full rounded shadow-lg p-6 flex flex-col justify-between items-center">
+      <div className="flex flex-col items-center">
+         <Clock />
       </div>
+
+      <div className="w-full bg-indigo-100 p-4 rounded-md text-center shadow-sm">
+         <h2 className="text-lg font-semibold text-indigo-500">Working Hours</h2>
+         {/* <p className="mt-2 text-gray-700">9:00 AM - 6:00 PM</p> */}
+         <BiometricWorkingHour biometricApiData={biometricData}/>
+      </div>
+    </div>
+
 
     {/* Banner/Bunting Section */}
     <div className=" bg-gradient-to-br from-indigo-100 to-indigo-200 p-4 flex items-center justify-center">
