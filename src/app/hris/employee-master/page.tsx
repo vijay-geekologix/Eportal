@@ -88,10 +88,12 @@ const EmployeeTable = () => {
             alert("Failed to delete selected employees.");
         }
     };
+    
+    const handleUserNameClick = (employeeName , esslId , _id) => {
+        console.log('yeeh',employeeName , esslId , _id ,currentRows)
+        router.push(`/hris/employee-master/add-employee/${employeeName}/${esslId}/${_id}`);
+    };
 
-    const handleUserNameClick = () =>{
-
-    }
 
     return (
         <DefaultLayout>
@@ -142,7 +144,7 @@ const EmployeeTable = () => {
                                         </tr>
                                     ) : (
                                         currentRows.map((employee: any, index: number) => (
-                                            <tr key={employee.id} className="hover:bg-gray-50">
+                                            <tr key={employee._id} className="hover:bg-gray-50">
                                                 <td className="border text-center">
                                                     {(currentPage - 1) * rowsPerPage + index + 1}
                                                 </td>
@@ -153,7 +155,9 @@ const EmployeeTable = () => {
                                                     />
                                                 </td>
 
-                                                <td className="border px-4 py-2" onClick={handleUserNameClick}><a className="">{employee.firstName}</a></td>
+                                                <td className="border px-4 py-2 underline text-blue-500 hover:text-blue-700" onClick={()=>handleUserNameClick(employee.firstName , employee.esslId , employee._id)} value={employee.firstName}>
+                                                    {employee.firstName}
+                                                </td>
                                                 <td className="border px-4 py-2">{employee.user_role}</td>
                                                 <td className="border px-4 py-2">{employee.email}</td>
                                                 <td className="border px-4 py-2">{employee.probationMonths}</td>

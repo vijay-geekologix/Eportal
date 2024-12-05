@@ -69,7 +69,7 @@ const menuGroups = [
         route: "#",
         children: [
           { label: "Emloyess-Master", route: "/hris/employee-master" },
-          { label: "Attrition-Master", route: "/hris/attrition" },
+          { label: "Attrition", route: "/hris/attrition" },
         ],
       },
       {

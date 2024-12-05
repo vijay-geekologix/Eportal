@@ -250,10 +250,10 @@ const Table = () => {
               <th className="border border-gray-300 px-4 py-2">For Period</th>
               <th className="border border-gray-300 px-4 py-2">From Date</th>
               <th className="border border-gray-300 px-4 py-2">To Date</th>
-              <th className="border border-gray-300 px-4 py-2">Start Day</th>
-              <th className="border border-gray-300 px-4 py-2">Last Day</th>
-              <th className="border border-gray-300 px-4 py-2">Reason</th>
+              {/* <th className="border border-gray-300 px-4 py-2">Start Day</th> */}
+              {/* <th className="border border-gray-300 px-4 py-2">Last Day</th> */}
               <th className="border border-gray-300 px-4 py-2">Total Days</th>
+              <th className="border border-gray-300 px-4 py-2">Reason</th>
               <th className="border border-gray-300 px-4 py-2">Attach Document</th>
             </tr>
           </thead>
@@ -265,10 +265,10 @@ const Table = () => {
                   <td className="border border-gray-300 px-4 py-2">{item.forPeriod || 'N/A'}</td>
                   <td className="border border-gray-300 px-4 py-2">{item.fromDate || 'N/A'}</td>
                   <td className="border border-gray-300 px-4 py-2">{item.toDate || 'N/A'}</td>
-                  <td className="border border-gray-300 px-4 py-2">{item.startDay || 'N/A'}</td>
-                  <td className="border border-gray-300 px-4 py-2">{item.lastDay || 'N/A'}</td>
-                  <td className="border border-gray-300 px-4 py-2">{item.reason || 'N/A'}</td>
+                  {/* <td className="border border-gray-300 px-4 py-2">{item.startDay || 'N/A'}</td> */}
+                  {/* <td className="border border-gray-300 px-4 py-2">{item.lastDay || 'N/A'}</td> */}
                   <td className="border border-gray-300 px-4 py-2">{item.totalDays || 'N/A'}</td>
+                  <td className="border border-gray-300 px-4 py-2">{item.reason || 'N/A'}</td>
                   <td className="border border-gray-300 px-4 py-2">
                     {item.attachDocument ? (
                       <a

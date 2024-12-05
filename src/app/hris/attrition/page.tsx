@@ -63,7 +63,14 @@ const EmployeeTable = () => {
             alert("Failed to delete selected employees.");
         }
     };
-
+    
+    // dynamic routing
+    const handleUserNameClick = (employeeId:any ,employeeName:any) =>{
+        router.push(`/hris/attrition/add-attrition/${employeeId}/${employeeName}`)
+    }
+    useEffect(()=>{
+     console.log('employeedate',employeeData)
+    },[employeeData])
     return (
         <DefaultLayout>
             <div className="mx-auto max-w-10xl px-4 md:px-6">
@@ -105,7 +112,7 @@ const EmployeeTable = () => {
                                     ) : (
 
                                         employeeData.map((employee: any, index: number) => (
-                                            <tr key={employee.id} className="hover:bg-gray-50">
+                                            <tr key={index} className="hover:bg-gray-50">
                                                 <td className="border text-center">
                                                     {(currentPage - 1) * rowsPerPage + index + 1}
                                                 </td>
@@ -115,7 +122,8 @@ const EmployeeTable = () => {
                                                         onChange={() => handleCheckboxChange(employee._id)}
                                                     />
                                                 </td>
-                                                <td className="border px-4 py-2">{employee.employee_name}</td>
+                                                {console.log('heyeyeeyyee',employee._id)}
+                                                <td className="border px-4 py-2 underline text-blue-500 hover:text-blue-700" onClick={()=>handleUserNameClick(employee._id ,employee.employee_name)}>{employee.employee_name}</td>
                                                 <td className="border px-4 py-2">{employee.joining_date}</td>
                                                 <td className="border px-4 py-2">{employee.email}</td>
                                                 <td className="border px-4 py-2">{employee.resign_offer_date}</td>

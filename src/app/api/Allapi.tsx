@@ -79,6 +79,20 @@ const DeleteEmployee = async (data: any): Promise<any> => {
   }
 }
 
+const specificEmployee = async (esslId:any , _id:any): Promise<any> =>{
+  try {
+    const data = {
+      esslId:esslId,
+      _id:_id,
+    }
+    const response = await api.get("/Employee/specificEmployee", data);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching specificEmployee list:",error);
+    throw error;
+  }
+}
+
 const AttendenceList = async (
   userESSLid?: string,
   startDate?: string,
@@ -125,6 +139,20 @@ const AttritionList = async (): Promise<any> => {
   }
 }
 
+const getSpecificAttrition = async (_id:any , employeeName:any): Promise<any> => {
+  try {
+    const data = {
+      _id:_id,
+      employeeName:employeeName,
+    }
+    const response = await api.get('/Employee/getSpecificAttrition',data);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching SpecificAttrition list:", error);
+    throw error;
+  }
+}
+
 const DeleteAttrition = async (data: any): Promise<any> => {
   try {
     const response = await api.post("/Employee/deleteAttrition", data)
@@ -165,4 +193,4 @@ const getLeaveData = async (): Promise<any> => {
   }
 }
 
-export { login, ProjectList, CreateLeave, getLeaveData, AttritionList, CreateAttrition, CreateEmployee, DeleteEmployee, EmployeeList, CreateProject, AttendenceList, DeleteAttrition, WeekHolday };
+export { login, ProjectList, CreateLeave, getLeaveData, AttritionList, CreateAttrition, CreateEmployee, DeleteEmployee, EmployeeList, specificEmployee ,CreateProject, AttendenceList, getSpecificAttrition, DeleteAttrition, WeekHolday };
