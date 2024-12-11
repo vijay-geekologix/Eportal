@@ -551,17 +551,17 @@ const ProjectForm = () => {
                             {/* <h1 className="text-2xl font-bold mb-4 text-center">Dynamic Multi Form</h1> */}
                             <div className=''>
                                 <div>
-                                    Actual Start Date -<input
+                                    Actual Start Date-<input
                                         type="date"
                                         placeholder="Actual Start Date"
                                         // onChange={(e) =>
                                         //     handleInputChange(form.id, "milestoneName", e.target.value)
                                         // }
-                                        className="p-2 border rounded-lg focus:outline-none focus:ring focus:ring-blue-300"
+                                        className="p-2 border rounded-lg focus:outline-none focus:ring focus:ring-blue-300 mb-3"
                                     />
                                 </div>
                                 <div>
-                                    Actual End Date -<input
+                                    Actual End Date- <input
                                         type="date"
                                         placeholder="Actual End  Date"
                                         // onChange={(e) =>
@@ -571,7 +571,7 @@ const ProjectForm = () => {
                                     />
                                 </div>
                             </div>
-                            <div className=" flex justify-start mt-4">
+                            <div className=" flex justify-start mt-4 mb-3">
                                 <button
                                     onClick={addForm}
                                     className="px-6 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition"
@@ -586,7 +586,7 @@ const ProjectForm = () => {
                                         className="bg-white shadow-md rounded-lg p-4 space-y-4"
                                     >
                                         {/* First Row: Milestone Name, Assigned, Start Date, Due Date */}
-                                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 ">
                                             <input
                                                 type="text"
                                                 placeholder="Milestone Name"

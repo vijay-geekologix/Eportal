@@ -207,7 +207,7 @@ const AttritionMaster = ({params:initialParams}) => {
         
         <div className="w-full bg-indigo-50 p-4 md:p-6 shadow-md">
         <div className="max-w-4xl mx-auto p-8 border bg-white">
-          <form onSubmit={handleSubmit} className="space-y-6">
+          <form  className="space-y-6">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
               <div className="flex flex-col">
                 <label htmlFor="employee_name" className="text-lg font-semibold">
@@ -302,10 +302,10 @@ const AttritionMaster = ({params:initialParams}) => {
             </div>
 
             <button
-              type="submit"
               className=" py-2 text-end px-4 mt-6 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none"
+              onClick={()=> router.push('/dashboard')}
             >
-              Update
+              Save
             </button>
           </form>
         </div>
