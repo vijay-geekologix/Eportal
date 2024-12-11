@@ -4,18 +4,23 @@ import { useState, useEffect } from "react"
 import { ChevronRight, ChevronDown, X, Search } from 'lucide-react'
 import DefaultLayout from "@/components/Layouts/DefaultLaout"
 import Breadcrumb from "@/components/Breadcrumbs/Breadcrumb"
-import { AttendenceList, WeekHolday } from "@/app/api/Allapi"
+import { AttendenceList, WeekHolday , editAttendenceType } from "@/app/api/Allapi"
 import { toast } from "react-toastify"
+import React from "react"
 
 export default function AttendanceModule() {
   const [attendanceData, setAttendanceData] = useState<any[]>([]);
-  const [userId, setUserId] = useState((localStorage.getItem('userId')));
+  const [userId, setUserId] = useState((localStorage.getItem('esslId')));
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
   const [month, setMonth] = useState("November")
   const [year, setYear] = useState("2024")
   const [expandedDate, setExpandedDate] = useState<string | null>(null);
   const [showRegularizeModal, setShowRegularizeModal] = useState(false);
+  const [showAttendencetypeEditModel,setShowAttendencetypeEditModel] = useState(false);
+  const [attendenceTypeDate , setAttendanceTypeDate] = useState('');
+  const [attendenceType,setAttendanceType] = useState('present');
+  const [attendanceTypeFieldId,setAttendanceTypeFieldId] = useState('');
   const [regularizeForm, setRegularizeForm] = useState({
     date: "",
     checkIn: "",
@@ -53,7 +58,6 @@ export default function AttendanceModule() {
       setIsLoading(false);
     }
   };
-
 
   const [totalCounts, setTotalCounts] = useState({
     attendance: 0,
@@ -108,6 +112,13 @@ export default function AttendanceModule() {
     setShowRegularizeModal(false);
   };
 
+   
+  const handleAttendenceTypeEdit = async (e:any) =>{
+    e.preventDefault()
+    const response = await editAttendenceType(userId,attendenceTypeDate,attendenceType,attendanceTypeFieldId);
+    setShowAttendencetypeEditModel(prev=>!prev);
+    console.log("attendence Type",e.target);
+  }
 
 
   return (
@@ -115,7 +126,7 @@ export default function AttendanceModule() {
       <div className="mx-auto max-w-10xl px-4 md:px-6">
         <Breadcrumb pageName="Attendance" />
 
-        <div className="w-full bg-gray-50 p-4 md:p-6">
+        <div className="w-full bg-indigo-50 p-4 md:p-6 shadow-md">
           <div className="mx-auto max-w-full space-y-6">
             {/* Header */}
             <div className="flex items-center gap-2 text-xl text-gray-600">
@@ -202,9 +213,8 @@ export default function AttendanceModule() {
                       </tr>
                     ) : (
                       attendanceData.map((row) => (
-                        <>
-                        {console.log('llll',row)}
-                          <tr key={row._id}>
+                        <React.Fragment key={row._id}>
+                          <tr >
                             <td className="px-6 py-4 whitespace-nowrap text-sm text-blue-600 cursor-pointer" onClick={() => toggleSessionDetails(row.date)}>
                               {row.date}
                             </td>
@@ -212,21 +222,52 @@ export default function AttendanceModule() {
                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{row.records[0].time}</td>
                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{row.records[row.records.length-1].time}</td>
                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                              {row.userType1 === "PH" && (
-                                <div className="flex items-center gap-2">
-                                  <div className="h-3 w-3 rounded-full bg-gray-300" />
-                                  <span>PH</span>
-                                </div>
-                              )}
-                              {row.userType1 === "WO" && (
-                                <div className="flex items-center gap-2">
-                                  <div className="h-3 w-3 rounded-full bg-yellow-300" />
-                                  <span>WO</span>
-                                </div>
-                              )}
-                              {row.userType1 === "DP" && <span>DP</span>}
+                             <div className="flex-row gap-5 ">
+
+                              {(() => {
+                                const workingHour = row.records[row.records.length - 1]?.workingHour;
+                                if (!workingHour) return "No Data";
+                                
+                                return  row.records[row.records.length - 1].attendenceType == 'Present'? (
+                                   <span className="mr-2 text-green-500">Present</span>
+                                 ) : (
+                                   row.records[row.records.length - 1].attendenceType == "Half Day" ? (
+                                     <span className="mr-1 text-orange-500">Half Day</span>
+                                    ):(
+                                      <span className="mr-3 text-red-500">Absent</span>
+                                    )
+                                 );
+                                })()
+                              }
+                              <button
+                                  onClick={(e)=>{
+                                    console.log('hjhjhjh',e.target)
+                                    setAttendanceTypeDate(row.date);
+                                    setAttendanceTypeFieldId(row._id); 
+                                    setShowAttendencetypeEditModel(prev=>!prev)
+                                  }}
+                                  className="ml-3 bg-gray-200 hover:bg-gray-300 text-gray-600 p-1 rounded-full transition-colors"
+                                  title="Edit"
+                              >
+                                <svg
+                                  xmlns="http://www.w3.org/2000/svg"
+                                  fill="none"
+                                  viewBox="0 0 24 24"
+                                  strokeWidth={1.5}
+                                  stroke="currentColor"
+                                  className="w-3 h-3"
+                                  >
+                                 <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  d="M16.862 3.487a2.25 2.25 0 113.182 3.182L7.5 19.213l-4.125.688.688-4.125L16.862 3.487z"
+                                  />
+                                </svg>
+                              </button>
+                             </div>
                             </td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{row.workingHour}</td>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{row.records[row.records.length-1].workingHour}</td>
+                            {/* {console.log('working',row)}   */}
                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{row.lateMark}</td>
                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                               <button
@@ -243,7 +284,7 @@ export default function AttendanceModule() {
                                 <div className="px-6 py-4 bg-gray-50">
                                   <h4 className="font-semibold mb-2">Session Details</h4>
                                   <div className="max-h-48 overflow-y-auto pr-2 space-y-2 custom-scrollbar">
-                                    {row.sessions.map((session: any, index: number) => (
+                                    {row.sessions?.map((session: any, index: number) => (
                                       <div key={index} className="bg-white p-3 rounded-md shadow-sm">
                                         <p className="font-medium">Session {index + 1}</p>
                                         <p>Check In: {session.checkIn || 'N/A'}</p>
@@ -255,7 +296,7 @@ export default function AttendanceModule() {
                               </td>
                             </tr>
                           )}
-                        </>
+                        </React.Fragment>
                       ))
                     )}
                   </tbody>
@@ -330,6 +371,73 @@ export default function AttendanceModule() {
           </div>
         </div>
       )}
+
+ {/* Edit Attendence Type Form */}
+      {
+        showAttendencetypeEditModel && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-lg p-6 w-full max-w-md">
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-lg font-semibold">Attendence Type</h3>
+              <button onClick={() => setShowAttendencetypeEditModel(prev=>!prev)} className="text-gray-500 hover:text-gray-700">
+                <X className="h-6 w-6" />
+              </button>
+            </div>
+            <form onSubmit={(e) =>handleAttendenceTypeEdit(e)} className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700">Date</label>
+                <input
+                  type="date"
+                  value={attendenceTypeDate}
+                  // onChange={(e) => setAttendanceTypeDate({ ...regularizeForm, date: e.target.value })}
+                  className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                />
+              </div>
+              <div>
+                <label className="mt-3 block text-sm font-medium text-gray-700">Request For</label>
+                <select
+                  value={attendenceType}
+                  onChange={(e) => setAttendanceType(e.target.value)}
+                  className="mt-1 mb-5 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
+                >
+                  <option value="Present">Present</option>
+                  <option value="Half Day">Half Day</option>
+                  <option value="Absent">Absent</option>
+                </select>
+              </div>
+              {/* <div>
+                <label className="block text-sm font-medium text-gray-700">Check In</label>
+                <input
+                  type="time"
+                  value={regularizeForm.checkIn}
+                  onChange={(e) => setRegularizeForm({ ...regularizeForm, checkIn: e.target.value })}
+                  disabled={regularizeForm.type === "checkOut"}
+                  className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700">Check Out</label>
+                <input
+                  type="time"
+                  value={regularizeForm.checkOut}
+                  onChange={(e) => setRegularizeForm({ ...regularizeForm, checkOut: e.target.value })}
+                  disabled={regularizeForm.type === "checkIn"}
+                  className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                />
+              </div> */}
+              <div>
+                <button
+                  type='submit'
+                  className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                >
+                  Send Request
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+        )
+      }
     </DefaultLayout>
   )
 }

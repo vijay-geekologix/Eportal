@@ -407,6 +407,7 @@ import { BombIcon as Balloon, PartyPopperIcon as Party, Gift, Cake } from 'lucid
 import { useEffect,useState } from "react";
 import BiometricWorkingHour from '@/components/BiometricWorkingHour/BiometricWorkingHour'
 import axios from "axios";
+import { getBiometricWorkingHour } from "@/app/api/Allapi";
 
 const userRole = localStorage.getItem('user_role')
 console.log("userrole", userRole)
@@ -493,18 +494,17 @@ const DataStatsOne: React.FC<dataStats> = () => {
     useEffect(()=>{
       const fetch_Biometric_Data = async ()=>{
       try{
-       let response  = await axios.get('http://localhost:9000/biometric/xmlapi');
-       console.log('workinghour',response);
-       setBiometricData(response.data);
+       let response  = await getBiometricWorkingHour();
+       setBiometricData(response);
       }catch(err){
        console.log('ERROR OCCURE During Fetching Biometric Data',err);
       }
     }
     fetch_Biometric_Data();
-    const interval = setInterval(()=>{
-       fetch_Biometric_Data();
-    },1000);
-    return () => clearInterval(interval);  
+    // const interval = setInterval(()=>{
+    //    fetch_Biometric_Data();
+    // },1000);
+    // return () => clearInterval(interval);  
     },[]);
 
 return (
@@ -608,7 +608,7 @@ return (
       <div className="w-full bg-indigo-100 p-4 rounded-md text-center shadow-sm">
          <h2 className="text-lg font-semibold text-indigo-500">Working Hours</h2>
          {/* <p className="mt-2 text-gray-700">9:00 AM - 6:00 PM</p> */}
-         <BiometricWorkingHour biometricApiData={biometricData}/>
+         <BiometricWorkingHour biometricApiData={biometricData || []}/>
       </div>
     </div>
 

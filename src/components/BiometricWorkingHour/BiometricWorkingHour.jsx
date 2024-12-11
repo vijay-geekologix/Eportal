@@ -8,7 +8,7 @@ export default function BiometricWorkingHour({biometricApiData}){
   const [intervalId, setIntervalId] = useState(null);
 
   // biometric
-  const [esslUserID,setEsslUserID] = useState(42);  
+  const [esslUserID,setEsslUserID] = useState((localStorage.getItem('esslId')));  
   let isEsslBiometricUserCheckin = false;
 
   const checkUserEsslID = () =>{
@@ -43,15 +43,12 @@ export default function BiometricWorkingHour({biometricApiData}){
         const checkInTimeInSec = checkInHour*3600 + checkInMinutes*60 + checkInSeconds;
         
         nonWorkingHour = nonWorkingHour + checkInTimeInSec - checkOutTimeInSec;
-        console.log('lllkl',nonWorkingHour); 
       }
     }
-     console.log('checkInOutEntryLength',checkInOutEntryLength)
+     
      if(isEsslBiometricUserCheckin == false){
-       console.log('holllaa');
        setElapsedTime('user Not checkIN')
      }else if(checkInOutEntryLength % 2 == 1){
-        console.log('pppp',checkInEntry);
         
         const [checkInHour , checkInMinutes , checkInSeconds]= checkInEntry.split(':').map(Number);
         const checkInTimeInSeconds = checkInHour*3600 + checkInMinutes*60 + checkInSeconds;  // 12.27 hour
@@ -90,7 +87,6 @@ export default function BiometricWorkingHour({biometricApiData}){
       startTimer();
     }
       // startTimer();
-      console.log('hello hello2 ' , biometricApiData);
   });
 
 //   --------------------------------------------->
@@ -99,7 +95,6 @@ export default function BiometricWorkingHour({biometricApiData}){
   // Helper functions for managing time and storage
   const startTimer = (initialElapsedTime = 0) => {
     const id = setInterval(() => {
-      console.log('hello hello ' , elapsedTime);
       setElapsedTime((prevElapsedTime) => {
         const updatedTime = prevElapsedTime + 1;
         return updatedTime;
@@ -112,7 +107,7 @@ export default function BiometricWorkingHour({biometricApiData}){
   const stopTimer = () => {
     clearInterval(intervalId);
     setIntervalId(null);
-    console.log('hgggg',elapsedTime)
+    console.log('Working Hour count-Down Stoped',elapsedTime)
   };
 
   useEffect(() => {

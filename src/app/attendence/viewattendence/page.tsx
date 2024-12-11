@@ -68,7 +68,7 @@ export default function AttendanceModule() {
     fetchAttendanceData();
   };
 
-  const toggleSessionDetails = (date: string) => {
+  const toggleSessionDetails = (date: string , index) => {
     setExpandedDate(expandedDate === date ? null : date);
   };
 
@@ -93,7 +93,7 @@ export default function AttendanceModule() {
       <div className="mx-auto max-w-10xl px-4 md:px-6">
         <Breadcrumb pageName="Attendance" />
 
-        <div className="w-full bg-gray-50 p-4 md:p-6">
+        <div className="w-full bg-indigo-50 p-4 md:p-6 shadow-md">
           <div className="mx-auto max-w-full space-y-6">
             {/* Header */}
             <div className="flex items-center gap-2 text-xl text-gray-600">
@@ -195,31 +195,33 @@ export default function AttendanceModule() {
                         <td colSpan={8} className="px-6 py-4 text-center text-red-500">{error}</td>
                       </tr>
                     ) : (
-                      attendanceData.map((row) => (
+                      attendanceData.map((row , index) => (
                         <>
                           <tr key={row.date}>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-blue-600 cursor-pointer" onClick={() => toggleSessionDetails(row.date)}>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm text-blue-600 cursor-pointer" onClick={() => toggleSessionDetails(row.date , index )}>
                               {row.date}
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{row.day}</td>
                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{row.records[0].time}</td>
                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{row.records[row.records.length-1].time}</td>
                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                              {/* {row.userType1 === "PH" && (
-                                <div className="flex items-center gap-2">
-                                  <div className="h-3 w-3 rounded-full bg-gray-300" />
-                                  <span>PH</span>
-                                </div>
-                              )}
-                              {row.userType1 === "WO" && (
-                                <div className="flex items-center gap-2">
-                                  <div className="h-3 w-3 rounded-full bg-yellow-300" />
-                                  <span>WO</span>
-                                </div>
-                              )}
-                              {row.userType1 === "DP" && <span>DP</span>} */}
+                            {(() => {
+                                const workingHour = row.records[row.records.length - 1]?.workingHour;
+                                if (!workingHour) return "No Data";
+                                
+                                return  row.records[row.records.length - 1].attendenceType == 'Present'? (
+                                   <span className="mr-2 text-green-500">Present</span>
+                                 ) : (
+                                   row.records[row.records.length - 1].attendenceType == "Half Day" ? (
+                                     <span className="mr-1 text-orange-500">Half Day</span>
+                                    ):(
+                                      <span className="mr-3 text-red-500">Absent</span>
+                                    )
+                                 );
+                                })()
+                              }
                             </td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{row.records[row.records.length-1].time - row.records[0].time}</td>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{row.records[row.records.length-1].workingHour}</td>
                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{row.lateMark}</td>
                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                               <button
@@ -230,7 +232,7 @@ export default function AttendanceModule() {
                               </button>
                             </td>
                           </tr>
-                          {expandedDate === attendanceData[0].date && (
+                          {/* {expandedDate === attendanceData[0].date && (
                             <tr>
                               <td colSpan={8}>
                                 <div className="px-6 py-4 bg-gray-50">
@@ -247,7 +249,7 @@ export default function AttendanceModule() {
                                 </div>
                               </td>
                             </tr>
-                          )}
+                          )} */}
                         </>
                       ))
                     )}

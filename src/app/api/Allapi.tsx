@@ -15,7 +15,11 @@ const login = async (data: any): Promise<void> => {
     if (token) {
 
       localStorage.setItem("authToken", token);
+      localStorage.setItem("Id", response.data.data.user._id);
+
+      localStorage.setItem("esslId", response.data.data.user.esslId);
       localStorage.setItem("user_role", response.data.data.user.user_role);
+
 
       console.log("Login successful! Token saved.");
     } else {
@@ -103,11 +107,32 @@ const AttendenceList = async (
     if (userESSLid) params.userESSLid = userESSLid;
     if (startDate) params.startDate = startDate;
     if (endDate) params.endDate = endDate;
-    const response = await api.get('/Employee/totalDuration', params);
-    console.log('lkl',response)
+    const response = await api.get('/Employee/biometric/totalDuration', params);
     return response;
   } catch (error) {
     console.error("Error fetching attendance list:", error);
+    throw error;
+  }
+};
+
+const editAttendenceType = async (
+  userESSLid?: string,
+  date?: string,
+  attendenceType?: string,
+  attendenceTypeFeildId?: any,
+): Promise<any> => {
+  try {
+    const params: Record<string, any> = {};
+    if (userESSLid) params.userESSLid = userESSLid;
+    if (date) params.date = date;
+    if (attendenceType) params.attendenceType = attendenceType;
+    if (attendenceTypeFeildId) params.attendenceTypeFeildId = attendenceTypeFeildId;
+
+    const response = await api.put('/Employee/biometric/editAttendenceType', params);
+    console.log('lkl',response)
+    return response;
+  } catch (error) {
+    console.error("Error During Edit attendance type:", error);
     throw error;
   }
 };
@@ -193,4 +218,17 @@ const getLeaveData = async (): Promise<any> => {
   }
 }
 
-export { login, ProjectList, CreateLeave, getLeaveData, AttritionList, CreateAttrition, CreateEmployee, DeleteEmployee, EmployeeList, specificEmployee ,CreateProject, AttendenceList, getSpecificAttrition, DeleteAttrition, WeekHolday };
+// biometricBaseURL:"https://p4h4d07h-9000.inc1.devtunnels.ms/",
+
+
+const getBiometricWorkingHour = async (): Promise<any> => {
+  try {
+    const response = await api.get("https://p4h4d07h-9000.inc1.devtunnels.ms/biometric/xmlapi");
+    return response.data;
+  } catch (err) {
+    console.log('Error during get biometric working hour', err);
+  }
+}
+
+
+export { login, ProjectList, CreateLeave, getLeaveData, AttritionList, CreateAttrition, CreateEmployee, DeleteEmployee, EmployeeList, specificEmployee ,CreateProject, AttendenceList, editAttendenceType, getSpecificAttrition, DeleteAttrition, WeekHolday, getBiometricWorkingHour};

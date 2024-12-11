@@ -665,7 +665,7 @@ export default function CalendarBox() {
                     className={cn(
                       "text-center py-2 rounded-full cursor-pointer",
                       isToday && "bg-primary text-white",
-                      isSelected && "bg-secondary text-secondary-foreground"
+                      isSelected && "bg-primary text-white"
                     )}
                     onClick={() => handleDateClick(day)}
                   >

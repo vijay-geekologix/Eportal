@@ -188,7 +188,7 @@ const Header = (props: {
                   minute: "2-digit",
                 })} */}
                {/* <BiometricWorkingHour biometricApiData={biometricData}/> */}
-               11:11
+               Check-in
               </span>
             </div>
           </div>
