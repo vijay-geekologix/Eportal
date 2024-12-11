@@ -81,7 +81,7 @@ const DropdownUser = () => {
                 jonson@nextadmin.com
               </span>
               <span className="block mt-2 font-medium text-dark-5 dark:text-dark-6">
-                Employee code -12345
+                Employee code -{(localStorage.getItem('esslId'))}
               </span>
             </span>
           </div>

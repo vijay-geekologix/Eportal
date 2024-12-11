@@ -7,7 +7,7 @@ import { AttendenceList, EmployeeList } from "@/app/api/Allapi"
 import { toast } from "react-toastify"
 export default function AttendanceModule() {
   const [attendanceData, setAttendanceData] = useState<any[]>([]);
-  const [employeeData , setEmployeeData] = useState([]);
+  const [employeeData, setEmployeeData] = useState([]);
   const [userId, setUserId] = useState("");
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
@@ -23,30 +23,30 @@ export default function AttendanceModule() {
   });
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  
-  useEffect(()=>{
-    const fetchEmployeeData = async()=>{
-     try{
-       const response = await EmployeeList();
-       console.log('dggd',response);
-       setEmployeeData(response.data);
-     }catch(err){
-      console.error("Error Employee Data data:", err);
-      setError("No data found");
-      toast.error("Failed to fetch Employee Name and ID. Please try again.");
-     } 
+
+  useEffect(() => {
+    const fetchEmployeeData = async () => {
+      try {
+        const response = await EmployeeList();
+        console.log('dggd', response);
+        setEmployeeData(response.data);
+      } catch (err) {
+        console.error("Error Employee Data data:", err);
+        setError("No data found");
+        toast.error("Failed to fetch Employee Name and ID. Please try again.");
+      }
     }
     fetchEmployeeData();
-  },[]);
+  }, []);
 
-  
+
   const fetchAttendanceData = async () => {
     setIsLoading(true);
     setError(null);
     try {
       const response = await AttendenceList(userId, startDate, endDate);
       setAttendanceData(response.data.result);
-      console.log('attendance ',response.data.result);
+      console.log('attendance ', response.data.result);
       if (response.data.result.length === 0) {
         setError("No data found");
       }
@@ -60,7 +60,7 @@ export default function AttendanceModule() {
   };
 
   useEffect(() => {
-    console.log('employeeData',employeeData);
+    console.log('employeeData', employeeData);
     fetchAttendanceData();
   }, [employeeData]);
 
@@ -68,7 +68,7 @@ export default function AttendanceModule() {
     fetchAttendanceData();
   };
 
-  const toggleSessionDetails = (date: string , index) => {
+  const toggleSessionDetails = (date: string, index: any) => {
     setExpandedDate(expandedDate === date ? null : date);
   };
 
@@ -113,9 +113,9 @@ export default function AttendanceModule() {
                     className="w-full rounded-md border px-3 py-2"
                   >
                     <option value="">Select Employee</option>
-                    {employeeData.map((user) => (
+                    {employeeData.map((user: any) => (
                       <option key={user._id} value={user.esslId}>
-                       {user.firstName}
+                        {user.firstName}
                       </option>
                     ))}
                   </select>
@@ -195,33 +195,33 @@ export default function AttendanceModule() {
                         <td colSpan={8} className="px-6 py-4 text-center text-red-500">{error}</td>
                       </tr>
                     ) : (
-                      attendanceData.map((row , index) => (
+                      attendanceData.map((row, index) => (
                         <>
                           <tr key={row.date}>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-blue-600 cursor-pointer" onClick={() => toggleSessionDetails(row.date , index )}>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm text-blue-600 cursor-pointer" onClick={() => toggleSessionDetails(row.date, index)}>
                               {row.date}
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{row.day}</td>
                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{row.records[0].time}</td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{row.records[row.records.length-1].time}</td>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{row.records[row.records.length - 1].time}</td>
                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                            {(() => {
+                              {(() => {
                                 const workingHour = row.records[row.records.length - 1]?.workingHour;
                                 if (!workingHour) return "No Data";
-                                
-                                return  row.records[row.records.length - 1].attendenceType == 'Present'? (
-                                   <span className="mr-2 text-green-500">Present</span>
-                                 ) : (
-                                   row.records[row.records.length - 1].attendenceType == "Half Day" ? (
-                                     <span className="mr-1 text-orange-500">Half Day</span>
-                                    ):(
-                                      <span className="mr-3 text-red-500">Absent</span>
-                                    )
-                                 );
-                                })()
+
+                                return row.records[row.records.length - 1].attendenceType == 'Present' ? (
+                                  <span className="mr-2 text-green-500">Present</span>
+                                ) : (
+                                  row.records[row.records.length - 1].attendenceType == "Half Day" ? (
+                                    <span className="mr-1 text-orange-500">Half Day</span>
+                                  ) : (
+                                    <span className="mr-3 text-red-500">Absent</span>
+                                  )
+                                );
+                              })()
                               }
                             </td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{row.records[row.records.length-1].workingHour}</td>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{row.records[row.records.length - 1].workingHour}</td>
                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{row.lateMark}</td>
                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                               <button
@@ -250,6 +250,39 @@ export default function AttendanceModule() {
                               </td>
                             </tr>
                           )} */}
+
+                          {expandedDate === row.date && (
+                            <tr>
+                              <td colSpan={8}>
+                                <div className="px-6 py-4 bg-gray-50">
+                                  <h4 className="font-semibold mb-2">Session Details</h4>
+                                  <div className="max-h-48 overflow-y-auto pr-2 space-y-2 custom-scrollbar">
+                                    {row.records?.map((_res: any, index: any) => {
+                                      if (index % 2 !== 0) return null;
+                                      const session1 = row.records[index];
+                                      const session2 = row.records[index + 1];
+                                      return (
+                                        <div key={index} className="bg-white p-3 rounded-md shadow-sm space-y-2 md:space-y-0 md:grid md:grid-cols-2 gap-4">
+                                          <div className="flex flex-col">
+                                            {/* <p className="font-medium">Session {index + 1}</p> */}
+                                            <p>Check In: {session1?.time || 'N/A'}</p>
+                                            {/* <p>Check Out: {session1?.checkOut || 'N/A'}</p> */}
+                                          </div>
+                                          {session2 && (
+                                            <div className="flex flex-col">
+                                              {/* <p className="font-medium">Session {index + 2}</p> */}
+                                              <p>Check Out: {session2?.time || 'N/A'}</p>
+                                              {/* <p>Check Out: {session2?.checkOut || 'N/A'}</p> */}
+                                            </div>
+                                          )}
+                                        </div>
+                                      );
+                                    })}
+                                  </div>
+                                </div>
+                              </td>
+                            </tr>
+                          )}
                         </>
                       ))
                     )}
@@ -277,7 +310,7 @@ export default function AttendanceModule() {
                 <input
                   type="date"
                   value={regularizeForm.date}
-                  onChange={(e) => setRegularizeForm({...regularizeForm, date: e.target.value})}
+                  onChange={(e) => setRegularizeForm({ ...regularizeForm, date: e.target.value })}
                   className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                 />
               </div>
@@ -285,7 +318,7 @@ export default function AttendanceModule() {
                 <label className="block text-sm font-medium text-gray-700">Type</label>
                 <select
                   value={regularizeForm.type}
-                  onChange={(e) => setRegularizeForm({...regularizeForm, type: e.target.value})}
+                  onChange={(e) => setRegularizeForm({ ...regularizeForm, type: e.target.value })}
                   className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
                 >
                   <option value="both">Both</option>
@@ -298,7 +331,7 @@ export default function AttendanceModule() {
                 <input
                   type="time"
                   value={regularizeForm.checkIn}
-                  onChange={(e) => setRegularizeForm({...regularizeForm, checkIn: e.target.value})}
+                  onChange={(e) => setRegularizeForm({ ...regularizeForm, checkIn: e.target.value })}
                   disabled={regularizeForm.type === "checkOut"}
                   className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                 />
@@ -308,7 +341,7 @@ export default function AttendanceModule() {
                 <input
                   type="time"
                   value={regularizeForm.checkOut}
-                  onChange={(e) => setRegularizeForm({...regularizeForm, checkOut: e.target.value})}
+                  onChange={(e) => setRegularizeForm({ ...regularizeForm, checkOut: e.target.value })}
                   disabled={regularizeForm.type === "checkIn"}
                   className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                 />

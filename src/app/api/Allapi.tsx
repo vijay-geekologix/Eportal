@@ -10,7 +10,7 @@ const login = async (data: any): Promise<void> => {
   try {
     const response: any = await api.post<LoginResponse>("admin/login", data);
     const token = response.data.data.token;
-    console.log("Res", response.data.data.user.user_role)
+    // console.log("Res", response.data.data.user.firstName)
     // Save the token in localStorage
     if (token) {
 
@@ -18,6 +18,9 @@ const login = async (data: any): Promise<void> => {
       localStorage.setItem("Id", response.data.data.user._id);
 
       localStorage.setItem("esslId", response.data.data.user.esslId);
+      localStorage.setItem("Name", response.data.data.user.firstName);
+      localStorage.setItem("email", response.data.data.user.email);
+
       localStorage.setItem("user_role", response.data.data.user.user_role);
 
 

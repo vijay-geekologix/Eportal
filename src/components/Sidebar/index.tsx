@@ -176,6 +176,37 @@ const menuGroups = [
         ),
         label: "Leave",
         route: "/leave",
+      },
+      {
+        icon: (
+          <svg
+            className="fill-current"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M3 4C3 2.89543 3.89543 2 5 2H15C16.1046 2 17 2.89543 17 4V8H13C11.8954 8 11 8.89543 11 10V14H7C5.89543 14 5 13.1046 5 12V4H3Z"
+              fill=""
+            />
+            <path
+              d="M13 10H17C18.1046 10 19 10.8954 19 12V16H13V10Z"
+              fill=""
+            />
+            <path
+              d="M16.5858 17.4142L12 22L14 22H20C20.5523 22 21 21.5523 21 21V15L20.7071 15.2929L16.5858 17.4142Z"
+              fill=""
+            />
+            <path
+              d="M8 16H3C2.44772 16 2 16.4477 2 17V21C2 21.5523 2.44772 22 3 22H8C8.55228 22 9 21.5523 9 21V17C9 16.4477 8.55228 16 8 16Z"
+              fill=""
+            />
+          </svg>
+        ),
+        label: "Pedding Approval",
+        route: "/pending-approval",
       }
       // {
       //   icon: (

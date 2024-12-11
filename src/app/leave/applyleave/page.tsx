@@ -24,24 +24,24 @@ function LeaveForm(){
   });
   const [totalDays,setTotalDays] = useState(0);
    
-  const handleInputChange = (e) => {
+  const handleInputChange = (e:any) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
 
-  const handleFileChange = (e) => {
+  const handleFileChange = (e:any) => {
     // const { name, value } = e.target;
     setFormData({ ...formData, attachDocument: e.target.files[0] });
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e:any) => {
     e.preventDefault();
     router.push('/dashboard');
     const response = await CreateLeave(formData);
     console.log('helllllllo',formData , "naaa" , response);
   };
 
-  const handleTotalDays = (e) =>{
+  const handleTotalDays = (e:any) =>{
     const { name, value } = e.target;
     setFormData({...formData,[name]:value});
     setTotalDays(e.target.value); 
