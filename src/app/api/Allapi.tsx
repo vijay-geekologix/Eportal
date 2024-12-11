@@ -5,6 +5,9 @@ interface LoginResponse {
   token: string;
 }
 
+const date = new Date();
+const currentDate =  `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`;
+
 // Auth Api
 const login = async (data: any): Promise<void> => {
   try {
@@ -22,7 +25,7 @@ const login = async (data: any): Promise<void> => {
       localStorage.setItem("email", response.data.data.user.email);
 
       localStorage.setItem("user_role", response.data.data.user.user_role);
-
+      localStorage.setItem("user_name", `${response.data.data.user.firstName} ${response.data.data.user.lastName}`);
 
       console.log("Login successful! Token saved.");
     } else {
@@ -119,14 +122,14 @@ const AttendenceList = async (
 };
 
 const editAttendenceType = async (
-  userESSLid?: string,
+  esslId?: string,
   date?: string,
   attendenceType?: string,
   attendenceTypeFeildId?: any,
 ): Promise<any> => {
   try {
     const params: Record<string, any> = {};
-    if (userESSLid) params.userESSLid = userESSLid;
+    if (esslId) params.esslId = esslId;
     if (date) params.date = date;
     if (attendenceType) params.attendenceType = attendenceType;
     if (attendenceTypeFeildId) params.attendenceTypeFeildId = attendenceTypeFeildId;
@@ -139,6 +142,52 @@ const editAttendenceType = async (
     throw error;
   }
 };
+
+const requestEditAttendenceType = async (
+  esslId?: string,
+  date?: string,
+  attendenceType?: string,
+  attendenceTypeFeildId?: any,
+  reason?:any
+): Promise<any> => {
+  const userName = localStorage.getItem('user_name');
+
+  try {
+    const params: Record<string, any> = {};
+    if (esslId) params.esslId = esslId;
+    if (userName) params.userName = userName;
+    if (date) params.attendenceDate = date;
+    if (attendenceType) params.attendenceType = attendenceType;
+    if (attendenceTypeFeildId) params.attendenceTypeFeildId = attendenceTypeFeildId;
+    if(reason) params.reason = reason;
+    if(currentDate) params.applyDate = currentDate;
+    console.log('lkl',params)
+    const response = await api.post('/Employee/requests/requestEditAttendenceType', params);
+    return response;
+  } catch (error) {
+    console.error("Error During Request Edit attendance type:", error);
+    throw error;
+  }
+};
+
+const getAllrequestsEditAttendenceType = async (
+  esslId?: string,
+  startDate?: string,
+  endDate?: string
+): Promise<any> => {
+  try {
+    const params: Record<string, any> = {};
+    if (esslId) params.esslId = esslId;
+    if (startDate) params.startDate = startDate;
+    if (endDate) params.endDate = endDate;
+    const response = await api.get('/Employee/requests/requestEditAttendenceType', params);
+    return response;
+  } catch (error) {
+    console.error("Error fetching attendance list:", error);
+    throw error;
+  }
+};
+
 
 const WeekHolday = async (
   startDate?: string,
@@ -233,5 +282,34 @@ const getBiometricWorkingHour = async (): Promise<any> => {
   }
 }
 
+// const getAllRequests = async () : Promise<any> =>{
+//  try {
+//   const response = await api.get("leave/allLeavelist")
+//   return response.data;
+//  } catch (err) {
+//   console.log('Error during get leave', err);
+//  }
+// }
 
-export { login, ProjectList, CreateLeave, getLeaveData, AttritionList, CreateAttrition, CreateEmployee, DeleteEmployee, EmployeeList, specificEmployee ,CreateProject, AttendenceList, editAttendenceType, getSpecificAttrition, DeleteAttrition, WeekHolday, getBiometricWorkingHour};
+
+export { 
+         login,
+         ProjectList, 
+         CreateLeave, 
+         getLeaveData, 
+         AttritionList, 
+         CreateAttrition, 
+         CreateEmployee, 
+         DeleteEmployee, 
+         EmployeeList, 
+         specificEmployee 
+         ,CreateProject, 
+         AttendenceList, 
+         editAttendenceType,
+         getAllrequestsEditAttendenceType, 
+         requestEditAttendenceType, 
+         getSpecificAttrition, 
+         DeleteAttrition,
+         WeekHolday, 
+         getBiometricWorkingHour
+      };
