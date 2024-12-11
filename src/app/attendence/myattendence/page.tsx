@@ -4,7 +4,7 @@ import { useState, useEffect } from "react"
 import { ChevronRight, ChevronDown, X, Search } from 'lucide-react'
 import DefaultLayout from "@/components/Layouts/DefaultLaout"
 import Breadcrumb from "@/components/Breadcrumbs/Breadcrumb"
-import { AttendenceList, WeekHolday, editAttendenceType } from "@/app/api/Allapi"
+import { AttendenceList, WeekHolday , requestEditAttendenceType } from "@/app/api/Allapi"
 import { toast } from "react-toastify"
 import React from "react"
 
@@ -17,10 +17,11 @@ export default function AttendanceModule() {
   const [year, setYear] = useState("2024")
   const [expandedDate, setExpandedDate] = useState<string | null>(null);
   const [showRegularizeModal, setShowRegularizeModal] = useState(false);
-  const [showAttendencetypeEditModel, setShowAttendencetypeEditModel] = useState(false);
-  const [attendenceTypeDate, setAttendanceTypeDate] = useState('');
-  const [attendenceType, setAttendanceType] = useState('present');
-  const [attendanceTypeFieldId, setAttendanceTypeFieldId] = useState('');
+  const [showAttendencetypeEditModel,setShowAttendencetypeEditModel] = useState(false);
+  const [attendenceTypeDate , setAttendanceTypeDate] = useState('');
+  const [attendenceType,setAttendanceType] = useState('present');
+  const [attendanceTypeFieldId,setAttendanceTypeFieldId] = useState('');
+  const [requestReason,setRequestReason] = useState('');
   const [regularizeForm, setRegularizeForm] = useState({
     date: "",
     checkIn: "",
@@ -38,12 +39,12 @@ export default function AttendanceModule() {
   const fetchAttendanceData = async () => {
     setIsLoading(true);
     setError(null);
-    console.log('userid', userId)
     try {
 
       const date = new Date();
       const startDate2 = startDate != '' ? startDate : '2024-11-20';
-      const endDate2 = endDate != '' ? endDate : `${date.getFullYear}-${date.getMonth}-${date.getDate}`
+      const endDate2 = endDate != '' ? endDate : `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`
+      
       const response = await AttendenceList(userId, startDate2, endDate2);
       setAttendanceData(response.data.result);
       console.log('sgsgdgs', response.data.result);
@@ -115,9 +116,9 @@ export default function AttendanceModule() {
 
   const handleAttendenceTypeEdit = async (e: any) => {
     e.preventDefault()
-    const response = await editAttendenceType(userId, attendenceTypeDate, attendenceType, attendanceTypeFieldId);
-    setShowAttendencetypeEditModel(prev => !prev);
-    console.log("attendence Type", e.target);
+    const response = await requestEditAttendenceType(userId,attendenceTypeDate,attendenceType,attendanceTypeFieldId,requestReason);
+    setShowAttendencetypeEditModel(prev=>!prev);
+    console.log("attendence Type",e.target);
   }
 
 
