@@ -293,18 +293,17 @@ export default function AttendanceModule() {
                                         <div key={index} className="bg-white p-3 rounded-md shadow-sm space-y-2 md:space-y-0 md:grid md:grid-cols-2 gap-4">
                                           <div className="flex flex-col">
                                             {/* <p className="font-medium">Session {index + 1}</p> */}
-                                            <p>Check In: {session1?.workingHour || 'N/A'}</p>
+                                            <p>Check In: {session1?.time || 'N/A'}</p>
                                             {/* <p>Check Out: {session1?.checkOut || 'N/A'}</p> */}
                                           </div>
                                           {session2 && (
                                             <div className="flex flex-col">
                                               {/* <p className="font-medium">Session {index + 2}</p> */}
-                                              <p>Check Out: {session2?.workingHour || 'N/A'}</p>
+                                              <p>Check Out: {session2?.time || 'N/A'}</p>
                                               {/* <p>Check Out: {session2?.checkOut || 'N/A'}</p> */}
                                             </div>
                                           )}
-                                        </div>
-                                      );
+                                        </div>                                      );
                                     })}
                                   </div>
                                 </div>
@@ -420,26 +419,17 @@ export default function AttendanceModule() {
                     <option value="Absent">Absent</option>
                   </select>
                 </div>
-                {/* <div>
-                <label className="block text-sm font-medium text-gray-700">Check In</label>
-                <input
-                  type="time"
-                  value={regularizeForm.checkIn}
-                  onChange={(e) => setRegularizeForm({ ...regularizeForm, checkIn: e.target.value })}
-                  disabled={regularizeForm.type === "checkOut"}
+                <div>
+                 <label className="block text-sm font-medium mb-1 text-gray-700">Reason *</label>
+                 <textarea
+                  name="reason"
+                  value={requestReason}
+                  onChange={(e)=>setRequestReason(e.target.value)}
+                  required
                   className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700">Check Out</label>
-                <input
-                  type="time"
-                  value={regularizeForm.checkOut}
-                  onChange={(e) => setRegularizeForm({ ...regularizeForm, checkOut: e.target.value })}
-                  disabled={regularizeForm.type === "checkIn"}
-                  className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                />
-              </div> */}
+                  >
+                 </textarea>
+                </div>
                 <div>
                   <button
                     type='submit'
