@@ -143,6 +143,10 @@ const editAttendenceType = async (
   }
 };
 
+
+// leave and change Attendence Leaves Api;
+// ------------------------------------------------->
+
 const requestEditAttendenceType = async (
   esslId?: string,
   date?: string,
@@ -171,15 +175,17 @@ const requestEditAttendenceType = async (
 };
 
 const getAllrequestsEditAttendenceType = async (
-  esslId?: string,
   startDate?: string,
-  endDate?: string
+  endDate?: string,
+  requestType?: string , 
+  requestStatus? : string,
 ): Promise<any> => {
   try {
     const params: Record<string, any> = {};
-    if (esslId) params.esslId = esslId;
     if (startDate) params.startDate = startDate;
     if (endDate) params.endDate = endDate;
+    if (requestType) params.requestType = requestType
+    if(requestStatus) params.requestStatus = requestStatus
     const response = await api.get('/Employee/requests/requestEditAttendenceType', params);
     return response;
   } catch (error) {
@@ -188,6 +194,52 @@ const getAllrequestsEditAttendenceType = async (
   }
 };
 
+
+//leave Post Api 
+const postRequestLeave = async (data: any): Promise<any> => {
+  try {
+    console.log('lklllll',data)
+    const response = await api.post("/Employee/requests/requestLeave", data)
+    return response.data;
+  } catch (err) {
+    console.log('Error during creating leave', err);
+  }
+}
+
+// const getAllrequestLeave = async (
+
+// ): Promise<any> => {
+//   try {
+//     const response = await api.get("/Employee/requests/requestLeave")
+//     return response.data;
+//   } catch (err) {
+//     console.log('Error during get leave', err);
+//   }
+// }
+
+
+const getAllrequestLeave = async (
+  startDate?: string,
+  endDate?: string,
+  requestType?: string , 
+  requestStatus? : string,
+): Promise<any> => {
+  try {
+    const params: Record<string, any> = {};
+    if (startDate) params.startDate = startDate;
+    if (endDate) params.endDate = endDate;
+    if (requestType) params.requestType = requestType;
+    if(requestStatus) params.requestStatus = requestStatus;
+    const response = await api.get('/Employee/requests/requestLeave', params);
+    return response;
+  } catch (error) {
+    console.error("Error fetching leave list:", error);
+    throw error;
+  }
+};
+
+
+// ------------------------------------------------->
 
 const WeekHolday = async (
   startDate?: string,
@@ -254,7 +306,7 @@ const CreateAttrition = async (data: any): Promise<any> => {
 //leave Post Api 
 const CreateLeave = async (data: any): Promise<any> => {
   try {
-    const response = await api.post("leave/applyleave", data)
+    const response = await api.post("/requestLeave", data)
     return response.data;
   } catch (err) {
     console.log('Error during creating leave', err);
@@ -270,9 +322,8 @@ const getLeaveData = async (): Promise<any> => {
   }
 }
 
+
 // biometricBaseURL:"https://p4h4d07h-9000.inc1.devtunnels.ms/",
-
-
 const getBiometricWorkingHour = async (): Promise<any> => {
   try {
     const response = await api.get("https://p4h4d07h-9000.inc1.devtunnels.ms/biometric/xmlapi");
@@ -307,7 +358,9 @@ export {
          AttendenceList, 
          editAttendenceType,
          getAllrequestsEditAttendenceType, 
-         requestEditAttendenceType, 
+         requestEditAttendenceType,
+         postRequestLeave,
+         getAllrequestLeave, 
          getSpecificAttrition, 
          DeleteAttrition,
          WeekHolday, 
