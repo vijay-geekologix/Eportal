@@ -4,7 +4,7 @@ import { useState, useEffect } from "react"
 import { ChevronRight, ChevronDown, X, Search } from 'lucide-react'
 import DefaultLayout from "@/components/Layouts/DefaultLaout"
 import Breadcrumb from "@/components/Breadcrumbs/Breadcrumb"
-import { AttendenceList, WeekHolday , requestEditAttendenceType } from "@/app/api/Allapi"
+import { AttendenceList, WeekHolday, requestEditAttendenceType } from "@/app/api/Allapi"
 import { toast } from "react-toastify"
 import React from "react"
 
@@ -17,11 +17,11 @@ export default function AttendanceModule() {
   const [year, setYear] = useState("2024")
   const [expandedDate, setExpandedDate] = useState<string | null>(null);
   const [showRegularizeModal, setShowRegularizeModal] = useState(false);
-  const [showAttendencetypeEditModel,setShowAttendencetypeEditModel] = useState(false);
-  const [attendenceTypeDate , setAttendanceTypeDate] = useState('');
-  const [attendenceType,setAttendanceType] = useState('present');
-  const [attendanceTypeFieldId,setAttendanceTypeFieldId] = useState('');
-  const [requestReason,setRequestReason] = useState('');
+  const [showAttendencetypeEditModel, setShowAttendencetypeEditModel] = useState(false);
+  const [attendenceTypeDate, setAttendanceTypeDate] = useState('');
+  const [attendenceType, setAttendanceType] = useState('present');
+  const [attendanceTypeFieldId, setAttendanceTypeFieldId] = useState('');
+  const [requestReason, setRequestReason] = useState('');
   const [regularizeForm, setRegularizeForm] = useState({
     date: "",
     checkIn: "",
@@ -36,30 +36,96 @@ export default function AttendanceModule() {
     fetchWeekHolidaData()
   }, []);
 
+  // const fetchAttendanceData = async () => {
+  //   setIsLoading(true);
+  //   setError(null);
+  //   try {
+
+  //     const date = new Date();
+  //     const startDate2 = startDate != '' ? startDate : '2024-11-20';
+  //     const endDate2 = endDate != '' ? endDate : `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`
+
+  //     const response = await AttendenceList(userId, startDate2, endDate2);
+  //     setAttendanceData(response.data.result);
+  //     console.log('sgsgdgs', response.data.result);
+  //     if (response.data.result.length === 0) {
+  //       setError("No data found");
+  //     }
+  //   } catch (error) {
+  //     console.error("Error fetching attendance data:", error);
+  //     setError("No data found");
+  //     toast.error("Failed to fetch attendance data. Please try again.");
+  //   } finally {
+  //     setIsLoading(false);
+  //   }
+  // };
   const fetchAttendanceData = async () => {
     setIsLoading(true);
     setError(null);
     try {
-
       const date = new Date();
-      const startDate2 = startDate != '' ? startDate : '2024-11-20';
-      const endDate2 = endDate != '' ? endDate : `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`
-      
+      const startDate2 = startDate !== '' ? startDate : '2024-11-20';
+      const endDate2 =
+        endDate !== ''
+          ? endDate
+          : `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`;
+  
       const response = await AttendenceList(userId, startDate2, endDate2);
-      setAttendanceData(response.data.result);
-      console.log('sgsgdgs', response.data.result);
-      if (response.data.result.length === 0) {
+      const attendance = response.data.result;
+  
+      if (attendance.length === 0) {
         setError("No data found");
+        setAttendanceData([]);
+        return;
       }
+  
+      // Step 1: Filter attendance data for "Friday"
+      const fridayIndices = attendance
+        .map((item, index) => ({ day: new Date(item.date).getDay(), index })) // Extract day and index
+        .filter((item) => item.day === 5); // Friday's day index is 5
+  
+      if (fridayIndices.length === 0) {
+        setError("No Friday found in the data");
+        setAttendanceData([]);
+        return;
+      }
+  
+      // Step 2: Find the first Friday's index
+      const firstFridayIndex = fridayIndices[0].index;
+  
+      // Step 3: Find the next occurrences of Saturday and Friday after the first Friday
+      const saturdayIndex = attendance.findIndex(
+        (item:any, index:any) =>
+          index > firstFridayIndex && new Date(item.date).getDay() === 6 // Saturday's day index is 6
+      );
+  
+      const nextFridayIndex = attendance.findIndex(
+        (item:any, index:any) =>
+          index > firstFridayIndex && new Date(item.date).getDay() === 5
+      );
+  
+      // Step 4: Add the indices to the response
+      const resultWithIndices:any = {
+        attendance,
+        indices: {
+          firstFriday: firstFridayIndex,
+          saturdayAfterFirstFriday: saturdayIndex,
+          nextFridayAfterFirstFriday: nextFridayIndex,
+        },
+      };
+  
+      // Set the final data
+      setAttendanceData(attendance);
+      console.log("Filtered Data with Indices:", resultWithIndices);
     } catch (error) {
       console.error("Error fetching attendance data:", error);
-      setError("No data found");
+      setError("Failed to fetch attendance data. Please try again.");
       toast.error("Failed to fetch attendance data. Please try again.");
     } finally {
       setIsLoading(false);
     }
   };
-
+  
   const [totalCounts, setTotalCounts] = useState({
     attendance: 0,
     isHoliday: 0,
@@ -116,9 +182,9 @@ export default function AttendanceModule() {
 
   const handleAttendenceTypeEdit = async (e: any) => {
     e.preventDefault()
-    const response = await requestEditAttendenceType(userId,attendenceTypeDate,attendenceType,attendanceTypeFieldId,requestReason);
-    setShowAttendencetypeEditModel(prev=>!prev);
-    console.log("attendence Type",e.target);
+    const response = await requestEditAttendenceType(userId, attendenceTypeDate, attendenceType, attendanceTypeFieldId, requestReason);
+    setShowAttendencetypeEditModel(prev => !prev);
+    console.log("attendence Type", e.target);
   }
 
 
@@ -283,19 +349,25 @@ export default function AttendanceModule() {
                             <tr>
                               <td colSpan={8}>
                                 <div className="px-6 py-4 bg-gray-50">
-                                  <h4 className="font-semibold mb-2">Session Details</h4>
+                                  <div className="d-flex justify-between">
+                                    <h4 className="font-semibold mb-2">Session Details</h4>
+
+
+                                  </div>
+
                                   <div className="max-h-48 overflow-y-auto pr-2 space-y-2 custom-scrollbar">
                                     {row.records?.map((_res: any, index: any) => {
                                       if (index % 2 !== 0) return null;
                                       const session1 = row.records[index];
                                       const session2 = row.records[index + 1];
                                       return (
-                                        <div key={index} className="bg-white p-3 rounded-md shadow-sm space-y-2 md:space-y-0 md:grid md:grid-cols-2 gap-4">
+                                        <div key={index} className="bg-white p-3 rounded-md shadow-sm space-y-2 md:space-y-0 md:grid md:grid-cols-3 gap-4">
                                           <div className="flex flex-col">
                                             {/* <p className="font-medium">Session {index + 1}</p> */}
                                             <p>Check In: {session1?.time || 'N/A'}</p>
                                             {/* <p>Check Out: {session1?.checkOut || 'N/A'}</p> */}
                                           </div>
+
                                           {session2 && (
                                             <div className="flex flex-col">
                                               {/* <p className="font-medium">Session {index + 2}</p> */}
@@ -303,7 +375,20 @@ export default function AttendanceModule() {
                                               {/* <p>Check Out: {session2?.checkOut || 'N/A'}</p> */}
                                             </div>
                                           )}
-                                        </div>                                      );
+                                          {session2 && (
+                                            <div className="flex flex-col">
+                                              <div>
+                                                <button
+                                                  onClick={() => handleRegularize(row.date)}
+                                                  className="bg-indigo-500 hover:bg-indigo-600 text-white px-3 py-1 rounded-md transition-colors text-xs"
+                                                >
+                                                  Regularize
+                                                </button>
+                                              </div>
+                                            </div>
+                                          )}
+
+                                        </div>);
                                     })}
                                   </div>
                                 </div>
@@ -420,15 +505,15 @@ export default function AttendanceModule() {
                   </select>
                 </div>
                 <div>
-                 <label className="block text-sm font-medium mb-1 text-gray-700">Reason *</label>
-                 <textarea
-                  name="reason"
-                  value={requestReason}
-                  onChange={(e)=>setRequestReason(e.target.value)}
-                  required
-                  className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                  <label className="block text-sm font-medium mb-1 text-gray-700">Reason *</label>
+                  <textarea
+                    name="reason"
+                    value={requestReason}
+                    onChange={(e) => setRequestReason(e.target.value)}
+                    required
+                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                   >
-                 </textarea>
+                  </textarea>
                 </div>
                 <div>
                   <button
