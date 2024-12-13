@@ -189,16 +189,35 @@ const getAllrequestsEditAttendenceType = async (
     const response = await api.get('/Employee/requests/requestEditAttendenceType', params);
     return response;
   } catch (error) {
-    console.error("Error fetching attendance list:", error);
+    console.error("Error fetching attendance type request Data:", error);
+    throw error;
+  }
+};
+
+const putAllrequestsEditAttendenceType = async (
+   requestIds?:string[],
+   approvalType?:string,
+): Promise<any> => {
+  try {
+    const params: Record<string, any> = {};
+    if (requestIds) params.requestIds = requestIds;
+    if (approvalType) params.approvalType = approvalType;
+    const response = await api.put('/Employee/requests/requestEditAttendenceType', params);
+    return response;
+  } catch (error) {
+    console.error("Error update attendance type request:", error);
     throw error;
   }
 };
 
 
+
+
 //leave Post Api 
 const postRequestLeave = async (data: any): Promise<any> => {
+  const userName = localStorage.getItem('user_name');
   try {
-    console.log('lklllll',data)
+    console.log('leave apply data',data);
     const response = await api.post("/Employee/requests/requestLeave", data)
     return response.data;
   } catch (err) {
@@ -206,22 +225,12 @@ const postRequestLeave = async (data: any): Promise<any> => {
   }
 }
 
-// const getAllrequestLeave = async (
-
-// ): Promise<any> => {
-//   try {
-//     const response = await api.get("/Employee/requests/requestLeave")
-//     return response.data;
-//   } catch (err) {
-//     console.log('Error during get leave', err);
-//   }
-// }
 
 
 const getAllrequestLeave = async (
   startDate?: string,
   endDate?: string,
-  requestType?: string , 
+  requestType?: string,
   requestStatus? : string,
 ): Promise<any> => {
   try {
@@ -233,9 +242,26 @@ const getAllrequestLeave = async (
     const response = await api.get('/Employee/requests/requestLeave', params);
     return response;
   } catch (error) {
-    console.error("Error fetching leave list:", error);
+    console.error("Error fetching leave list request:", error);
     throw error;
   }
+};
+
+
+const putAllrequestsLeave = async (
+  requestIds?:string[],
+  approvalType?:string,
+): Promise<any> => {
+ try {
+   const params: Record<string, any> = {};
+   if (requestIds) params.requestIds = requestIds;
+   if (approvalType) params.approvalType = approvalType;
+   const response = await api.put('/Employee/requests/requestLeave', params);
+   return response;
+ } catch (error) {
+   console.error("Error update attendance type request:", error);
+   throw error;
+ }
 };
 
 
@@ -304,23 +330,23 @@ const CreateAttrition = async (data: any): Promise<any> => {
 }
 
 //leave Post Api 
-const CreateLeave = async (data: any): Promise<any> => {
-  try {
-    const response = await api.post("/requestLeave", data)
-    return response.data;
-  } catch (err) {
-    console.log('Error during creating leave', err);
-  }
-}
+// const CreateLeave = async (data: any): Promise<any> => {
+//   try {
+//     const response = await api.post("/requestLeave", data)
+//     return response.data;
+//   } catch (err) {
+//     console.log('Error during creating leave', err);
+//   }
+// }
 
-const getLeaveData = async (): Promise<any> => {
-  try {
-    const response = await api.get("leave/allLeavelist")
-    return response.data;
-  } catch (err) {
-    console.log('Error during get leave', err);
-  }
-}
+// const getLeaveData = async (): Promise<any> => {
+//   try {
+//     const response = await api.get("leave/allLeavelist")
+//     return response.data;
+//   } catch (err) {
+//     console.log('Error during get leave', err);
+//   }
+// }
 
 
 // biometricBaseURL:"https://p4h4d07h-9000.inc1.devtunnels.ms/",
@@ -346,8 +372,8 @@ const getBiometricWorkingHour = async (): Promise<any> => {
 export { 
          login,
          ProjectList, 
-         CreateLeave, 
-         getLeaveData, 
+        //  CreateLeave, 
+        //  getLeaveData, 
          AttritionList, 
          CreateAttrition, 
          CreateEmployee, 
@@ -359,8 +385,10 @@ export {
          editAttendenceType,
          getAllrequestsEditAttendenceType, 
          requestEditAttendenceType,
+         putAllrequestsEditAttendenceType,
          postRequestLeave,
          getAllrequestLeave, 
+         putAllrequestsLeave,
          getSpecificAttrition, 
          DeleteAttrition,
          WeekHolday, 

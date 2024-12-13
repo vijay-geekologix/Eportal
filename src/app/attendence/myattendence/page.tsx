@@ -19,7 +19,7 @@ export default function AttendanceModule() {
   const [showRegularizeModal, setShowRegularizeModal] = useState(false);
   const [showAttendencetypeEditModel,setShowAttendencetypeEditModel] = useState(false);
   const [attendenceTypeDate , setAttendanceTypeDate] = useState('');
-  const [attendenceType,setAttendanceType] = useState('present');
+  const [attendenceType,setAttendanceType] = useState('Present');
   const [attendanceTypeFieldId,setAttendanceTypeFieldId] = useState('');
   const [requestReason,setRequestReason] = useState('');
   const [regularizeForm, setRegularizeForm] = useState({

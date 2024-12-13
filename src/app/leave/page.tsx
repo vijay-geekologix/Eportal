@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useEffect, useState } from 'react';
-import {getLeaveData} from '@/app/api/Allapi';
+import {getAllrequestLeave} from '@/app/api/Allapi';
 import DefaultLayout from "@/components/Layouts/DefaultLaout"
 import Breadcrumb from "@/components/Breadcrumbs/Breadcrumb"
 import { useRouter} from 'next/navigation';
@@ -11,17 +11,20 @@ const Table = () => {
   const [data, setData] = useState([]);
 
   // Fetch data from the server
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //     try {
-  //       const result = await getLeaveData();
-  //       setData(result.data);
-  //     } catch (error) {
-  //       console.error('Error fetching data:', error);
-  //     }
-  //   };
-  //   fetchData();
-  // }, []);
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const result = await getAllrequestLeave();
+        console.log('luuuuuuu',result.data.data);
+        
+        setData(result.data.data);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    };
+    fetchData();
+  }, []);
+
 
   const handleApply = () => {
      router.push('/leave/applyleave');
@@ -45,7 +48,7 @@ const Table = () => {
         {/* Header */}
        <div className="flex justify-between items-center mb-4">
          <h2 className="text-lg font-semibold text-gray-500">Records Table</h2>
-         <button onClick={handleApply} className="bg-blue-500 text-white px-4 py-2 rounded-md shadow hover:bg-blue-600">
+         <button onClick={handleApply} className="bg-indigo-600 text-white px-4 py-2 rounded-md shadow hover:bg-indigo-700">
            <a href="/leave/applyleave">Apply</a>
          </button>
        </div>
@@ -53,7 +56,7 @@ const Table = () => {
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
               <tr>
-                {["Apply Date", "For Period", "From Date", "To Date", "Total Days", "Reason"].map(
+                {["Apply Date", "For Period", "From Date", "To Date", "Total Days", "Reason" , "Request Status"].map(
                   (header) => (
                     <th
                       key={header}
@@ -79,7 +82,7 @@ const Table = () => {
                       {item.fromDate || "N/A"}
                     </td>
                     <td className="border px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      {item.toDate || "N/A"}
+                      {item.toDate.split('T')[0] || "N/A"}
                     </td>
                     <td className="border px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                       {item.totalDays || "N/A"}
@@ -87,20 +90,18 @@ const Table = () => {
                     <td className="border px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                       {item.reason || "N/A"}
                     </td>
-                    {/* <td className="border px-6 py-4 whitespace-nowrap text-sm text-blue-500">
-                      {item.attachDocument ? (
-                        <a
-                          href={item.attachDocument}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="underline"
-                        >
-                          View
-                        </a>
-                      ) : (
-                        "N/A"
-                      )}
-                    </td> */}
+                    <td className={`border px-7 py-4 text-gray-50 w-30`}>
+                    <span
+                      className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
+                        item.requestStatus === "pending"
+                          ? "bg-yellow-100 text-yellow-800"
+                          : item.requestStatus === "approved" ? "bg-green-100 text-green-800"
+                          : "bg-red-100 text-red-600"
+                      }`}
+                    >
+                      {item.requestStatus || "N/A"}
+                    </span>
+                    </td>
                   </tr>
                 ))
               ) : (
