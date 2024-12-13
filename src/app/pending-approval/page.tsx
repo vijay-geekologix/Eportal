@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react'
 import { CalendarIcon, Search, ChevronLeft, ChevronRight } from 'lucide-react'
 import DefaultLayout from "@/components/Layouts/DefaultLaout"
 import Breadcrumb from "@/components/Breadcrumbs/Breadcrumb"
-import { getAllrequestsEditAttendenceType , getAllrequestLeave } from '../api/Allapi'
+import { getAllrequestsEditAttendenceType , getAllrequestLeave , putAllrequestsEditAttendenceType , putAllrequestsLeave } from '../api/Allapi'
 
 export default function PendingApprovalList() {
   const [startDate, setStartDate] = useState('');
@@ -13,7 +13,9 @@ export default function PendingApprovalList() {
   const [requestLeaveApplyData,setRequestLeaveApplyData] = useState([]);
   const [requestType , setRequestType] = useState('all');
   const [requestStatus , setRequestStatus] = useState('pending');
-  const [selectedRequests, setSelectedRequests] = useState(new Set());
+  // const [selectedRequests, setSelectedRequests] = useState(new Set());
+  const [attendenceRequestSelectedRows, setAttendenceRequestSelectedRows] = useState<string[]>([]);
+  const [leaveRequestSelectedRows, setLeaveRequestSelectedRows] = useState<string[]>([]);
 
   useEffect(() => {
     fetchAttendenceTypeRequestData();
@@ -42,12 +44,12 @@ export default function PendingApprovalList() {
         console.log('sgsgdgs', response.data.data);
       
       }else{
-      
-        const response1 = await getAllrequestsEditAttendenceType(startDate2, endDate2, requestType , requestStatus);
-        setRequestAttendanceTypeData(response1.data.data);
-
+        
         const response2 = await getAllrequestLeave(startDate2, endDate2, requestType , requestStatus);
         setRequestLeaveApplyData(response2.data.data);
+
+        const response1 = await getAllrequestsEditAttendenceType(startDate2, endDate2, requestType , requestStatus);
+        setRequestAttendanceTypeData(response1.data.data);
       
       }
       // if (response.data.result.length === 0) {
@@ -64,46 +66,42 @@ export default function PendingApprovalList() {
   };
 
 
-  const handleCheckboxChange = (id) => {
-    setSelectedRequests((prev) => {
-      const updated = new Set(prev);
-      if (updated.has(id)) {
-        updated.delete(id);
-      } else {
-        updated.add(id);
-      }
-      return updated;
-    });
-  };
-
-  const handleBulkAction = (action) => {
-    if (selectedRequests.size === 0) {
-      alert('No requests selected.');
-      return;
-    }
-    alert(`${action} action performed on selected requests.`);
-  };
-
-  const [selectedRows, setSelectedRows] = useState<string[]>([]);
-
-  const handleAttendenceTypeCheckboxChange = (id: string) => {
-    if (selectedRows.includes(id)) {
-      setSelectedRows(selectedRows.filter((rowId) => rowId !== id));
+  const handleLeaveRequestsCheckboxChange = (id:any) => {
+    if (leaveRequestSelectedRows.includes(id)) {
+      setLeaveRequestSelectedRows(leaveRequestSelectedRows.filter((rowId) => rowId !== id));
     } else {
-      setSelectedRows([...selectedRows, id]);
+      setLeaveRequestSelectedRows([...leaveRequestSelectedRows, id]);
     }
   };
 
-  const handleActionClick = (action: "approve" | "reject") => {
-    if (selectedRows.length === 0) {
+  const handleLeaveRequestsBtnClick = async (action:"approved" | "rejected") => {
+    if (leaveRequestSelectedRows.length === 0) {
       alert("Please select at least one application.");
     } else {
-      alert(`${action === "approve" ? "Approved" : "Rejected"} applications for selected rows.`);
-      // Perform approve/reject logic here
+      const response = await putAllrequestsLeave(leaveRequestSelectedRows,action);
+      setLeaveRequestSelectedRows([]);
+      fetchAttendenceTypeRequestData();
     }
   };
 
 
+  const handleAttendenceTypeCheckboxChange = (id: string) => {
+    if (attendenceRequestSelectedRows.includes(id)) {
+      setAttendenceRequestSelectedRows(attendenceRequestSelectedRows.filter((rowId) => rowId !== id));
+    } else {
+      setAttendenceRequestSelectedRows([...attendenceRequestSelectedRows, id]);
+    }
+  };
+
+  const handleAttendenceRequestBtnClick = async (action: "approved" | "rejected") => {
+    if (attendenceRequestSelectedRows.length === 0) {
+      alert("Please select at least one application.");
+    } else {
+      const response = await putAllrequestsEditAttendenceType(attendenceRequestSelectedRows,action);
+      setRequestAttendanceTypeData([]);
+      fetchAttendenceTypeRequestData();
+    }
+  };
 
   return (
     <DefaultLayout>
@@ -118,7 +116,7 @@ export default function PendingApprovalList() {
                   <h2 className="text-xl font-semibold text-gray-800">Filter</h2>
                   <button onClick={fetchAttendenceTypeRequestData} className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
                     <Search className="inline-block mr-2 h-5 w-5" />
-                    Search
+                    Apply
                   </button>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -192,73 +190,19 @@ export default function PendingApprovalList() {
                   </div>
                 </div>
               </div>
-
-    {/* Leave Requests Table */}
-    {/* <div className="bg-white shadow rounded-lg overflow-hidden">
-      <h2 className="text-2xl font-bold text-gray-800 p-6 border-b">Leave Requests</h2>
-      <div className="overflow-x-auto">
-        <table className="min-w-full divide-y divide-gray-200 border border-gray-300">
-          <thead className="bg-gray-50">
-            <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border border-gray-300">Employee</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border border-gray-300">Request Type</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border border-gray-300">Start Date</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border border-gray-300">End Date</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border border-gray-300">Total Days</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border border-gray-300">Status</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border border-gray-300">Actions</th>
-            </tr>
-          </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
-            {requestLeaveApplyData.length > 0 ? (
-              requestLeaveApplyData.map((request:any) => (
-                <tr key={request._id}>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 border border-gray-300">{request.userName}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 border border-gray-300">{request.requestType}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 border border-gray-300">{request.fromDate}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 border border-gray-300">{request.toDate}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 border border-gray-300">{request.totalDays}</td>
-                  <td className="px-6 py-4 whitespace-nowrap border border-gray-300">
-                    <span
-                      className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                        request.requestStatus === 'approved'
-                          ? 'bg-green-100 text-green-800'
-                          : 'bg-yellow-100 text-yellow-800'
-                      }`}
-                    >
-                      {request.requestStatus}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium border border-gray-300">
-                    <button className="text-indigo-600 hover:text-indigo-900 mr-2">Approve</button>
-                    <button className="text-red-600 hover:text-red-900">Reject</button>
-                  </td>
-                </tr>
-              ))
-            ) : (
-              <tr>
-                <td colSpan={7} className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-center">
-                  No leave requests available.
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
-      </div>
-    </div> */}
-
-<div className="bg-white shadow rounded-lg overflow-hidden">
+{/* Leave Apply Request */}
+    <div className="bg-white shadow rounded-lg overflow-hidden px-6 pb-6">
       <div className="flex justify-between items-center p-6 border-b">
-        <h2 className="text-2xl font-bold text-gray-800">Leave Requests</h2>
+        <h2 className="text-xl font-bold text-gray-800">Leave Requests</h2>
         <div>
           <button
-            onClick={() => handleBulkAction('Approve')}
+            onClick={() => handleLeaveRequestsBtnClick("approved")}
             className="mr-2 px-3 py-1 bg-indigo-600 text-white font-semibold rounded hover:bg-indigo-700"
           >
             Approve
           </button>
           <button
-            onClick={() => handleBulkAction('Reject')}
+            onClick={() => handleLeaveRequestsBtnClick('rejected')}
             className="px-3 py-1 bg-red-600 text-white font-semibold rounded hover:bg-red-700"
           >
             Reject
@@ -270,7 +214,16 @@ export default function PendingApprovalList() {
           <thead className="bg-gray-50">
             <tr>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border border-gray-300">
-                <input type="checkbox" disabled />
+                <input type="checkbox"
+                                  onChange={(e) => {
+                                    if (e.target.checked) {
+                                      setLeaveRequestSelectedRows(requestLeaveApplyData.map((item:any) => item._id));
+                                    } else {
+                                      setLeaveRequestSelectedRows([]);
+                                    }
+                                  }}
+                                  checked={leaveRequestSelectedRows.length === requestLeaveApplyData.length}
+                />
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border border-gray-300">Employee</th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border border-gray-300">Request Type</th>
@@ -282,26 +235,27 @@ export default function PendingApprovalList() {
           </thead>
           <tbody className="bg-white divide-y divide-gray-200">
             {requestLeaveApplyData.length > 0 ? (
-              requestLeaveApplyData.map((request) => (
+              requestLeaveApplyData.map((request:any) => (
                 <tr key={request._id}>
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 border border-gray-300">
                     <input
                       type="checkbox"
-                      checked={selectedRequests.has(request._id)}
-                      onChange={() => handleCheckboxChange(request._id)}
+                      checked={leaveRequestSelectedRows.includes(request._id)}
+                      onChange={() => handleLeaveRequestsCheckboxChange(request._id)}
                     />
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 border border-gray-300">{request.userName}</td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 border border-gray-300">{request.requestType}</td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 border border-gray-300">{request.fromDate}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 border border-gray-300">{request.toDate}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 border border-gray-300">{request.toDate.split('T')[0]}</td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 border border-gray-300">{request.totalDays}</td>
                   <td className="px-6 py-4 whitespace-nowrap border border-gray-300">
                     <span
                       className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
                         request.requestStatus === 'approved'
                           ? 'bg-green-100 text-green-800'
-                          : 'bg-yellow-100 text-yellow-800'
+                          :  request.requestStatus === "pending" ?  "bg-yellow-100 text-yellow-800"
+                          : "bg-red-100 text-red-600"  
                       }`}
                     >
                       {request.requestStatus}
@@ -321,92 +275,20 @@ export default function PendingApprovalList() {
       </div>
     </div>
 
-    {/* Attendence Type  Request */}
-    {/* <div className="bg-white shadow rounded-lg overflow-hidden mt-8">
-      <h2 className="text-2xl font-bold text-gray-800 p-6 border-b">Attendance Applications</h2>
-      <div className="overflow-x-auto">
-        <table className="min-w-full divide-y divide-gray-200 border-collapse border border-gray-300">
-          <thead className="bg-gray-50">
-            <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border border-gray-300">
-                Employee
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border border-gray-300">
-                Attendance Type
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border border-gray-300">
-                Date
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border border-gray-300">
-                Reason
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border border-gray-300">
-                Status
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border border-gray-300">
-                Actions
-              </th>
-            </tr>
-          </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
-            {requestAttendanceTypeData.length > 0 ? (
-              requestAttendanceTypeData.map((item:any) => (
-                <tr key={item._id}>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 border border-gray-300">
-                    {item.userName}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 border border-gray-300">
-                    {item.attendenceType}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 border border-gray-300">
-                    {item.attendenceDate}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 border border-gray-300">
-                    {item.reason}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap border border-gray-300">
-                    <span
-                      className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                        item.requestStatus === "pending"
-                          ? "bg-yellow-100 text-yellow-800"
-                          : "bg-green-100 text-green-800"
-                      }`}
-                    >
-                      {item.requestStatus}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium border border-gray-300">
-                    <button className="text-indigo-600 hover:text-indigo-900 mr-2">Approve</button>
-                    <button className="text-red-600 hover:text-red-900">Reject</button>
-                  </td>
-                </tr>
-              ))
-            ) : (
-              <tr>
-                <td colSpan={6} className="px-6 py-4 text-center text-sm text-gray-500">
-                  No data available.
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
-      </div>
-    </div> */}
-
-
-<div className="bg-white shadow rounded-lg overflow-hidden mt-8">
+{/* Attendence type Request */}
+<div className="bg-white shadow rounded-lg overflow-hidden mt-8 px-6 pb-6">
    <div className="flex justify-between items-center p-6 border-b">
-     <h2 className="text-2xl font-bold text-gray-800">Attendence Requests</h2>
+     <h2 className="text-xl font-bold text-gray-800">Attendence Requests</h2>
       <div className="">
         <button
           className="mr-2 px-3 py-1 bg-indigo-600 text-white font-semibold rounded hover:bg-indigo-700"
-          onClick={() => handleActionClick("approve")}
+          onClick={() => handleAttendenceRequestBtnClick("approved")}
         >
           Approve
         </button>
         <button
-          className="mr-2 px-3 py-1 bg-red-600 text-white font-semibold rounded hover:bg-red-700"
-          onClick={() => handleActionClick("reject")}
+          className=" px-3 py-1 bg-red-600 text-white font-semibold rounded hover:bg-red-700"
+          onClick={() => handleAttendenceRequestBtnClick("rejected")}
         >
           Reject
         </button>
@@ -421,12 +303,12 @@ export default function PendingApprovalList() {
                   type="checkbox"
                   onChange={(e) => {
                     if (e.target.checked) {
-                      setSelectedRows(requestAttendanceTypeData.map((item) => item._id));
+                      setAttendenceRequestSelectedRows(requestAttendanceTypeData.map((item:any) => item._id));
                     } else {
-                      setSelectedRows([]);
+                      setAttendenceRequestSelectedRows([]);
                     }
                   }}
-                  checked={selectedRows.length === requestAttendanceTypeData.length}
+                  checked={attendenceRequestSelectedRows.length === requestAttendanceTypeData.length}
                 />
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider border border-gray-300">
@@ -453,7 +335,7 @@ export default function PendingApprovalList() {
                   <td className="px-6 py-4 whitespace-nowrap text-sm border border-gray-300">
                     <input
                       type="checkbox"
-                      checked={selectedRows.includes(item._id)}
+                      checked={attendenceRequestSelectedRows.includes(item._id)}
                       onChange={() => handleAttendenceTypeCheckboxChange(item._id)}
                     />
                   </td>
@@ -474,7 +356,8 @@ export default function PendingApprovalList() {
                       className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
                         item.requestStatus === "pending"
                           ? "bg-yellow-100 text-yellow-800"
-                          : "bg-green-100 text-green-800"
+                          : item.requestStatus === "approved" ? "bg-green-100 text-green-800"
+                          : "bg-red-100 text-red-600"  
                       }`}
                     >
                       {item.requestStatus}
@@ -493,6 +376,10 @@ export default function PendingApprovalList() {
         </table>
       </div>
      </div>
+
+     {/* Employee Details Requests */}
+
+     
     </div>
    </div>
   </div>
