@@ -15,6 +15,10 @@ export default function AttendanceModule() {
   const [year, setYear] = useState("2024")
   const [expandedDate, setExpandedDate] = useState<string | null>(null);
   const [showRegularizeModal, setShowRegularizeModal] = useState(false);
+  const [AbsentCount, setAbsentCount] = useState<any>('')
+  const [HalfDayCount, setHalfDayCount] = useState<any>('')
+  const [PresentCount, setPresentCount] = useState<any>('')
+  const [WorkingHours, setWorkingHours] = useState<any>('')
   const [regularizeForm, setRegularizeForm] = useState({
     date: "",
     checkIn: "",
@@ -22,7 +26,11 @@ export default function AttendanceModule() {
     type: "both"
   });
   const [isLoading, setIsLoading] = useState(false);
+  const [weekoOff, setWeekOff] = useState<any>();
   const [error, setError] = useState<string | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
+
 
   useEffect(() => {
     const fetchEmployeeData = async () => {
@@ -40,19 +48,135 @@ export default function AttendanceModule() {
   }, []);
 
 
+
+  //   setIsLoading(true);
+  //   setError(null);
+  //   try {
+  //     const response = await AttendenceList(userId, startDate, endDate);
+  //     setAttendanceData(response.data.result);
+  //     console.log('attendance ', response.data.result);
+  //     if (response.data.result.length === 0) {
+  //       setError("No data found");
+  //     }
+  //   } catch (error) {
+  //     console.error("Error fetching attendance data:", error);
+  //     setError("No data found");
+  //     toast.error("Failed to fetch attendance data. Please try again.");
+  //   } finally {
+  //     setIsLoading(false);
+  //   }
+  // };
   const fetchAttendanceData = async () => {
     setIsLoading(true);
     setError(null);
+
     try {
-      const response = await AttendenceList(userId, startDate, endDate);
-      setAttendanceData(response.data.result);
-      console.log('attendance ', response.data.result);
-      if (response.data.result.length === 0) {
+      // Define default dates
+      const date = new Date();
+      const startDate2 = startDate !== '' ? startDate : '2024-11-20';
+      const endDate2 = endDate !== '' ? endDate : `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`;
+
+      // Fetch attendance data from API
+      const response = await AttendenceList(userId, startDate2, endDate2);
+      const attendanceData = response.data.result;
+      const attendanceData1 = response.data.result;
+
+      // Validate attendance data
+      if (!Array.isArray(attendanceData) || attendanceData.length === 0) {
         setError("No data found");
+        toast.error("No attendance data available.");
+        return;
       }
+
+      // Set the main state for attendanceData
+      setAttendanceData(attendanceData);
+      console.log('Attendance Data:', attendanceData);
+
+      // Process for missing dates (Fridays and Mondays logic)
+      const dateMap = attendanceData.reduce((acc, record) => {
+        acc[record.date] = record.day; // Assuming `record.date` and `record.day` exist
+        return acc;
+      }, {});
+
+      const missingDateCount = Object.entries(dateMap).reduce((count, [date, day]) => {
+        if (day.toLowerCase() === "friday") {
+          const fridayDate = new Date(date);
+          const mondayDate = new Date(fridayDate);
+          mondayDate.setDate(mondayDate.getDate() + 3); // Add 3 days to get Monday
+
+          // Get all dates between Friday and Monday
+          let currentDate = new Date(fridayDate);
+          currentDate.setDate(currentDate.getDate() + 1);
+
+          while (currentDate < mondayDate) {
+            const formattedDate = currentDate.toISOString().split('T')[0];
+            if (!dateMap[formattedDate]) count++;
+            currentDate.setDate(currentDate.getDate() + 1);
+          }
+        }
+        return count;
+      }, 0);
+
+      console.log("Missing Dates Count:", missingDateCount);
+      setWeekOff(missingDateCount);
+      // Initialize attendance counts and total working hours
+      let absentCount = 0;
+      let halfDayCount = 0;
+      let presentCount = 0;
+      let totalWorkingSeconds = 0; // To store total working seconds
+
+      if (Array.isArray(attendanceData1)) {
+        attendanceData1.forEach((record) => {
+          if (Array.isArray(record.records)) {
+            record.records.forEach((subRecord: any) => {
+              console.log("Sub Record:", subRecord);
+
+              // Count attendance types
+              if (subRecord.attendenceType === "Absent") {
+                absentCount++;
+              } else if (subRecord.attendenceType === "Half Day") {
+                halfDayCount++;
+              } else if (subRecord.attendenceType === "Present") {
+                presentCount++;
+              }
+
+              // Sum up working hours (assuming workingHour is in seconds)
+              if (subRecord.workingHour) {
+
+                totalWorkingSeconds += parseInt(subRecord.workingHour, 10); // Convert to number
+              }
+            });
+          }
+        });
+      }
+
+      // Calculate total working time in hours and seconds
+      const totalWorkingHours = Math.floor(totalWorkingSeconds / 3600); // Convert seconds to hours
+      const remainingSeconds = totalWorkingSeconds % 3600; // Remaining seconds after hours
+
+      // Log results
+      console.log("Absent Count:", absentCount);
+      console.log("Half Day Count:", halfDayCount);
+      console.log("Present Count:", presentCount);
+      console.log("Total Working Hours:", totalWorkingHours);
+      console.log("Remaining Seconds:", remainingSeconds);
+
+      // Optional: Scale attendance counts
+      let absent = absentCount / 2;
+      let halfday = halfDayCount / 2;
+      let present = presentCount / 2;
+
+      // Optional: Set counts in state
+      setAbsentCount(absent);
+      setHalfDayCount(halfday);
+      setPresentCount(present);
+
+      // Optional: Set working hours in state or a variable
+      setWorkingHours({ totalWorkingHours, remainingSeconds });
+      console.log("totalWorkingHours", totalWorkingHours)
     } catch (error) {
       console.error("Error fetching attendance data:", error);
-      setError("No data found");
+      setError("Failed to fetch attendance data. Please try again.");
       toast.error("Failed to fetch attendance data. Please try again.");
     } finally {
       setIsLoading(false);
@@ -72,21 +196,34 @@ export default function AttendanceModule() {
     setExpandedDate(expandedDate === date ? null : date);
   };
 
-  const handleRegularize = (date: string) => {
+
+  //   setRegularizeForm({
+  //     date,
+  //     checkIn: "09:00",
+  //     checkOut: "18:00",
+  //     type: "both"
+  //   });
+  //   setShowRegularizeModal(true);
+  // };
+  const handleRegularize = (date: string, checkIn: any, checkOut: any) => {
     setRegularizeForm({
       date,
-      checkIn: "09:00",
-      checkOut: "18:00",
+      checkIn: checkIn.time,
+      checkOut: checkOut.time,
       type: "both"
     });
     setShowRegularizeModal(true);
   };
-
   const handleRegularizeSubmit = () => {
     // Here you would typically send this data to your backend
     console.log("Regularize form submitted:", regularizeForm);
     setShowRegularizeModal(false);
   };
+  // Pagination
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentItems = attendanceData.slice(indexOfFirstItem, indexOfLastItem);
+  const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
 
   return (
     <DefaultLayout>
@@ -155,21 +292,27 @@ export default function AttendanceModule() {
                 <div className="flex items-center gap-2">
                   <div className="h-3 w-3 rounded-full bg-red-200" />
                   <span className="text-sm">ABS</span>
-                  <span className="rounded border px-2 py-0.5 text-sm">8</span>
+                  <span className="rounded border px-2 py-0.5 text-sm">{AbsentCount}</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className="text-sm">DP</span>
-                  <span className="rounded border px-2 py-0.5 text-sm">9</span>
+                  <div className="h-3 w-3 rounded-full bg-green-400" />
+                  <span className="text-sm">PRE</span>
+                  <span className="rounded border px-2 py-0.5 text-sm">{PresentCount}</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <div className="h-3 w-3 rounded-full bg-gray-300" />
-                  <span className="text-sm">PH</span>
-                  <span className="rounded border px-2 py-0.5 text-sm">1</span>
+                  <div className="h-3 w-3 rounded-full bg-red-400" />
+                  <span className="text-sm">HF</span>
+                  <span className="rounded border px-2 py-0.5 text-sm">{HalfDayCount}</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  {/* <div className="h-3 w-3 rounded-full bg-gray-300" /> */}
+                  {/* <span className="text-sm">PH</span> */}
+                  {/* <span className="rounded border px-2 py-0.5 text-sm">{totalCounts.isHoliday}</span> */}
                 </div>
                 <div className="flex items-center gap-2">
                   <div className="h-3 w-3 rounded-full bg-yellow-300" />
                   <span className="text-sm">WO</span>
-                  <span className="rounded border px-2 py-0.5 text-sm">7</span>
+                  <span className="rounded border px-2 py-0.5 text-sm">{weekoOff}</span>
                 </div>
               </div>
 
@@ -178,7 +321,7 @@ export default function AttendanceModule() {
                 <table className="min-w-full divide-y divide-gray-200">
                   <thead className="bg-gray-50">
                     <tr>
-                      {["Date", "Day", "First Login", "Last Logout", "Attendance Type", "Tot. Hrs.", "LateMark_Calc", "Regularize"].map((header) => (
+                      {["Date", "Day", "First Login", "Last Logout", "Attendance Type", "Tot. Hrs.", "LateMark_Calc",].map((header) => (
                         <th key={header} className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                           {header}
                         </th>
@@ -195,7 +338,7 @@ export default function AttendanceModule() {
                         <td colSpan={8} className="px-6 py-4 text-center text-red-500">{error}</td>
                       </tr>
                     ) : (
-                      attendanceData.map((row, index) => (
+                      currentItems.map((row, index) => (
                         <>
                           <tr key={row.date}>
                             <td className="px-6 py-4 whitespace-nowrap text-sm text-blue-600 cursor-pointer" onClick={() => toggleSessionDetails(row.date, index)}>
@@ -223,14 +366,14 @@ export default function AttendanceModule() {
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{row.records[row.records.length - 1].workingHour}</td>
                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{row.lateMark}</td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                            {/* <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                               <button
                                 onClick={() => handleRegularize(row.date)}
                                 className="bg-indigo-500 hover:bg-indigo-600 text-white px-3 py-1 rounded-md transition-colors text-xs"
                               >
                                 Regularize
                               </button>
-                            </td>
+                            </td> */}
                           </tr>
                           {/* {expandedDate === attendanceData[0].date && (
                             <tr>
@@ -262,12 +405,13 @@ export default function AttendanceModule() {
                                       const session1 = row.records[index];
                                       const session2 = row.records[index + 1];
                                       return (
-                                        <div key={index} className="bg-white p-3 rounded-md shadow-sm space-y-2 md:space-y-0 md:grid md:grid-cols-2 gap-4">
+                                        <div key={index} className="bg-white p-3 rounded-md shadow-sm space-y-2 md:space-y-0 md:grid md:grid-cols-4 gap-4">
                                           <div className="flex flex-col">
                                             {/* <p className="font-medium">Session {index + 1}</p> */}
                                             <p>Check In: {session1?.time || 'N/A'}</p>
                                             {/* <p>Check Out: {session1?.checkOut || 'N/A'}</p> */}
                                           </div>
+
                                           {session2 && (
                                             <div className="flex flex-col">
                                               {/* <p className="font-medium">Session {index + 2}</p> */}
@@ -275,8 +419,28 @@ export default function AttendanceModule() {
                                               {/* <p>Check Out: {session2?.checkOut || 'N/A'}</p> */}
                                             </div>
                                           )}
-                                        </div>
-                                      );
+                                          {session2 && (
+                                            <div className="flex flex-col">
+                                              {/* <p className="font-medium">Session {index + 2}</p> */}
+                                              <p>Total Work: {session2?.workingHour || 'N/A'}</p>
+                                              {/* <p>Check Out: {session2?.checkOut || 'N/A'}</p> */}
+                                            </div>
+                                          )}
+                                          {session2 && (
+                                            <div className="flex flex-col">
+                                              <div>
+                                                <button
+                                                  onClick={() => handleRegularize(row.date, session1, session2)}
+                                                  className="bg-indigo-500 hover:bg-indigo-600 text-white px-3 py-1 rounded-md transition-colors text-xs"
+                                                >
+                                                  Regularize
+                                                </button>
+                                              </div>
+                                            </div>
+                                          )}
+
+
+                                        </div>);
                                     })}
                                   </div>
                                 </div>
@@ -289,6 +453,41 @@ export default function AttendanceModule() {
                   </tbody>
                 </table>
               </div>
+              <div className="mt-4 flex flex-col sm:flex-row items-center justify-between">
+                {/* Previous Button */}
+                <div className="w-full sm:w-auto flex justify-start mb-2 sm:mb-0">
+                  <button
+                    onClick={() => paginate(currentPage - 1)}
+                    disabled={currentPage === 1}
+                    className={`w-full sm:w-auto px-3 py-2 text-sm font-medium rounded-md border border-gray-300 transition-all duration-200 
+        ${currentPage === 1
+                        ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
+                        : 'bg-white text-gray-700 hover:bg-gray-100'
+                      }`}
+                  >
+                    Previous
+                  </button>
+                </div>
+
+                {/* Next Button */}
+                <div className="w-full sm:w-auto flex justify-end">
+                  <button
+                    onClick={() => paginate(currentPage + 1)}
+                    disabled={currentPage === Math.ceil(attendanceData.length / itemsPerPage)}
+                    className={`w-full sm:w-auto px-3 py-2 text-sm font-medium rounded-md border border-gray-300 transition-all duration-200 
+        ${currentPage === Math.ceil(attendanceData.length / itemsPerPage)
+                        ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
+                        : 'bg-white text-gray-700 hover:bg-gray-100'
+                      }`}
+                  >
+                    Next
+                  </button>
+                </div>
+              </div>
+
+
+
+
             </div>
           </div>
         </div>
