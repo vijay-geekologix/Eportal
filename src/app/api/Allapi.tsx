@@ -1,12 +1,11 @@
-import api from "./httpClient"
-
+import api from "./httpClient";
 
 interface LoginResponse {
   token: string;
 }
 
 const date = new Date();
-const currentDate =  `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`;
+const currentDate = `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`;
 
 // Auth Api
 const login = async (data: any): Promise<void> => {
@@ -16,7 +15,6 @@ const login = async (data: any): Promise<void> => {
     // console.log("Res", response.data.data.user.firstName)
     // Save the token in localStorage
     if (token) {
-
       localStorage.setItem("authToken", token);
       localStorage.setItem("Id", response.data.data.user._id);
 
@@ -25,7 +23,10 @@ const login = async (data: any): Promise<void> => {
       localStorage.setItem("email", response.data.data.user.email);
 
       localStorage.setItem("user_role", response.data.data.user.user_role);
-      localStorage.setItem("user_name", `${response.data.data.user.firstName} ${response.data.data.user.lastName}`);
+      localStorage.setItem(
+        "user_name",
+        `${response.data.data.user.firstName} ${response.data.data.user.lastName}`,
+      );
 
       console.log("Login successful! Token saved.");
     } else {
@@ -34,7 +35,7 @@ const login = async (data: any): Promise<void> => {
   } catch (error) {
     console.error("Login failed:", error);
   }
-}
+};
 
 // Project Api
 const ProjectList = async (): Promise<any> => {
@@ -49,71 +50,72 @@ const ProjectList = async (): Promise<any> => {
 
 const CreateProject = async (data: any): Promise<any> => {
   try {
-    const response = await api.post("admin/projectDetails/createProjectDetails", data)
+    const response = await api.post(
+      "admin/projectDetails/createProjectDetails",
+      data,
+    );
     console.log("Full Response:", response);
   } catch (error) {
     console.error("Error fetching project list:", error);
     throw error;
   }
-}
+};
 
 // Employee Api
 const EmployeeList = async (): Promise<any> => {
   try {
-    const response = await api.get("/Employee/getEmployee")
+    const response = await api.get("/Employee/getEmployee");
     return response.data;
   } catch (error) {
     console.error("Error fetching project list:", error);
     throw error;
   }
-}
-
+};
 
 const CreateEmployee = async (data: any): Promise<any> => {
   try {
-    const response = await api.post("/Employee/createEmployee", data)
+    const response = await api.post("/Employee/createEmployee", data);
     return response.data;
   } catch (error) {
     console.error("Error fetching project list:", error);
     throw error;
   }
-}
-
+};
 
 const DeleteEmployee = async (data: any): Promise<any> => {
   try {
-    const response = await api.post("/Employee/deleteEmployee", data)
+    const response = await api.post("/Employee/deleteEmployee", data);
   } catch (error) {
     console.error("Error fetching project list:", error);
     throw error;
   }
-}
+};
 
-const specificEmployee = async (esslId:any , _id:any): Promise<any> =>{
+const specificEmployee = async (esslId: any, _id: any): Promise<any> => {
   try {
     const data = {
-      esslId:esslId,
-      _id:_id,
-    }
+      esslId: esslId,
+      _id: _id,
+    };
     const response = await api.get("/Employee/specificEmployee", data);
     return response.data;
   } catch (error) {
-    console.error("Error fetching specificEmployee list:",error);
+    console.error("Error fetching specificEmployee list:", error);
     throw error;
   }
-}
+};
 
 const AttendenceList = async (
   userESSLid?: string,
   startDate?: string,
-  endDate?: string
+  endDate?: string,
 ): Promise<any> => {
   try {
     const params: Record<string, any> = {};
     if (userESSLid) params.userESSLid = userESSLid;
     if (startDate) params.startDate = startDate;
     if (endDate) params.endDate = endDate;
-    const response = await api.get('/Employee/biometric/totalDuration', params);
+    const response = await api.get("/Employee/biometric/totalDuration", params);
     return response;
   } catch (error) {
     console.error("Error fetching attendance list:", error);
@@ -132,10 +134,14 @@ const editAttendenceType = async (
     if (esslId) params.esslId = esslId;
     if (date) params.date = date;
     if (attendenceType) params.attendenceType = attendenceType;
-    if (attendenceTypeFeildId) params.attendenceTypeFeildId = attendenceTypeFeildId;
+    if (attendenceTypeFeildId)
+      params.attendenceTypeFeildId = attendenceTypeFeildId;
 
-    const response = await api.put('/Employee/biometric/editAttendenceType', params);
-    console.log('lkl',response)
+    const response = await api.put(
+      "/Employee/biometric/editAttendenceType",
+      params,
+    );
+    console.log("lkl", response);
     return response;
   } catch (error) {
     console.error("Error During Edit attendance type:", error);
@@ -143,8 +149,7 @@ const editAttendenceType = async (
   }
 };
 
-
-// leave and change Attendence Leaves Api;
+// leave Apply, change Attendence Leaves , change employee Details requests Api;
 // ------------------------------------------------->
 
 const requestEditAttendenceType = async (
@@ -152,9 +157,9 @@ const requestEditAttendenceType = async (
   date?: string,
   attendenceType?: string,
   attendenceTypeFeildId?: any,
-  reason?:any
+  reason?: any,
 ): Promise<any> => {
-  const userName = localStorage.getItem('user_name');
+  const userName = localStorage.getItem("user_name");
 
   try {
     const params: Record<string, any> = {};
@@ -162,11 +167,15 @@ const requestEditAttendenceType = async (
     if (userName) params.userName = userName;
     if (date) params.attendenceDate = date;
     if (attendenceType) params.attendenceType = attendenceType;
-    if (attendenceTypeFeildId) params.attendenceTypeFeildId = attendenceTypeFeildId;
-    if(reason) params.reason = reason;
-    if(currentDate) params.applyDate = currentDate;
-    console.log('lkl',params)
-    const response = await api.post('/Employee/requests/requestEditAttendenceType', params);
+    if (attendenceTypeFeildId)
+      params.attendenceTypeFeildId = attendenceTypeFeildId;
+    if (reason) params.reason = reason;
+    if (currentDate) params.applyDate = currentDate;
+    console.log("lkl", params);
+    const response = await api.post(
+      "/Employee/requests/requestEditAttendenceType",
+      params,
+    );
     return response;
   } catch (error) {
     console.error("Error During Request Edit attendance type:", error);
@@ -177,16 +186,19 @@ const requestEditAttendenceType = async (
 const getAllrequestsEditAttendenceType = async (
   startDate?: string,
   endDate?: string,
-  requestType?: string , 
-  requestStatus? : string,
+  requestType?: string,
+  requestStatus?: string,
 ): Promise<any> => {
   try {
     const params: Record<string, any> = {};
     if (startDate) params.startDate = startDate;
     if (endDate) params.endDate = endDate;
-    if (requestType) params.requestType = requestType
-    if(requestStatus) params.requestStatus = requestStatus
-    const response = await api.get('/Employee/requests/requestEditAttendenceType', params);
+    if (requestType) params.requestType = requestType;
+    if (requestStatus) params.requestStatus = requestStatus;
+    const response = await api.get(
+      "/Employee/requests/requestEditAttendenceType",
+      params,
+    );
     return response;
   } catch (error) {
     console.error("Error fetching attendance type request Data:", error);
@@ -195,14 +207,17 @@ const getAllrequestsEditAttendenceType = async (
 };
 
 const putAllrequestsEditAttendenceType = async (
-   requestIds?:string[],
-   approvalType?:string,
+  requestIds?: string[],
+  approvalType?: string,
 ): Promise<any> => {
   try {
     const params: Record<string, any> = {};
     if (requestIds) params.requestIds = requestIds;
     if (approvalType) params.approvalType = approvalType;
-    const response = await api.put('/Employee/requests/requestEditAttendenceType', params);
+    const response = await api.put(
+      "/Employee/requests/requestEditAttendenceType",
+      params,
+    );
     return response;
   } catch (error) {
     console.error("Error update attendance type request:", error);
@@ -210,36 +225,84 @@ const putAllrequestsEditAttendenceType = async (
   }
 };
 
-
-
-
-//leave Post Api 
+//leave request Api
 const postRequestLeave = async (data: any): Promise<any> => {
-  const userName = localStorage.getItem('user_name');
+  const userName = localStorage.getItem("user_name");
   try {
-    console.log('leave apply data',data);
-    const response = await api.post("/Employee/requests/requestLeave", data)
+    console.log("leave apply data", data);
+    const response = await api.post("/Employee/requests/requestLeave", data);
     return response.data;
   } catch (err) {
-    console.log('Error during creating leave', err);
+    console.log("Error during creating leave", err);
   }
-}
-
-
+};
 
 const getAllrequestLeave = async (
   startDate?: string,
   endDate?: string,
   requestType?: string,
-  requestStatus? : string,
+  requestStatus?: string,
 ): Promise<any> => {
   try {
     const params: Record<string, any> = {};
     if (startDate) params.startDate = startDate;
     if (endDate) params.endDate = endDate;
     if (requestType) params.requestType = requestType;
-    if(requestStatus) params.requestStatus = requestStatus;
-    const response = await api.get('/Employee/requests/requestLeave', params);
+    if (requestStatus) params.requestStatus = requestStatus;
+    const response = await api.get("/Employee/requests/requestLeave", params);
+    return response;
+  } catch (error) {
+    console.error("Error fetching leave list request:", error);
+    throw error;
+  }
+};
+
+const putAllrequestsLeave = async (
+  requestIds?: string[],
+  approvalType?: string,
+): Promise<any> => {
+  try {
+    const params: Record<string, any> = {};
+    if (requestIds) params.requestIds = requestIds;
+    if (approvalType) params.approvalType = approvalType;
+    const response = await api.put("/Employee/requests/requestLeave", params);
+    return response;
+  } catch (error) {
+    console.error("Error update attendance type request:", error);
+    throw error;
+  }
+};
+
+//Employee Details request Api
+const postEmployeeDetailsRequest = async (data: any): Promise<any> => {
+  try {
+    console.log("EmployeeDetailsRequest data", data);
+    const response = await api.post(
+      "/Employee/requests/requestEmployeeDetails",
+      data,
+    );
+    return response.data;
+  } catch (err) {
+    console.log("Error during creating Employee Details leave Request", err);
+  }
+};
+
+const getAllEmployeeDetailsRequest = async (
+  startDate?: string,
+  endDate?: string,
+  requestType?: string,
+  requestStatus?: string,
+): Promise<any> => {
+  try {
+    const params: Record<string, any> = {};
+    if (startDate) params.startDate = startDate;
+    if (endDate) params.endDate = endDate;
+    if (requestType) params.requestType = requestType;
+    if (requestStatus) params.requestStatus = requestStatus;
+    const response = await api.get(
+      "/Employee/requests/requestEmployeeDetails",
+      params,
+    );
     return response;
   } catch (error) {
     console.error("Error fetching leave list request:", error);
@@ -248,149 +311,124 @@ const getAllrequestLeave = async (
 };
 
 
-const putAllrequestsLeave = async (
-  requestIds?:string[],
-  approvalType?:string,
+const putAllEmployeeDetailsRequest = async (
+  requestData?: any[],
+  approvalType?: string,
 ): Promise<any> => {
- try {
-   const params: Record<string, any> = {};
-   if (requestIds) params.requestIds = requestIds;
-   if (approvalType) params.approvalType = approvalType;
-   const response = await api.put('/Employee/requests/requestLeave', params);
-   return response;
- } catch (error) {
-   console.error("Error update attendance type request:", error);
-   throw error;
- }
+  try {
+    const params: Record<string, any> = {};
+    if (requestData) params.requestData = requestData;
+    if (approvalType) params.approvalType = approvalType;
+    const response = await api.put("/Employee/requests/requestEmployeeDetails", params);
+    return response;
+  } catch (error) {
+    console.error("Error update Employee Details request:", error);
+    throw error;
+  }
 };
-
 
 // ------------------------------------------------->
 
 const WeekHolday = async (
   startDate?: string,
-  endDate?: string
+  endDate?: string,
 ): Promise<any> => {
   try {
     const params: Record<string, any> = {};
     if (startDate) params.startDate = startDate;
     if (endDate) params.endDate = endDate;
-    const response = await api.get('/Employee/weekSummary', params);
+    const response = await api.get("/Employee/weekSummary", params);
     return response;
   } catch (error) {
     console.error("Error fetching attendance list:", error);
     throw error;
   }
-}
+};
 
 //Attrition Api
 const AttritionList = async (): Promise<any> => {
   try {
-    const response = await api.get('/Employee/getAttrition')
-    return response.data
+    const response = await api.get("/Employee/getAttrition");
+    return response.data;
   } catch (error) {
     console.error("Error fetching project list:", error);
     throw error;
   }
-}
+};
 
-const getSpecificAttrition = async (_id:any , employeeName:any): Promise<any> => {
+const getSpecificAttrition = async (
+  _id: any,
+  employeeName: any,
+): Promise<any> => {
   try {
     const data = {
-      _id:_id,
-      employeeName:employeeName,
-    }
-    const response = await api.get('/Employee/getSpecificAttrition',data);
+      _id: _id,
+      employeeName: employeeName,
+    };
+    const response = await api.get("/Employee/getSpecificAttrition", data);
     return response.data;
   } catch (error) {
     console.error("Error fetching SpecificAttrition list:", error);
     throw error;
   }
-}
+};
 
 const DeleteAttrition = async (data: any): Promise<any> => {
   try {
-    const response = await api.post("/Employee/deleteAttrition", data)
-    return response.data
+    const response = await api.post("/Employee/deleteAttrition", data);
+    return response.data;
   } catch (error) {
     console.error("Error fetching project list:", error);
     throw error;
   }
-}
+};
 
 //Post Employee Attrition
 const CreateAttrition = async (data: any): Promise<any> => {
   try {
-    const response = await api.post('/Employee/createAttrition', data)
-    console.log("response", response)
+    const response = await api.post("/Employee/createAttrition", data);
+    console.log("response", response);
   } catch (error) {
     console.error("Error fetching project list:", error);
     throw error;
   }
-}
-
-//leave Post Api 
-// const CreateLeave = async (data: any): Promise<any> => {
-//   try {
-//     const response = await api.post("/requestLeave", data)
-//     return response.data;
-//   } catch (err) {
-//     console.log('Error during creating leave', err);
-//   }
-// }
-
-// const getLeaveData = async (): Promise<any> => {
-//   try {
-//     const response = await api.get("leave/allLeavelist")
-//     return response.data;
-//   } catch (err) {
-//     console.log('Error during get leave', err);
-//   }
-// }
-
+};
 
 // biometricBaseURL:"https://p4h4d07h-9000.inc1.devtunnels.ms/",
 const getBiometricWorkingHour = async (): Promise<any> => {
   try {
-    const response = await api.get("https://p4h4d07h-9000.inc1.devtunnels.ms/biometric/xmlapi");
+    const response = await api.get(
+      "https://p4h4d07h-9000.inc1.devtunnels.ms/biometric/xmlapi",
+    );
     return response.data;
   } catch (err) {
-    console.log('Error during get biometric working hour', err);
+    console.log("Error during get biometric working hour", err);
   }
-}
+};
 
-// const getAllRequests = async () : Promise<any> =>{
-//  try {
-//   const response = await api.get("leave/allLeavelist")
-//   return response.data;
-//  } catch (err) {
-//   console.log('Error during get leave', err);
-//  }
-// }
-
-
-export { 
-         login,
-         ProjectList, 
-        //  CreateLeave, 
-        //  getLeaveData, 
-         AttritionList, 
-         CreateAttrition, 
-         CreateEmployee, 
-         DeleteEmployee, 
-         EmployeeList, 
-         specificEmployee 
-         ,CreateProject, 
-         AttendenceList, 
-         editAttendenceType,
-         getAllrequestsEditAttendenceType, 
-         requestEditAttendenceType,
-         putAllrequestsEditAttendenceType,
-         postRequestLeave,
-         getAllrequestLeave, 
-         putAllrequestsLeave,
-         getSpecificAttrition, 
-         DeleteAttrition,
-         WeekHolday, 
-         getBiometricWorkingHour
-      };
+export {
+  login,
+  ProjectList,
+  AttritionList,
+  CreateAttrition,
+  CreateEmployee,
+  DeleteEmployee,
+  EmployeeList,
+  specificEmployee,
+  CreateProject,
+  AttendenceList,
+  editAttendenceType,
+  getAllrequestsEditAttendenceType,
+  requestEditAttendenceType,
+  putAllrequestsEditAttendenceType,
+  postRequestLeave,
+  getAllrequestLeave,
+  putAllrequestsLeave,
+  postEmployeeDetailsRequest,
+  getAllEmployeeDetailsRequest,
+  putAllEmployeeDetailsRequest,
+  getSpecificAttrition,
+  DeleteAttrition,
+  WeekHolday,
+  getBiometricWorkingHour,
+};
