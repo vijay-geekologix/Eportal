@@ -61,22 +61,16 @@
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
               <tr>
-                {[
-                  "Apply Date",
-                  "For Period",
-                  "From Date",
-                  "To Date",
-                  "Total Days",
-                  "Reason",
-                  "Request Status",
-                ].map((header) => (
-                  <th
-                    key={header}
-                    className="border px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                  >
-                    {header}
-                  </th>
-                ))}
+                {["Apply Date" , "From Date", "To Date", "Total Days", "Reason" , "Request Status"].map(
+                  (header) => (
+                    <th
+                      key={header}
+                      className="border px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                    >
+                      {header}
+                    </th>
+                  )
+                )}
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
@@ -86,9 +80,9 @@
                     <td className="border px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                       {item.applyDate || "N/A"}
                     </td>
-                    <td className="border px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    {/* <td className="border px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                       {item.forPeriod || "N/A"}
-                    </td>
+                    </td> */}
                     <td className="border px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                       {item.fromDate || "N/A"}
                     </td>

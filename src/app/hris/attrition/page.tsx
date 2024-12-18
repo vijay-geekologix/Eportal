@@ -53,6 +53,7 @@ const EmployeeTable = () => {
         console.log("eele", selectedEmployeeIds)
         try {
             const data = { "_id": selectedEmployeeIds }
+            console.log('dfafaf',data)
             const response = await DeleteAttrition(data);
             console.log("Deleted IDs:", selectedEmployeeIds);
             employeelist();

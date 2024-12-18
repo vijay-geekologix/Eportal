@@ -1207,8 +1207,9 @@ const EmployeeProfile: React.FC = ({ params: initialParams }) => {
   const router = useRouter()
   const [activeTab, setActiveTab] = useState<'personal' | 'qualification' | 'statutory'>('personal')
   const [profileImage, setProfileImage] = useState<string | null>(null)
-  const [params, setParams] = useState<any | null>(null)
-  const [specificEmployeeData, setSpecificEmployeeData] = useState<any>({})
+  const [params, setParams] = useState<any | null>(null);
+  const [specificEmployeeData , setSpecificEmployeeData] = useState<any>({});
+  // const [paramsData , setParamsData] = useState(params.addEmployee); 
   const [personalInfo, setPersonalInfo] = useState<PersonalInfo>({
     firstName: '',
     middleName: '',
@@ -1349,9 +1350,38 @@ const EmployeeProfile: React.FC = ({ params: initialParams }) => {
     fetchSpecifyEmployeeData()
   }, [params])
 
-  const formatISODate = (isoString: any) => {
-    return isoString ? new Date(isoString).toISOString().split('T')[0] : ''
-  }
+//   const fetchSpecifyEmployeeData = async () =>{
+//     try{
+//     const response = await specificEmployee(params.addEmployee[2] , params.addEmployee[3]);
+//     setSpecificEmployeeData(response.data)
+//     console.log('specifcEMplo',response.data);
+//     // if ( response.statusCode === 201) {
+//     //     toast.success("Employee  successfully!", {
+//     //         position: "top-right",
+//     //     });
+//     //   }
+
+//    }catch(error){
+//     console.error("Error submitting form:", error);
+//     toast.error("An error occurred while Fetching Employee Data. Please try again.", {
+//       position: "top-right",
+//     });
+//   }
+// }
+
+// fetchSpecifyEmployeeData();
+// console.log('sss',params.addEmployee);
+// },[]);
+
+
+useEffect(()=>{
+  console.log('speccif',specificEmployeeData[0]);
+},[specificEmployeeData]);
+
+// for Database's date format 
+const formatISODate = (isoString:any) =>{
+   return isoString ? new Date(isoString).toISOString().split('T')[0] : '';
+}
 
   return (
     <DefaultLayout>
