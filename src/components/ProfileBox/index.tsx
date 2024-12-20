@@ -211,42 +211,6 @@ const ProfileBox = () => {
   const handleRequestBtn = async (event: React.FormEvent) => {
     event.preventDefault();
     try {
-      // const data = {
-      //   userName: userName,
-      //   userId: userDbId,
-      //   esslId: esslId,
-      //   applyDate: currentDate,
-      //   information: {
-      //     newPersonalInfo: newPersonalInfo,
-      //     oldPersonalInfo: oldPersonalInfo,
-      //     newQualificationInfo: newQualificationInfo,
-      //     oldQualificationInfo: oldQualificationInfo,
-      //     newStatutoryInfo: newStatutoryInfo,
-      //     oldStatutoryInfo: oldStatutoryInfo,
-      //   },
-      // };
-
-
-      // const data = {
-      //   userName: userName,
-      //   userId: userDbId,
-      //   esslId: esslId,
-      //   applyDate: currentDate,
-      //   information: {
-      //     personalInfo:[
-      //       newPersonalInfo,
-      //       oldPersonalInfo,
-      //     ],
-      //     qualificationInfo:[
-      //       newQualificationInfo,
-      //       oldQualificationInfo,
-      //     ],
-      //     statutoryInfo:[
-      //       newStatutoryInfo,
-      //       oldStatutoryInfo,
-      //     ]
-      //   },
-      // };
 
       const data = {
         userName: userName,
@@ -256,18 +220,18 @@ const ProfileBox = () => {
         information: [
           {
             type: "personalInfo",
-            oldInfo: oldPersonalInfo, // Replace with actual old personal info
-            newInfo: newPersonalInfo, // Replace with actual new personal info
+            oldInfo: oldPersonalInfo, 
+            newInfo: newPersonalInfo,
           },
           {
             type: "qualificationInfo",
-            oldInfo: oldQualificationInfo, // Replace with actual old qualification info
-            newInfo: newQualificationInfo, // Replace with actual new qualification info
+            oldInfo: oldQualificationInfo,
+            newInfo: newQualificationInfo,
           },
           {
             type: "statutoryInfo",
-            oldInfo: oldStatutoryInfo, // Replace with actual old statutory info
-            newInfo: newStatutoryInfo, // Replace with actual new statutory info
+            oldInfo: oldStatutoryInfo,
+            newInfo: newStatutoryInfo,
           },
         ],
       };
@@ -303,6 +267,8 @@ const ProfileBox = () => {
   const formatISODate = (isoString: any) => {
     return isoString ? new Date(isoString).toISOString().split("T")[0] : "";
   };
+
+  
 
   return (
     <>

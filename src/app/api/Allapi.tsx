@@ -1,3 +1,4 @@
+import { actions } from "react-table";
 import api from "./httpClient";
 
 interface LoginResponse {
@@ -97,6 +98,7 @@ const specificEmployee = async (esslId: any, _id: any): Promise<any> => {
       esslId: esslId,
       _id: _id,
     };
+    console.log('liiiiiii',data);
     const response = await api.get("/Employee/specificEmployee", data);
     return response.data;
   } catch (error) {
@@ -149,7 +151,7 @@ const editAttendenceType = async (
   }
 };
 
-// leave Apply, change Attendence Leaves , change employee Details requests Api;
+// leave Apply, change Attendence Leaves , change employee Details , Regularise requests  Api;
 // ------------------------------------------------->
 
 const requestEditAttendenceType = async (
@@ -268,7 +270,7 @@ const putAllrequestsLeave = async (
     const response = await api.put("/Employee/requests/requestLeave", params);
     return response;
   } catch (error) {
-    console.error("Error update attendance type request:", error);
+    console.error("Error update Leave request:", error);
     throw error;
   }
 };
@@ -276,14 +278,14 @@ const putAllrequestsLeave = async (
 //Employee Details request Api
 const postEmployeeDetailsRequest = async (data: any): Promise<any> => {
   try {
-    console.log("EmployeeDetailsRequest data", data);
+    console.log("postRegulariseRequest Request data", data);
     const response = await api.post(
       "/Employee/requests/requestEmployeeDetails",
       data,
     );
     return response.data;
   } catch (err) {
-    console.log("Error during creating Employee Details leave Request", err);
+    console.log("Error during creating post Regularise Request Request", err);
   }
 };
 
@@ -326,6 +328,66 @@ const putAllEmployeeDetailsRequest = async (
     throw error;
   }
 };
+
+
+// Regularise Request Api
+const postRegulariseRequest = async (data: any): Promise<any> => {
+  console.log('hhhhhhhhhhh',data);
+  
+  try {
+    console.log("Regularise data", data);
+    const response = await api.post(
+      "/Employee/requests/requestRegularise",
+      data,
+    );
+    return response.data;
+  } catch (err) {
+    console.log("Error during creating Regularise Request", err);
+  }
+};
+
+const getAllRegulariseRequest = async (
+  startDate?: string,
+  endDate?: string,
+  requestType?: string,
+  requestStatus?: string,
+): Promise<any> => {
+  try {
+    const params: Record<string, any> = {};
+    if (startDate) params.startDate = startDate;
+    if (endDate) params.endDate = endDate;
+    if (requestType) params.requestType = requestType;
+    if (requestStatus) params.requestStatus = requestStatus;
+    const response = await api.get(
+      "/Employee/requests/requestRegularise",
+      params,
+    );
+    return response;
+  } catch (error) {
+    console.error("Error fetching Regularise request list:", error);
+    throw error;
+  }
+};
+
+
+const putAllRegulariseRequest = async (
+  requestData?: any[],
+  approvalType?: string,
+): Promise<any> => {
+  
+  try {
+    const params: Record<string, any> = {};
+    if (requestData) params.requestData = requestData;
+    if (approvalType) params.approvalType = approvalType;
+    const response = await api.put("/Employee/requests/requestRegularise", params);
+    console.log('kkkks',response);
+    return response;
+  } catch (error) {
+    console.error("Error update Regularise request:", error);
+    throw error;
+  }
+};
+
 
 // ------------------------------------------------->
 
@@ -427,6 +489,9 @@ export {
   postEmployeeDetailsRequest,
   getAllEmployeeDetailsRequest,
   putAllEmployeeDetailsRequest,
+  postRegulariseRequest,
+  getAllRegulariseRequest,
+  putAllRegulariseRequest,
   getSpecificAttrition,
   DeleteAttrition,
   WeekHolday,
