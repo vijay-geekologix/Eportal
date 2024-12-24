@@ -10,6 +10,9 @@ import {
   putAllrequestsEditAttendenceType,
   putAllrequestsLeave,
   putAllEmployeeDetailsRequest,
+  getAllRegulariseRequest,
+  postRegulariseRequest,
+  putAllRegulariseRequest,
 } from "../api/Allapi";
 
 export default function PendingApprovalList() {
@@ -23,6 +26,7 @@ export default function PendingApprovalList() {
   const [requestEmployeeDetailsData, setRequestEmployeeDetailsData] = useState(
     [],
   );
+  const [requestRegulariseData, setRequestRegulariseData] = useState([]);
   const [requestType, setRequestType] = useState("all");
   const [requestStatus, setRequestStatus] = useState("pending");
   const [attendenceRequestSelectedRows, setAttendenceRequestSelectedRows] =
@@ -34,6 +38,8 @@ export default function PendingApprovalList() {
     employeeDetailsRequestSelectedRows,
     setEmployeeDetailsRequestSelectedRows,
   ] = useState<{ rowId: string; informationType: string }[]>([]);
+  const [regulariseRequestSelectedRows, setregulariseRequestSelectedRows] =
+    useState<any[]>([]);
 
   useEffect(() => {
     fetchAttendenceTypeRequestData();
@@ -53,6 +59,7 @@ export default function PendingApprovalList() {
       if (requestType == "attendenceType") {
         setRequestEmployeeDetailsData([]);
         setRequestLeaveApplyData([]);
+        setRequestRegulariseData([]);
         const response = await getAllrequestsEditAttendenceType(
           startDate2,
           endDate2,
@@ -64,6 +71,7 @@ export default function PendingApprovalList() {
       } else if (requestType == "leaveApply") {
         setRequestEmployeeDetailsData([]);
         setRequestAttendanceTypeData([]);
+        setRequestRegulariseData([]);
         const response = await getAllrequestLeave(
           startDate2,
           endDate2,
@@ -75,6 +83,7 @@ export default function PendingApprovalList() {
       } else if (requestType == "employeeDetails") {
         setRequestAttendanceTypeData([]);
         setRequestLeaveApplyData([]);
+        setRequestRegulariseData([]);
         const response = await getAllEmployeeDetailsRequest(
           startDate2,
           endDate2,
@@ -83,19 +92,19 @@ export default function PendingApprovalList() {
         );
         setRequestEmployeeDetailsData(response.data.data);
         console.log("sgsgdgs", response.data.data);
-      } else if (requestType == "regularize") {
+      } else if (requestType == "regularise") {
         setRequestAttendanceTypeData([]);
         setRequestLeaveApplyData([]);
         setRequestEmployeeDetailsData([]);
 
-        const response = await getAllrequestLeave(
+        const response = await getAllRegulariseRequest(
           startDate2,
           endDate2,
           requestType,
           requestStatus,
         );
-        setRequestLeaveApplyData(response.data.data);
-        console.log("sgsgdgs", response.data.data);
+        setRequestRegulariseData(response.data.data);
+        console.log("sgsgdgs34", response.data.data);
       } else {
         const response1 = await getAllrequestsEditAttendenceType(
           startDate2,
@@ -120,7 +129,16 @@ export default function PendingApprovalList() {
           requestStatus,
         );
         setRequestEmployeeDetailsData(response3.data.data);
+
+        const response4 = await getAllRegulariseRequest(
+          startDate2,
+          endDate2,
+          requestType,
+          requestStatus,
+        );
+        setRequestRegulariseData(response4.data.data);
       }
+
       // if (response.data.result.length === 0) {
       //   // setError("No data found");
       // }
@@ -232,9 +250,39 @@ export default function PendingApprovalList() {
     }
   };
 
+  const handleRegulariseCheckboxChange = (id: string, newSessionInfo: {}) => {
+    setregulariseRequestSelectedRows((prevSelectedRows) => {
+      // Check if the row is already selected
+      const isAlreadySelected = prevSelectedRows.some(
+        (row: any) => row.rowId === id,
+      );
+
+      if (isAlreadySelected) {
+        return prevSelectedRows.filter((row: any) => row.rowId !== id);
+      } else {
+        return [...prevSelectedRows, { rowId: id, newSessionInfo }];
+      }
+    });
+  };
+
+  const handleRegulariseRequestBtnClick = async (
+    action: "approved" | "rejected",
+  ) => {
+    if (regulariseRequestSelectedRows.length === 0) {
+      alert("Please select at least one application.");
+    } else {
+      const response = await putAllRegulariseRequest(
+        regulariseRequestSelectedRows,
+        action,
+      );
+      setRequestRegulariseData([]);
+      fetchAttendenceTypeRequestData();
+    }
+  };
+
   useEffect(() => {
-    console.log("gjgjg", employeeDetailsRequestSelectedRows);
-  }, [employeeDetailsRequestSelectedRows]);
+    console.log("gjgjg", regulariseRequestSelectedRows);
+  }, [regulariseRequestSelectedRows]);
 
   return (
     <DefaultLayout>
@@ -323,7 +371,7 @@ export default function PendingApprovalList() {
                       <option value="attendenceType">Attendence Type</option>
                       employeeDetails
                       <option value="employeeDetails">Employee Details</option>
-                      <option value="regularize">Regularize</option>
+                      <option value="regularise">Regularise</option>
                     </select>
                   </div>
 
@@ -766,7 +814,172 @@ export default function PendingApprovalList() {
                   </table>
                 </div>
               </div>
-              ;
+
+              {/* Regularise Requests */}
+              <div className="mt-8 overflow-hidden rounded-lg bg-white px-6 pb-6 shadow">
+                <div className="flex items-center justify-between border-b p-6">
+                  <h2 className="text-xl font-bold text-gray-800">
+                    Regularize Requests
+                  </h2>
+                  <div>
+                    <button
+                      className="mr-2 rounded bg-indigo-600 px-3 py-1 font-semibold text-white hover:bg-indigo-700"
+                      onClick={() =>
+                        handleRegulariseRequestBtnClick("approved")
+                      }
+                    >
+                      Approve
+                    </button>
+                    <button
+                      className="rounded bg-red-600 px-3 py-1 font-semibold text-white hover:bg-red-700"
+                      onClick={() =>
+                        handleRegulariseRequestBtnClick("rejected")
+                      }
+                    >
+                      Reject
+                    </button>
+                  </div>
+                </div>
+
+                <div className="overflow-x-auto">
+                  <table className="min-w-full border-collapse divide-y divide-gray-200 border border-gray-300">
+                    <thead className="bg-gray-50">
+                      <tr>
+                        <th className="border border-gray-300 px-6 py-3 text-left text-xs font-medium uppercase text-gray-500">
+                          <input
+                            type="checkbox"
+                            onChange={(e) =>
+                              e.target.checked
+                                ? setregulariseRequestSelectedRows(
+                                    requestRegulariseData.map(
+                                      (request: any) => ({
+                                        rowId: request._id,
+                                        newSessionInfo: request.newSessionInfo,
+                                      }),
+                                    ),
+                                  )
+                                : setregulariseRequestSelectedRows([])
+                            }
+                            checked={
+                              regulariseRequestSelectedRows.length ===
+                                requestRegulariseData.length &&
+                              requestRegulariseData.length > 0
+                            }
+                          />
+                        </th>
+                        <th className="border border-gray-300 px-6 py-3 text-left text-xs font-medium uppercase text-gray-500">
+                          Name
+                        </th>
+                        <th className="border border-gray-300 px-6 py-3 text-left text-xs font-medium uppercase text-gray-500">
+                          Date
+                        </th>
+                        <th className="border border-gray-300 px-6 py-3 text-left text-xs font-medium uppercase text-gray-500">
+                          Regularize Type
+                        </th>
+                        <th className="border border-gray-300 px-6 py-3 text-left text-xs font-medium uppercase text-gray-500">
+                          Old Time
+                        </th>
+                        <th className="border border-gray-300 px-6 py-3 text-left text-xs font-medium uppercase text-gray-500">
+                          New Time
+                        </th>
+                        <th className="border border-gray-300 px-6 py-3 text-left text-xs font-medium uppercase text-gray-500">
+                          Reason
+                        </th>
+                        <th className="border border-gray-300 px-6 py-3 text-left text-xs font-medium uppercase text-gray-500">
+                          Status
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-gray-200 bg-white">
+                      {requestRegulariseData.length > 0 ? (
+                        requestRegulariseData.map((data: any) => (
+                          <tr key={data._id}>
+                            <td className="whitespace-nowrap border border-gray-300 px-6 py-4 text-sm">
+                              <input
+                                type="checkbox"
+                                onChange={() =>
+                                  handleRegulariseCheckboxChange(
+                                    data._id,
+                                    data.newSessionInfo,
+                                  )
+                                }
+                                checked={regulariseRequestSelectedRows.some(
+                                  (row: any) => row.rowId === data._id,
+                                )}
+                              />
+                            </td>
+                            <td className="border border-gray-300 px-6 py-4 text-sm font-medium text-gray-900">
+                              {data.userName}
+                            </td>
+                            <td className="border border-gray-300 px-6 py-4 text-sm text-gray-500">
+                              {data.applyDate}
+                            </td>
+                            <td className="border border-gray-300 px-6 py-4 text-sm font-semibold text-gray-500">
+                              {data.newSessionInfo.type === "both" ? (
+                                <>
+                                  <div>CheckIn:</div>
+                                  <div>CheckOut:</div>
+                                </>
+                              ) : (
+                                data.newSessionInfo.type + ":"
+                              )}
+                            </td>
+                            <td className="border border-gray-300 px-6 py-4 text-sm text-gray-500">
+                              {data.newSessionInfo.type === "checkIn" ? (
+                                data.oldSessionInfo.checkInTime
+                              ) : data.newSessionInfo.type === "checkOut" ? (
+                                data.oldSessionInfo.checkOutTime
+                              ) : (
+                                <>
+                                  <div>{data.oldSessionInfo.checkInTime}</div>
+                                  <div>{data.oldSessionInfo.checkOutTime}</div>
+                                </>
+                              )}
+                            </td>
+                            <td className="border border-gray-300 px-6 py-4 text-sm text-gray-500">
+                              {data.newSessionInfo.type === "checkIn" ? (
+                                data.newSessionInfo.checkInTime
+                              ) : data.newSessionInfo.type === "checkOut" ? (
+                                data.newSessionInfo.checkOutTime
+                              ) : (
+                                <>
+                                  <div>{data.newSessionInfo.checkInTime}</div>
+                                  <div>{data.newSessionInfo.checkOutTime}</div>
+                                </>
+                              )}
+                            </td>
+                            <td className="border border-gray-300 px-6 py-4 text-sm text-gray-500">
+                              {data.newSessionInfo.reason}
+                            </td>
+                            <td className="whitespace-nowrap border border-gray-300 px-6 py-4">
+                              <span
+                                className={`inline-flex rounded-full px-2 text-xs font-semibold leading-5 ${
+                                  data.requestStatus === "approved"
+                                    ? "bg-green-100 text-green-800"
+                                    : data.requestStatus === "rejected"
+                                      ? "bg-red-100 text-red-800"
+                                      : "bg-yellow-100 text-yellow-800"
+                                }`}
+                              >
+                                {data.requestStatus}
+                              </span>
+                            </td>
+                          </tr>
+                        ))
+                      ) : (
+                        <tr>
+                          <td
+                            colSpan={7}
+                            className="border border-gray-300 px-6 py-4 text-center text-sm text-gray-500"
+                          >
+                            No requests available.
+                          </td>
+                        </tr>
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
             </div>
           </div>
         </div>
