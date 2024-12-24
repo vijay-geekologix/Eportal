@@ -8,8 +8,10 @@ interface LoginResponse {
 const date = new Date();
 const currentDate = `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`;
 
+
 // Auth Api
 const login = async (data: any): Promise<void> => {
+
   try {
     const response: any = await api.post<LoginResponse>("admin/login", data);
     const token = response.data.data.token;
@@ -18,17 +20,17 @@ const login = async (data: any): Promise<void> => {
     if (token) {
       localStorage.setItem("authToken", token);
       localStorage.setItem("Id", response.data.data.user._id);
-
       localStorage.setItem("esslId", response.data.data.user.esslId);
-      localStorage.setItem("Name", response.data.data.user.firstName);
-      localStorage.setItem("email", response.data.data.user.email);
+      // localStorage.setItem("Name", response.data.data.user.firstName);
+      // localStorage.setItem("email", response.data.data.user.email);
 
-      localStorage.setItem("user_role", response.data.data.user.user_role);
-      localStorage.setItem(
-        "user_name",
-        `${response.data.data.user.firstName} ${response.data.data.user.lastName}`,
-      );
+      // localStorage.setItem("user_role", response.data.data.user.user_role);
 
+      // localStorage.setItem(
+      //   "user_name",
+      //   `${response.data.data.user.firstName} ${response.data.data.user.lastName}`,
+      // );
+      return response.data.data.user;
       console.log("Login successful! Token saved.");
     } else {
       console.error("No token received from API.");
@@ -98,7 +100,6 @@ const specificEmployee = async (esslId: any, _id: any): Promise<any> => {
       esslId: esslId,
       _id: _id,
     };
-    console.log('liiiiiii',data);
     const response = await api.get("/Employee/specificEmployee", data);
     return response.data;
   } catch (error) {
@@ -143,7 +144,6 @@ const editAttendenceType = async (
       "/Employee/biometric/editAttendenceType",
       params,
     );
-    console.log("lkl", response);
     return response;
   } catch (error) {
     console.error("Error During Edit attendance type:", error);
@@ -156,13 +156,12 @@ const editAttendenceType = async (
 
 const requestEditAttendenceType = async (
   esslId?: string,
+  userName?:string,
   date?: string,
   attendenceType?: string,
   attendenceTypeFeildId?: any,
   reason?: any,
 ): Promise<any> => {
-  const userName = localStorage.getItem("user_name");
-
   try {
     const params: Record<string, any> = {};
     if (esslId) params.esslId = esslId;
@@ -173,7 +172,6 @@ const requestEditAttendenceType = async (
       params.attendenceTypeFeildId = attendenceTypeFeildId;
     if (reason) params.reason = reason;
     if (currentDate) params.applyDate = currentDate;
-    console.log("lkl", params);
     const response = await api.post(
       "/Employee/requests/requestEditAttendenceType",
       params,

@@ -2,10 +2,12 @@ import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import ClickOutside from "@/components/ClickOutside";
+import { useUserDetailsContext } from "@/context/UserDetailsContext";
 import { useRouter } from "next/navigation";
 
 const DropdownUser = () => {
   const router = useRouter()
+  const {userDetails, setUserDetails}:any = useUserDetailsContext(); 
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
   return (
@@ -81,7 +83,7 @@ const DropdownUser = () => {
                 jonson@nextadmin.com
               </span>
               <span className="block mt-2 font-medium text-dark-5 dark:text-dark-6">
-                Employee code -{(localStorage.getItem('esslId'))}
+                Employee code {userDetails.esslId}
               </span>
             </span>
           </div>

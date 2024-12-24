@@ -1,14 +1,17 @@
 
 'use client';
 import React, { useState, useEffect } from 'react';
+import { useUserDetailsContext } from "@/context/UserDetailsContext";
 
 export default function BiometricWorkingHour({biometricApiData}){
 
+   const {userDetails, setUserDetails} = useUserDetailsContext(); 
   const [elapsedTime, setElapsedTime] = useState(0);
   const [intervalId, setIntervalId] = useState(null);
 
   // biometric
-  const [esslUserID,setEsslUserID] = useState((localStorage.getItem('esslId')));  
+  // const [esslUserID,setEsslUserID] = useState((localStorage.getItem('esslId')));  
+  const [esslUserID,setEsslUserID] = useState(userDetails.esslId);  
   let isEsslBiometricUserCheckin = false;
 
   const checkUserEsslID = () =>{

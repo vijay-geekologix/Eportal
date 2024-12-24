@@ -5,6 +5,8 @@ import { login } from '@/app/api/Allapi'
 // import login from '@/app/api/user'
 import toast from 'react-hot-toast'
 import { useRouter } from "next/navigation";
+import { useUserDetailsContext } from "@/context/UserDetailsContext";
+
 const images = [
   "/gif/LoginLogo.gif",
   // "/images/login/g2.jpg",
@@ -16,7 +18,8 @@ export default function Signin() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [currentImage, setCurrentImage] = useState(0)
-
+  const {userDetails, setUserDetails}:any = useUserDetailsContext();
+  
   useEffect(() => {
     const timer = setInterval(() => {
       setCurrentImage((prevImage) => (prevImage + 1) % images.length)
@@ -29,15 +32,15 @@ export default function Signin() {
     console.log('Login attempted with:', email, password)
     try {
       const loginData = { email, password }
-       await login(loginData)
+       const response = await login(loginData)
+       console.log('nhfgs',response);
       toast.success("Login successful! 🎉");
-      router.push('/dashboard')
+      setUserDetails(response);
+      router.push('/dashboard');
     } catch (error) {
       console.log("Login error:", error);
       toast.error("Invalid Credentials")
     }
-
-
   }
 
   return (

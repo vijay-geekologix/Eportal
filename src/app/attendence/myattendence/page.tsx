@@ -21,22 +21,25 @@ import {
 import { toast } from "react-toastify";
 import React from "react";
 import { useRouter } from "next/navigation";
+import { useUserDetailsContext } from "@/context/UserDetailsContext";
+
+
 
 export default function AttendanceModule() {
   const router = useRouter();
-  const [userName, setUserName] = useState(localStorage.getItem("user_name"));
+  const {userDetails, setUserDetails}:any = useUserDetailsContext(); 
+  const [userName, setUserName] = useState(userDetails.firstName + " " + userDetails.lastName);
   const [attendanceData, setAttendanceData] = useState<any[]>([]);
-  const [userId, setUserId] = useState<any>(localStorage.getItem("esslId"));
+  const [userId, setUserId] = useState<any>(userDetails.esslId);
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
   const [month, setMonth] = useState("November");
   const [year, setYear] = useState("2024");
   const [expandedDate, setExpandedDate] = useState<string | null>(null);
   const [showRegularizeModal, setShowRegularizeModal] = useState(false);
-  const [showAttendencetypeEditModel, setShowAttendencetypeEditModel] =
-    useState(false);
+  const [showAttendencetypeEditModel, setShowAttendencetypeEditModel] = useState(false);   
   const [attendenceTypeDate, setAttendanceTypeDate] = useState("");
-  const [attendenceType, setAttendanceType] = useState("present");
+  const [attendenceType, setAttendanceType] = useState("Present");
   const [attendanceTypeFieldId, setAttendanceTypeFieldId] = useState("");
   const [requestReason, setRequestReason] = useState("");
   const [AbsentCount, setAbsentCount] = useState<any>("");
@@ -54,6 +57,13 @@ export default function AttendanceModule() {
     type: "both",
     reason: "",
   });
+
+  
+
+  useEffect(()=>{
+    console.log('contecns',userDetails);
+    },[userDetails])
+  
   const [isLoading, setIsLoading] = useState(false);
   const [weekoOff, setWeekOff] = useState<any>();
 
@@ -136,8 +146,6 @@ export default function AttendanceModule() {
         attendanceData1.forEach((record) => {
           if (Array.isArray(record.records)) {
             record.records.forEach((subRecord: any) => {
-              console.log("Sub Record:", subRecord);
-
               // Count attendance types
               if (subRecord.attendenceType === "Absent") {
                 absentCount++;
@@ -295,6 +303,7 @@ export default function AttendanceModule() {
     e.preventDefault();
     const response = await requestEditAttendenceType(
       userId,
+      userName,
       attendenceTypeDate,
       attendenceType,
       attendanceTypeFieldId,

@@ -36,7 +36,6 @@ export default function AttendanceModule() {
     const fetchEmployeeData = async () => {
       try {
         const response = await EmployeeList();
-        console.log('dggd', response);
         setEmployeeData(response.data);
       } catch (err) {
         console.error("Error Employee Data data:", err);
@@ -129,8 +128,6 @@ export default function AttendanceModule() {
         attendanceData1.forEach((record) => {
           if (Array.isArray(record.records)) {
             record.records.forEach((subRecord: any) => {
-              console.log("Sub Record:", subRecord);
-
               // Count attendance types
               if (subRecord.attendenceType === "Absent") {
                 absentCount++;
@@ -184,7 +181,6 @@ export default function AttendanceModule() {
   };
 
   useEffect(() => {
-    console.log('employeeData', employeeData);
     fetchAttendanceData();
   }, [employeeData]);
 

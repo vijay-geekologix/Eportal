@@ -12,6 +12,8 @@ import {
 // import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
+import { useUserDetailsContext } from "@/context/UserDetailsContext";
+
 
 interface PersonalInfo {
   firstName: string;
@@ -50,6 +52,7 @@ interface StatutoryInfo {
 
 const ProfileBox = () => {
   const router = useRouter();
+  const {userDetails, setUserDetails}:any = useUserDetailsContext(); 
   const [activeTab, setActiveTab] = useState<
     "personal" | "qualification" | "statutory"
   >("personal");
@@ -58,9 +61,9 @@ const ProfileBox = () => {
   const [tempSpecificEmployeeData, setTempSpecificEmployeeData] = useState<any>(
     {},
   );
-  const [esslId, setEsslId] = useState(localStorage.getItem("esslId"));
-  const [userDbId, setUserDbId] = useState(localStorage.getItem("Id"));
-  const [userName, setUserName] = useState(localStorage.getItem("user_name"));
+  const [esslId, setEsslId] = useState(userDetails.esslId);
+  const [userDbId, setUserDbId] = useState(userDetails._id);
+  const [userName, setUserName] = useState(userDetails.firstName + " " + userDetails.lastName);
 
   const [newPersonalInfo, setNewPersonalInfo] = useState<any>({});
   const [oldPersonalInfo, setOldPersonalInfo] = useState<any>({});

@@ -41,7 +41,8 @@ interface StatutoryInfo {
   panNumber: string
   bankAccountNumber: string
   IFSCCode: string
-  branchName: string
+  branchName: string,
+  esslId:string,
   probationPeriod: boolean
   probationMonths: string
 }

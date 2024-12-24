@@ -14,11 +14,13 @@ import {
   postRegulariseRequest,
   putAllRegulariseRequest,
 } from "../api/Allapi";
+import { useUserDetailsContext } from "@/context/UserDetailsContext";
 
 export default function PendingApprovalList() {
+  const {userDetails, setUserDetails}:any = useUserDetailsContext(); 
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
-  const [userId, setUserId] = useState<any>(localStorage.getItem("esslId"));
+  // const [userId, setUserId] = useState<any>(localStorage.getItem("esslId"));
   const [requestAttendanceTypeData, setRequestAttendanceTypeData] = useState(
     [],
   );

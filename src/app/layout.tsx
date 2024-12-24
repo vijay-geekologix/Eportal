@@ -6,6 +6,8 @@ import "@/css/style.css";
 import React, { useEffect, useState } from "react";
 import Loader from "@/components/common/Loader";
 import { Toaster } from "react-hot-toast";
+import {UserDetailsContextProvider} from '../context/UserDetailsContext'
+
 
 export default function RootLayout({
   children,
@@ -23,10 +25,12 @@ export default function RootLayout({
 
   return (
     <html lang="en">
+      <UserDetailsContextProvider>
       <body suppressHydrationWarning={true}>
       <Toaster position="top-right" reverseOrder={false} />
         {loading ? <Loader /> : children}
       </body>
+      </UserDetailsContextProvider>
     </html>
   );
 }
