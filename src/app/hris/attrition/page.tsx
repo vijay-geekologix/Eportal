@@ -14,7 +14,6 @@ const EmployeeTable = () => {
 
     const employeelist = async () => {
         const response = await AttritionList();
-        console.log("res1", response);
         const activeEmployees = response.data.filter((employee: any) => employee.isActive === true);
         setEmployeeData(activeEmployees);
     };
@@ -70,7 +69,6 @@ const EmployeeTable = () => {
         router.push(`/hris/attrition/add-attrition/${employeeId}/${employeeName}`)
     }
     useEffect(() => {
-        console.log('employeedate', employeeData)
     }, [employeeData])
     return (
         <DefaultLayout>

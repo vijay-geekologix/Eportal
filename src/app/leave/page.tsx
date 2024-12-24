@@ -6,10 +6,14 @@ import DefaultLayout from "@/components/Layouts/DefaultLaout";
 import Breadcrumb from "@/components/Breadcrumbs/Breadcrumb";
 import { useRouter } from "next/navigation";
 import { Link } from "react-router-dom";
+import { useUserDetailsContext } from "@/context/UserDetailsContext";
+// const {userDetails, setUserDetails}:any = useUserDetailsContext(); 
+
 const Table = () => {
   const router = useRouter();
+const {userDetails, setUserDetails}:any = useUserDetailsContext(); 
   const [data, setData] = useState([]);
-  const [esslId, setEsslId] = useState<any>(localStorage.getItem("esslId"));
+  const [esslId, setEsslId] = useState<any>(userDetails.esslId);
 
   // Fetch data from the server
   useEffect(() => {

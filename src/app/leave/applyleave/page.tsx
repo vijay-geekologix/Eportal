@@ -6,14 +6,16 @@ import Breadcrumb from "@/components/Breadcrumbs/Breadcrumb"
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import {postRequestLeave} from '@/app/api/Allapi'
+import { useUserDetailsContext } from "@/context/UserDetailsContext";
 
 function LeaveForm(){
   const router = useRouter();
+  const {userDetails, setUserDetails}:any = useUserDetailsContext();
   const date = new Date;
   const currentDate = `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`;
   const [formData, setFormData] = useState({
-    userName:localStorage.getItem('user_name'),
-    esslId:localStorage.getItem('esslId'),
+    userName:userDetails.firstName + " " + userDetails.lastName,
+    esslId:userDetails.esslId,
     applyDate:currentDate,
     forPeriod:'',
     fromDate: "",
