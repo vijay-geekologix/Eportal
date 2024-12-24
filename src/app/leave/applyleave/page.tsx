@@ -12,6 +12,8 @@ function LeaveForm(){
   const date = new Date;
   const currentDate = `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`;
   const [formData, setFormData] = useState({
+    userName:localStorage.getItem('user_name'),
+    esslId:localStorage.getItem('esslId'),
     applyDate:currentDate,
     forPeriod:'',
     fromDate: "",

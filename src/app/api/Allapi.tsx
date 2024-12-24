@@ -229,7 +229,6 @@ const putAllrequestsEditAttendenceType = async (
 
 //leave request Api
 const postRequestLeave = async (data: any): Promise<any> => {
-  const userName = localStorage.getItem("user_name");
   try {
     console.log("leave apply data", data);
     const response = await api.post("/Employee/requests/requestLeave", data);
@@ -244,13 +243,17 @@ const getAllrequestLeave = async (
   endDate?: string,
   requestType?: string,
   requestStatus?: string,
+  esslId?:string,
 ): Promise<any> => {
   try {
+    console.log('kiu',esslId);
     const params: Record<string, any> = {};
     if (startDate) params.startDate = startDate;
     if (endDate) params.endDate = endDate;
     if (requestType) params.requestType = requestType;
     if (requestStatus) params.requestStatus = requestStatus;
+    if (esslId) params.esslId = esslId;
+    console.log('juh');
     const response = await api.get("/Employee/requests/requestLeave", params);
     return response;
   } catch (error) {
