@@ -122,14 +122,14 @@ const ProfileBox = () => {
     });
   };
 
-  useEffect(() => {
-    console.log("juuPersonalInfo1", newPersonalInfo);
-    console.log("juuPersonalInfo2", oldPersonalInfo);
-    console.log("juuQualificationInfo1", newQualificationInfo);
-    console.log("juuQualificationInfo2", oldQualificationInfo);
-    console.log("juuStatutoryInfo5", newStatutoryInfo);
-    console.log("juuStatutoryInfo6", oldStatutoryInfo);
-  }, [newPersonalInfo, newQualificationInfo, newStatutoryInfo]);
+  // useEffect(() => {
+  //   console.log("juuPersonalInfo1", newPersonalInfo);
+  //   console.log("juuPersonalInfo2", oldPersonalInfo);
+  //   console.log("juuQualificationInfo1", newQualificationInfo);
+  //   console.log("juuQualificationInfo2", oldQualificationInfo);
+  //   console.log("juuStatutoryInfo5", newStatutoryInfo);
+  //   console.log("juuStatutoryInfo6", oldStatutoryInfo);
+  // }, [newPersonalInfo, newQualificationInfo, newStatutoryInfo]);
 
   const handleWorkChange = (
     index: number,

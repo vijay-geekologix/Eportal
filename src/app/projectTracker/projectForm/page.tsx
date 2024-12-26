@@ -7,6 +7,9 @@ import Select from 'react-select';
 import { CreateProject, ProjectList } from '@/app/api/Allapi'
 import { toast } from 'react-toastify'
 import { useRouter } from 'next/navigation'
+import {NotFoundPage} from '@/components/NotFoundPage/page'
+import { useUserDetailsContext } from "@/context/UserDetailsContext";
+
 interface FormData {
     personalInfo: {
         selectProject: string
@@ -51,6 +54,8 @@ interface FormData {
 
 const ProjectForm = () => {
     const router = useRouter()
+    const {userDetails, setUserDetails}:any = useUserDetailsContext();
+    if(userDetails.user_role == 'employee') return(<NotFoundPage/>);
     const [step, setStep] = useState(1)
     const [formData, setFormData] = useState<FormData>({
         personalInfo: { selectProject: '', projectName: '', projectType: '', source: '', representative: '', clientName: '', personName: '', personNumber: '', date1talk: '', details: '', sendEmail: false, sendWhatsapp: false },

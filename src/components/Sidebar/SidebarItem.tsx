@@ -1,8 +1,10 @@
 import React from "react";
 import Link from "next/link";
 import SidebarDropdown from "@/components/Sidebar/SidebarDropdown";
+import { useUserDetailsContext } from "@/context/UserDetailsContext";
 
 const SidebarItem = ({ item, pageName, setPageName }: any) => {
+  const {userDetails,setUserDetails}:any = useUserDetailsContext();
   const handleClick = () => {
     const updatedPageName =
       pageName !== item.label.toLowerCase() ? item.label.toLowerCase() : "";
@@ -49,13 +51,25 @@ const SidebarItem = ({ item, pageName, setPageName }: any) => {
             </svg>
           )}
         </Link>
-
-        {item.children && (
+        
+        {/* for employee */}
+        {(userDetails?.user_role == 'employee' && item.children) && (
           <div
             className={`translate transform overflow-hidden ${
               pageName !== item.label.toLowerCase() && "hidden"
             }`}
-          >
+          > 
+            <SidebarDropdown item={[item.children[0]]} />
+          </div>
+        )}
+
+        {/* for admin or manager */}
+        {(userDetails?.user_role != 'employee' && item.children) && (
+          <div
+            className={`translate transform overflow-hidden ${
+              pageName !== item.label.toLowerCase() && "hidden"
+            }`}
+          > 
             <SidebarDropdown item={item.children} />
           </div>
         )}

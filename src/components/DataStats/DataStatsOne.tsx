@@ -408,9 +408,8 @@ import { useEffect,useState } from "react";
 import BiometricWorkingHour from '@/components/BiometricWorkingHour/BiometricWorkingHour'
 import axios from "axios";
 import { getBiometricWorkingHour } from "@/app/api/Allapi";
+import { useUserDetailsContext } from "@/context/UserDetailsContext";
 
-const userRole = localStorage.getItem('user_role')
-console.log("userrole", userRole)
 const dataStatsList = [
   {
     icon: (
@@ -488,7 +487,7 @@ const attendanceData = [
 ];
 
 const DataStatsOne: React.FC<dataStats> = () => {
-    
+    const {userDetails}:any = useUserDetailsContext();    
     // biometric ---------> 
     const [biometricData , setBiometricData] = useState([]);    
     useEffect(()=>{
@@ -510,7 +509,7 @@ const DataStatsOne: React.FC<dataStats> = () => {
 return (
 <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-4">
        {/* Card 1 */}
-   {userRole=='employee' ? (
+   {userDetails.user_role=='employee' ? (
   <div className="max-w-md w-full mx-auto rounded-lg shadow-lg bg-gradient-to-r from-blue-50 to-blue-100 border border-blue-200">
   <div className="px-6 py-5">
     <h1 className="font-bold text-2xl text-blue-800 mb-4">Important Notice</h1>

@@ -9,8 +9,14 @@ import { MdDelete, MdDeleteForever } from "react-icons/md";
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
+import {NotFoundPage} from '@/components/NotFoundPage/page'
+import { useUserDetailsContext } from "@/context/UserDetailsContext";
+
+
 const ProjectList4 = () => {
   const router = useRouter()
+  const {userDetails, setUserDetails}:any = useUserDetailsContext();
+  if(userDetails.user_role == 'employee') return(<NotFoundPage/>);
   const [projectData, setProjectData] = useState<any[]>([]);  // Holds the project list from the API
   const [currentPage, setCurrentPage] = useState(1);  // Track current page
   const [totalPages, setTotalPages] = useState(1);  // Track total pages

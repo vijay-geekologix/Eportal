@@ -9,7 +9,8 @@ export const UserDetailsContextProvider = ({ children }) => {
     async function fetchUserData() {
       const esslId = localStorage.getItem('esslId');
       const userId = localStorage.getItem('Id');
-  
+      
+      //  it prevent to empty context when web reloaded
       if (esslId && userId) {
         try {
           const response = await specificEmployee(esslId, userId);

@@ -9,7 +9,7 @@ import { Link } from "react-router-dom";
 import { useUserDetailsContext } from "@/context/UserDetailsContext";
 // const {userDetails, setUserDetails}:any = useUserDetailsContext(); 
 
-const Table = () => {
+const leaveTable = () => {
   const router = useRouter();
 const {userDetails, setUserDetails}:any = useUserDetailsContext(); 
   const [data, setData] = useState([]);
@@ -26,7 +26,6 @@ const {userDetails, setUserDetails}:any = useUserDetailsContext();
           undefined,
           esslId,
         );
-        console.log("luuuuuuu", result.data.data);
 
         setData(result.data.data);
       } catch (error) {
@@ -226,4 +225,4 @@ const {userDetails, setUserDetails}:any = useUserDetailsContext();
   );
 };
 
-export default Table;
+export default leaveTable;

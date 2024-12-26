@@ -57,12 +57,6 @@ export default function AttendanceModule() {
     type: "both",
     reason: "",
   });
-
-  
-
-  useEffect(()=>{
-    console.log('contecns',userDetails);
-    },[userDetails])
   
   const [isLoading, setIsLoading] = useState(false);
   const [weekoOff, setWeekOff] = useState<any>();
@@ -269,10 +263,6 @@ export default function AttendanceModule() {
     setShowRegularizeModal(true);
   };
 
-  useEffect(() => {
-    console.log("reejjj", regularizeForm);
-  }, [regularizeForm]);
-
   const handleRequestRegularizeSubmit = async (event:any) => {
     // Here you would typically send this data to your backend
     try {
@@ -317,7 +307,6 @@ export default function AttendanceModule() {
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentItems = attendanceData.slice(indexOfFirstItem, indexOfLastItem);
-  console.log("regularizeForm", regularizeForm);
   const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
 
   //convert regularise Time into 24 hours format

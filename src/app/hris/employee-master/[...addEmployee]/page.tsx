@@ -8,6 +8,8 @@ import { specificEmployee , CreateEmployee } from '@/app/api/Allapi'
 // import { toast } from "react-toastify";  
 import { useRouter } from 'next/navigation'
 import toast from 'react-hot-toast'
+import {NotFoundPage} from '@/components/NotFoundPage/page'
+import { useUserDetailsContext } from "@/context/UserDetailsContext";
 
 interface PersonalInfo {
   firstName: string
@@ -49,6 +51,8 @@ interface StatutoryInfo {
 
 const EmployeeProfile: React.FC = ({params:initialParams}) => {
   const router = useRouter()
+  const {userDetails, setUserDetails}:any = useUserDetailsContext();
+  if(userDetails.user_role == 'employee') return(<NotFoundPage/>);
   // const {ref} = router.query;
   const [activeTab, setActiveTab] = useState<'personal' | 'qualification' | 'statutory'>('personal')
   const [profileImage, setProfileImage] = useState<string | null>(null)

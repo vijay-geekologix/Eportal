@@ -1,14 +1,19 @@
 'use client'
 import Breadcrumb from "@/components/Breadcrumbs/Breadcrumb";
 import DefaultLayout from "@/components/Layouts/DefaultLaout";
+import {NotFoundPage} from '@/components/NotFoundPage/page'
 import React, { useEffect, useState } from "react";
 import { EmployeeList, DeleteEmployee } from "@/app/api/Allapi";
 import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
+import { useUserDetailsContext } from "@/context/UserDetailsContext";
 
 
 const EmployeeTable = () => {
     const router = useRouter();
+    const {userDetails, setUserDetails}:any = useUserDetailsContext();
+    if(userDetails.user_role == 'employee') return(<NotFoundPage/>);
+
     const [employeeData, setEmployeeData] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [selectedEmployeeIds, setSelectedEmployeeIds] = useState<any>([]);
