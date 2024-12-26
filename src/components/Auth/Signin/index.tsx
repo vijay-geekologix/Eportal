@@ -8,7 +8,7 @@ import { useRouter } from "next/navigation";
 import { useUserDetailsContext } from "@/context/UserDetailsContext";
 
 const images = [
-  "/gif/LoginLogo.gif",
+  "/gif/Developers Gif.gif",
   // "/images/login/g2.jpg",
   // "/images/login/g3.jpg",
 
@@ -58,9 +58,9 @@ export default function Signin() {
           className="transition-opacity duration-1000"
         />
       </div>
-      <div className="absolute inset-0 bg-blue-600 bg-opacity-30 flex flex-col justify-end p-8">
+      <div className="absolute inset-0 bg-blue-350 bg-opacity-30 flex flex-col justify-end p-8">
         <h2 className="text-4xl font-bold mb-4 text-white drop-shadow-lg">Welcome Back!</h2>
-        <p className="text-xl text-white drop-shadow-lg">Log in to access your employee dashboard.</p>
+        {/* <p className="text-xl text-white drop-shadow-lg">Log in to access your employee dashboard.</p> */}
       </div>
     </div>
   

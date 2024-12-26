@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 import { CalendarIcon, Search, ChevronLeft, ChevronRight } from "lucide-react";
 import DefaultLayout from "@/components/Layouts/DefaultLaout";
+import {NotFoundPage} from '@/components/NotFoundPage/page'
 import Breadcrumb from "@/components/Breadcrumbs/Breadcrumb";
 import {
   getAllrequestsEditAttendenceType,
@@ -17,7 +18,10 @@ import {
 import { useUserDetailsContext } from "@/context/UserDetailsContext";
 
 export default function PendingApprovalList() {
-  const {userDetails, setUserDetails}:any = useUserDetailsContext(); 
+  const {userDetails, setUserDetails}:any = useUserDetailsContext();
+  
+  if(userDetails.user_role == 'employee') return(<NotFoundPage/>);
+  
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
   // const [userId, setUserId] = useState<any>(localStorage.getItem("esslId"));

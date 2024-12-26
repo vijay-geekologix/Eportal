@@ -9,7 +9,6 @@ export default function Home() {
   if (!isAuthenticated) {
     redirect("/auth/signin"); // Redirect to login page if not authenticated
   }
-
   return (
     <>
       <Toaster position="top-right" reverseOrder={false} />

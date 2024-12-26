@@ -5,7 +5,12 @@ import DefaultLayout from "@/components/Layouts/DefaultLaout"
 import Breadcrumb from "@/components/Breadcrumbs/Breadcrumb"
 import { AttendenceList, EmployeeList } from "@/app/api/Allapi"
 import { toast } from "react-toastify"
+import {NotFoundPage} from '@/components/NotFoundPage/page'
+import { useUserDetailsContext } from "@/context/UserDetailsContext";
+
 export default function AttendanceModule() {
+  const {userDetails, setUserDetails}:any = useUserDetailsContext();
+  if(userDetails.user_role == 'employee') return(<NotFoundPage/>);
   const [attendanceData, setAttendanceData] = useState<any[]>([]);
   const [employeeData, setEmployeeData] = useState([]);
   const [userId, setUserId] = useState("");

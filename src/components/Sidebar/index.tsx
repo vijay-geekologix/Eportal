@@ -7,6 +7,7 @@ import Image from "next/image";
 import SidebarItem from "@/components/Sidebar/SidebarItem";
 import ClickOutside from "@/components/ClickOutside";
 import useLocalStorage from "@/hooks/useLocalStorage";
+import { useUserDetailsContext } from "@/context/UserDetailsContext";
 
 interface SidebarProps {
   sidebarOpen: boolean;
@@ -141,7 +142,7 @@ const menuGroups = [
         ),
         label: "Attendence",
         route: "#",
-           children: [  
+        children: [
           { label: "My Attendence", route: "/attendence/myattendence" },
           { label: "View Attendence", route: "/attendence/viewattendence" },
         ],
@@ -160,10 +161,7 @@ const menuGroups = [
               d="M3 4C3 2.89543 3.89543 2 5 2H15C16.1046 2 17 2.89543 17 4V8H13C11.8954 8 11 8.89543 11 10V14H7C5.89543 14 5 13.1046 5 12V4H3Z"
               fill=""
             />
-            <path
-              d="M13 10H17C18.1046 10 19 10.8954 19 12V16H13V10Z"
-              fill=""
-            />
+            <path d="M13 10H17C18.1046 10 19 10.8954 19 12V16H13V10Z" fill="" />
             <path
               d="M16.5858 17.4142L12 22L14 22H20C20.5523 22 21 21.5523 21 21V15L20.7071 15.2929L16.5858 17.4142Z"
               fill=""
@@ -191,10 +189,7 @@ const menuGroups = [
               d="M3 4C3 2.89543 3.89543 2 5 2H15C16.1046 2 17 2.89543 17 4V8H13C11.8954 8 11 8.89543 11 10V14H7C5.89543 14 5 13.1046 5 12V4H3Z"
               fill=""
             />
-            <path
-              d="M13 10H17C18.1046 10 19 10.8954 19 12V16H13V10Z"
-              fill=""
-            />
+            <path d="M13 10H17C18.1046 10 19 10.8954 19 12V16H13V10Z" fill="" />
             <path
               d="M16.5858 17.4142L12 22L14 22H20C20.5523 22 21 21.5523 21 21V15L20.7071 15.2929L16.5858 17.4142Z"
               fill=""
@@ -205,9 +200,9 @@ const menuGroups = [
             />
           </svg>
         ),
-        label: "Pedding Approval",
+        label: "Pending Approval",
         route: "/pending-approval",
-      }
+      },
       // {
       //   icon: (
       //     <svg
@@ -492,19 +487,41 @@ const menuGroups = [
 
 const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
   const pathname = usePathname();
-
+  const { userDetails, setUserDetails }:any = useUserDetailsContext();
   const [pageName, setPageName] = useLocalStorage("selectedMenu", "dashboard");
+  
+  // role base redirect user
+  
+  // const router = useRouter();
+  // const pathname = usePathname();
+  // const { userDetails, setUserDetails }:any = useUserDetailsContext();
+  // const [pageName, setPageName] = useLocalStorage("selectedMenu", "dashboard");
+  // const role = userDetails.user_role;
+  
+  // const roleBasedAccess:any = {
+  //   employee: ["/dashboard", "/attendence/myattendence", "/leave"],
+  //   admin: ["*"],
+  //   manager: ["*"],
+  // };
+
+  // useEffect(() => {
+  //   const allowedPaths = roleBasedAccess[role] || [];
+  //   if (!allowedPaths.includes("*") && !allowedPaths.includes(pathname)) {
+  //     router.replace("/dashboard");
+  //   }
+  // }, [role, pathname]);
 
   return (
     <ClickOutside onClick={() => setSidebarOpen(false)}>
       <aside
-        className={`absolute left-0 top-0 z-9999 flex h-screen w-72.5 flex-col overflow-y-hidden border-r border-stroke bg-white dark:border-stroke-dark dark:bg-gray-dark lg:static lg:translate-x-0 ${sidebarOpen
+        className={`absolute left-0 top-0 z-9999 flex h-screen w-72.5 flex-col overflow-y-hidden border-r border-stroke bg-white dark:border-stroke-dark dark:bg-gray-dark lg:static lg:translate-x-0 ${
+          sidebarOpen
             ? "translate-x-0 duration-300 ease-linear"
             : "-translate-x-full"
-          }`}
+        }`}
       >
         {/* SIDEBAR HEADER */}
-        <div className="flex items-center justify-between gap-2 px-6 py-6  bg-white dark:bg-gray-dark border-b border-gray-200 dark:border-gray-700">
+        <div className="flex items-center justify-between gap-2 border-b border-gray-200  bg-white px-6 py-6 dark:border-gray-700 dark:bg-gray-dark">
           <Link href="/dashboard">
             <Image
               width={176}
@@ -529,7 +546,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
           {/* Toggle Sidebar Button */}
           <button
             onClick={() => setSidebarOpen(!sidebarOpen)}
-            className="block lg:hidden text-gray-600 dark:text-gray-400"
+            className="block text-gray-600 dark:text-gray-400 lg:hidden"
           >
             <svg
               className="fill-current"
@@ -539,9 +556,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
               fill="none"
               xmlns="http://www.w3.org/2000/svg"
             >
-              <path
-                d="M19 8.175H2.98748L9.36248 1.6875C9.69998 1.35 9.69998 0.825 9.36248 0.4875C9.02498 0.15 8.49998 0.15 8.16248 0.4875L0.399976 8.3625C0.0624756 8.7 0.0624756 9.225 0.399976 9.5625L8.16248 17.4375C8.31248 17.5875 8.53748 17.7 8.76248 17.7C8.98748 17.7 9.17498 17.625 9.36248 17.475C9.69998 17.1375 9.69998 16.6125 9.36248 16.275L3.02498 9.8625H19C19.45 9.8625 19.825 9.4875 19.825 9.0375C19.825 8.55 19.45 8.175 19 8.175Z"
-              />
+              <path d="M19 8.175H2.98748L9.36248 1.6875C9.69998 1.35 9.69998 0.825 9.36248 0.4875C9.02498 0.15 8.49998 0.15 8.16248 0.4875L0.399976 8.3625C0.0624756 8.7 0.0624756 9.225 0.399976 9.5625L8.16248 17.4375C8.31248 17.5875 8.53748 17.7 8.76248 17.7C8.98748 17.7 9.17498 17.625 9.36248 17.475C9.69998 17.1375 9.69998 16.6125 9.36248 16.275L3.02498 9.8625H19C19.45 9.8625 19.825 9.4875 19.825 9.0375C19.825 8.55 19.45 8.175 19 8.175Z" />
             </svg>
           </button>
         </div>
@@ -556,14 +571,31 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                 </h3>
 
                 <ul className="mb-6 flex flex-col gap-4">
-                  {group.menuItems.map((menuItem, menuIndex) => (
-                    <SidebarItem
-                      key={menuIndex}
-                      item={menuItem}
-                      pageName={pageName}
-                      setPageName={setPageName}
-                    />
-                  ))}
+                  {group.menuItems.map(
+                    (menuItem, menuIndex) => {
+                      let notForEmployee = ['HRIS','Projects','Pending Approval'];
+                      if(userDetails.user_role == 'employee' && !notForEmployee.includes(menuItem.label)){
+                        return (
+                          <SidebarItem
+                            key={menuIndex}
+                            item={menuItem}
+                            pageName={pageName}
+                            setPageName={setPageName}
+                          />
+                        ) 
+                      }
+                      else if(userDetails.user_role != 'employee'){
+                        return (
+                          <SidebarItem
+                            key={menuIndex}
+                            item={menuItem}
+                            pageName={pageName}
+                            setPageName={setPageName}
+                          />
+                        ) 
+                      }
+                    }
+                  )}
                 </ul>
               </div>
             ))}
