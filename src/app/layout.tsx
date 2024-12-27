@@ -29,9 +29,10 @@ useEffect(()=>{
   const authToken = localStorage.getItem('authToken');
   if(authToken == undefined){
     router.replace('/')
-  }else{
-    router.replace('/dashboard')
   }
+  // else{
+  //   router.replace('/dashboard')
+  // }
 },[])
 
   return (

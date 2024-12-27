@@ -253,8 +253,8 @@ export default function PendingApprovalList() {
   };
 
   const handleRegulariseCheckboxChange = (id: string, newSessionInfo: {}) => {
+    
     setregulariseRequestSelectedRows((prevSelectedRows) => {
-      // Check if the row is already selected
       const isAlreadySelected = prevSelectedRows.some(
         (row: any) => row.rowId === id,
       );
