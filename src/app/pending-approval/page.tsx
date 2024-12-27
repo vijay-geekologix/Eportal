@@ -20,7 +20,7 @@ import { useUserDetailsContext } from "@/context/UserDetailsContext";
 export default function PendingApprovalList() {
   const {userDetails, setUserDetails}:any = useUserDetailsContext();
   
-  if(userDetails.user_role == 'employee') return(<NotFoundPage/>);
+  if(userDetails?.user_role == 'employee') return(<NotFoundPage/>);
   
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
@@ -73,7 +73,6 @@ export default function PendingApprovalList() {
           requestStatus,
         );
         setRequestAttendanceTypeData(response.data.data);
-        console.log("sgsgdgs", response.data.data);
       } else if (requestType == "leaveApply") {
         setRequestEmployeeDetailsData([]);
         setRequestAttendanceTypeData([]);
@@ -85,7 +84,6 @@ export default function PendingApprovalList() {
           requestStatus,
         );
         setRequestLeaveApplyData(response.data.data);
-        console.log("sgsgdgs", response.data.data);
       } else if (requestType == "employeeDetails") {
         setRequestAttendanceTypeData([]);
         setRequestLeaveApplyData([]);
@@ -97,7 +95,6 @@ export default function PendingApprovalList() {
           requestStatus,
         );
         setRequestEmployeeDetailsData(response.data.data);
-        console.log("sgsgdgs", response.data.data);
       } else if (requestType == "regularise") {
         setRequestAttendanceTypeData([]);
         setRequestLeaveApplyData([]);
@@ -110,7 +107,6 @@ export default function PendingApprovalList() {
           requestStatus,
         );
         setRequestRegulariseData(response.data.data);
-        console.log("sgsgdgs34", response.data.data);
       } else {
         const response1 = await getAllrequestsEditAttendenceType(
           startDate2,
@@ -285,10 +281,6 @@ export default function PendingApprovalList() {
       fetchAttendenceTypeRequestData();
     }
   };
-
-  useEffect(() => {
-    console.log("gjgjg", regulariseRequestSelectedRows);
-  }, [regulariseRequestSelectedRows]);
 
   return (
     <DefaultLayout>

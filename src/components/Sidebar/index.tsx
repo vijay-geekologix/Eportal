@@ -16,7 +16,7 @@ interface SidebarProps {
 
 const menuGroups = [
   {
-    name: "DASHBORD",
+    name: "DASHBOARD",
     menuItems: [
       {
         icon: (
@@ -496,7 +496,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
   // const pathname = usePathname();
   // const { userDetails, setUserDetails }:any = useUserDetailsContext();
   // const [pageName, setPageName] = useLocalStorage("selectedMenu", "dashboard");
-  // const role = userDetails.user_role;
+  // const role = userDetails?.user_role;
   
   // const roleBasedAccess:any = {
   //   employee: ["/dashboard", "/attendence/myattendence", "/leave"],
@@ -574,7 +574,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                   {group.menuItems.map(
                     (menuItem, menuIndex) => {
                       let notForEmployee = ['HRIS','Projects','Pending Approval'];
-                      if(userDetails.user_role == 'employee' && !notForEmployee.includes(menuItem.label)){
+                      if(userDetails?.user_role == 'employee' && !notForEmployee.includes(menuItem.label)){
                         return (
                           <SidebarItem
                             key={menuIndex}
@@ -584,7 +584,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                           />
                         ) 
                       }
-                      else if(userDetails.user_role != 'employee'){
+                      else if(userDetails?.user_role != 'employee'){
                         return (
                           <SidebarItem
                             key={menuIndex}

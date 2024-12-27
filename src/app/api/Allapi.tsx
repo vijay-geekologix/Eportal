@@ -8,28 +8,15 @@ interface LoginResponse {
 const date = new Date();
 const currentDate = `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`;
 
-
 // Auth Api
-const login = async (data: any): Promise<void> => {
-
+const login = async (data: any): Promise<null|void> => {
   try {
     const response: any = await api.post<LoginResponse>("admin/login", data);
     const token = response.data.data.token;
-    // console.log("Res", response.data.data.user.firstName)
-    // Save the token in localStorage
     if (token) {
       localStorage.setItem("authToken", token);
       localStorage.setItem("Id", response.data.data.user._id);
       localStorage.setItem("esslId", response.data.data.user.esslId);
-      // localStorage.setItem("Name", response.data.data.user.firstName);
-      // localStorage.setItem("email", response.data.data.user.email);
-
-      // localStorage.setItem("user_role", response.data.data.user.user_role);
-
-      // localStorage.setItem(
-      //   "user_name",
-      //   `${response.data.data.user.firstName} ${response.data.data.user.lastName}`,
-      // );
       return response.data.data.user;
       console.log("Login successful! Token saved.");
     } else {
@@ -37,8 +24,20 @@ const login = async (data: any): Promise<void> => {
     }
   } catch (error) {
     console.error("Login failed:", error);
+    return null;
   }
 };
+
+const verifyAuthToken = async (): Promise<null|void> =>{
+  // try{
+  //   const token:any = localStorage.getItem('authToken');
+  //   const response:any = await api.post("Employee/verifyToken", token);
+  //   return response;
+  // }catch(error){
+  //   console.error("Invalid Token!", error);
+  //   return null;
+  // }
+}
 
 // Project Api
 const ProjectList = async (): Promise<any> => {
@@ -57,7 +56,6 @@ const CreateProject = async (data: any): Promise<any> => {
       "admin/projectDetails/createProjectDetails",
       data,
     );
-    console.log("Full Response:", response);
   } catch (error) {
     console.error("Error fetching project list:", error);
     throw error;
@@ -228,7 +226,6 @@ const putAllrequestsEditAttendenceType = async (
 //leave request Api
 const postRequestLeave = async (data: any): Promise<any> => {
   try {
-    console.log("leave apply data", data);
     const response = await api.post("/Employee/requests/requestLeave", data);
     return response.data;
   } catch (err) {
@@ -331,10 +328,8 @@ const putAllEmployeeDetailsRequest = async (
 
 // Regularise Request Api
 const postRegulariseRequest = async (data: any): Promise<any> => {
-  console.log('hhhhhhhhhhh',data);
   
   try {
-    console.log("Regularise data", data);
     const response = await api.post(
       "/Employee/requests/requestRegularise",
       data,
@@ -379,7 +374,6 @@ const putAllRegulariseRequest = async (
     if (requestData) params.requestData = requestData;
     if (approvalType) params.approvalType = approvalType;
     const response = await api.put("/Employee/requests/requestRegularise", params);
-    console.log('kkkks',response);
     return response;
   } catch (error) {
     console.error("Error update Regularise request:", error);
@@ -448,7 +442,6 @@ const DeleteAttrition = async (data: any): Promise<any> => {
 const CreateAttrition = async (data: any): Promise<any> => {
   try {
     const response = await api.post("/Employee/createAttrition", data);
-    console.log("response", response);
   } catch (error) {
     console.error("Error fetching project list:", error);
     throw error;
@@ -469,6 +462,7 @@ const getBiometricWorkingHour = async (): Promise<any> => {
 
 export {
   login,
+  verifyAuthToken,
   ProjectList,
   AttritionList,
   CreateAttrition,

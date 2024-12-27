@@ -28,9 +28,9 @@ import { useUserDetailsContext } from "@/context/UserDetailsContext";
 export default function AttendanceModule() {
   const router = useRouter();
   const {userDetails, setUserDetails}:any = useUserDetailsContext(); 
-  const [userName, setUserName] = useState(userDetails.firstName + " " + userDetails.lastName);
+  const [userName, setUserName] = useState(userDetails?.firstName + " " + userDetails?.lastName);
   const [attendanceData, setAttendanceData] = useState<any[]>([]);
-  const [userId, setUserId] = useState<any>(userDetails.esslId);
+  const [userId, setUserId] = useState<any>(userDetails?.esslId);
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
   const [month, setMonth] = useState("November");
@@ -98,7 +98,6 @@ export default function AttendanceModule() {
 
       // Set the main state for attendanceData
       setAttendanceData(attendanceData);
-      console.log("Attendance Data:", attendanceData);
 
       // Process for missing dates (Fridays and Mondays logic)
       const dateMap = attendanceData.reduce((acc, record) => {
@@ -163,11 +162,11 @@ export default function AttendanceModule() {
       const remainingSeconds = totalWorkingSeconds % 3600; // Remaining seconds after hours
 
       // Log results
-      console.log("Absent Count:", absentCount);
-      console.log("Half Day Count:", halfDayCount);
-      console.log("Present Count:", presentCount);
-      console.log("Total Working Hours:", totalWorkingHours);
-      console.log("Remaining Seconds:", remainingSeconds);
+      // console.log("Absent Count:", absentCount);
+      // console.log("Half Day Count:", halfDayCount);
+      // console.log("Present Count:", presentCount);
+      // console.log("Total Working Hours:", totalWorkingHours);
+      // console.log("Remaining Seconds:", remainingSeconds);
 
       // Optional: Scale attendance counts
       let absent = absentCount / 2;
@@ -238,7 +237,6 @@ export default function AttendanceModule() {
     checkIn: any,
     checkOut: any,
   ) => {
-    console.log("looooo", checkIn, "l", checkOut);
 
     setOldSessionInfo({
       date: date,
@@ -285,7 +283,6 @@ export default function AttendanceModule() {
         position: "top-right",
       });
     } 
-    console.log("Regularize form submitted:", regularizeForm);
     setShowRegularizeModal(false);
   };
 
@@ -300,7 +297,6 @@ export default function AttendanceModule() {
       requestReason,
     );
     setShowAttendencetypeEditModel((prev) => !prev);
-    console.log("attendence Type", e.target);
   };
 
   // Pagination
@@ -549,7 +545,6 @@ export default function AttendanceModule() {
                                                 {session1?.time || "N/A"}
                                               </p>
                                             </div>
-                                            {console.log("rte", session2?.time)}
                                             {session2 && (
                                               <div>
                                                 <p className="text-sm font-medium">
@@ -703,7 +698,7 @@ export default function AttendanceModule() {
             <form
               onSubmit={(e) => {
                 e.preventDefault();
-                handleRequestRegularizeSubmit();
+                handleRequestRegularizeSubmit(e);
               }}
               className="space-y-4"
             >

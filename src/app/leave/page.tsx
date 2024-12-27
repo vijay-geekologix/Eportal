@@ -13,7 +13,7 @@ const leaveTable = () => {
   const router = useRouter();
 const {userDetails, setUserDetails}:any = useUserDetailsContext(); 
   const [data, setData] = useState([]);
-  const [esslId, setEsslId] = useState<any>(userDetails.esslId);
+  const [esslId, setEsslId] = useState<any>(userDetails?.esslId);
 
   // Fetch data from the server
   useEffect(() => {
