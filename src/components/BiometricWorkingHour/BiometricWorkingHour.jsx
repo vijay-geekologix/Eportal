@@ -11,7 +11,7 @@ export default function BiometricWorkingHour({biometricApiData}){
 
   // biometric
   // const [esslUserID,setEsslUserID] = useState((localStorage.getItem('esslId')));  
-  const [esslUserID,setEsslUserID] = useState(userDetails.esslId);  
+  const [esslUserID,setEsslUserID] = useState(userDetails?.esslId);  
   let isEsslBiometricUserCheckin = false;
 
   const checkUserEsslID = () =>{

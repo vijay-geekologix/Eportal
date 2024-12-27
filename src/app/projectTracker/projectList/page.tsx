@@ -16,7 +16,7 @@ import { useUserDetailsContext } from "@/context/UserDetailsContext";
 const ProjectList4 = () => {
   const router = useRouter()
   const {userDetails, setUserDetails}:any = useUserDetailsContext();
-  if(userDetails.user_role == 'employee') return(<NotFoundPage/>);
+  if(userDetails?.user_role == 'employee') return(<NotFoundPage/>);
   const [projectData, setProjectData] = useState<any[]>([]);  // Holds the project list from the API
   const [currentPage, setCurrentPage] = useState(1);  // Track current page
   const [totalPages, setTotalPages] = useState(1);  // Track total pages

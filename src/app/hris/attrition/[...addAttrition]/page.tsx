@@ -44,7 +44,6 @@ const AttritionMaster = ({params:initialParams}) => {
     const data = formData
     try {
       const response = await CreateAttrition(data)
-       console.log("response",response)
       if (response.status == 200) {
         router.push('hris/attrition')
         toast.success("Attrition Creatd Successfull")
@@ -68,7 +67,6 @@ const AttritionMaster = ({params:initialParams}) => {
 
   useEffect(() => {
     if (!params || !params.addAttrition) return;
-    console.log('params',params);
     const fetchSpecifyEmployeeData = async () => {
       try {
         const response = await getSpecificAttrition(params.addAttrition[1], params.addAttrition[2]);
