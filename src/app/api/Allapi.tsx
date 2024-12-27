@@ -205,7 +205,7 @@ const getAllrequestsEditAttendenceType = async (
 };
 
 const putAllrequestsEditAttendenceType = async (
-  requestIds?: string[],
+  requestIds?: any[],
   approvalType?: string,
 ): Promise<any> => {
   try {
@@ -214,6 +214,24 @@ const putAllrequestsEditAttendenceType = async (
     if (approvalType) params.approvalType = approvalType;
     const response = await api.put(
       "/Employee/requests/requestEditAttendenceType",
+      params,
+    );
+    return response;
+  } catch (error) {
+    console.error("Error update attendance type request:", error);
+    throw error;
+  }
+};
+
+// update attendance type by admin
+const updateAttendenceTypeByAdmin = async (
+  data?: any,
+): Promise<any> => {
+  try {
+    const params: Record<string, any> = {};
+    if (data) params.data = data;
+    const response = await api.put(
+      "/Employee/requests/attendenceTypeUpdateByAdmin",
       params,
     );
     return response;
@@ -476,6 +494,7 @@ export {
   getAllrequestsEditAttendenceType,
   requestEditAttendenceType,
   putAllrequestsEditAttendenceType,
+  updateAttendenceTypeByAdmin,
   postRequestLeave,
   getAllrequestLeave,
   putAllrequestsLeave,

@@ -65,8 +65,7 @@ const EmployeeTable = () => {
     const handleUserNameClick = (employeeId: any, employeeName: any) => {
         router.push(`/hris/attrition/add-attrition/${employeeId}/${employeeName}`)
     }
-    useEffect(() => {
-    }, [employeeData])
+
     return (
         <DefaultLayout>
             <div className="mx-auto max-w-10xl px-4 md:px-6">
@@ -156,7 +155,7 @@ const EmployeeTable = () => {
                                         <th className="border px-2 py-1 text-xs sm:text-sm">Select</th>
                                         <th className="border px-2 py-1 text-xs sm:text-sm">Employee Name</th>
                                         <th className="border px-2 py-1 text-xs sm:text-sm">Joining Date</th>
-                                        <th className="border px-2 py-1 text-xs sm:text-sm">Resign Offer Date</th>
+                                        <th className="border px-2 py-1 text-xs sm:text-sm">Last working date</th>
                                         <th className="border px-2 py-1 text-xs sm:text-sm">Reason of Leaving</th>
                                     </tr>
                                 </thead>
@@ -179,12 +178,12 @@ const EmployeeTable = () => {
                                                         onChange={() => handleCheckboxChange(employee._id)}
                                                     />
                                                 </td>
-                                                <td className="border px-4 py-2 underline text-xs sm:text-sm text-blue-500 hover:text-blue-700" onClick={() => handleUserNameClick(employee._id, employee.employee_name)}>
+                                                <td className="border px-4 py-2 underline text-xs sm:text-sm text-blue-500 hover:text-blue-700 cursor-pointer" onClick={() => handleUserNameClick(employee._id, employee.employee_name)}>
                                                     {employee.employee_name}
                                                 </td>
                                                 <td className="border px-2 py-1 text-xs sm:text-sm">{new Date(employee.joining_date).toLocaleDateString('en-CA')}
                                                 </td>
-                                                <td className="border px-2 py-1 text-xs sm:text-sm">{new Date(employee.resign_offer_date).toLocaleDateString('en-CA')}</td>
+                                                <td className="border px-2 py-1 text-xs sm:text-sm">{new Date(employee.left_date).toLocaleDateString('en-CA')}</td>
                                                 <td className="border px-2 py-1 text-xs sm:text-sm">{employee.reason_of_leaving}</td>
                                             </tr>
                                         ))

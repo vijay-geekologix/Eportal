@@ -18,17 +18,18 @@ import {
   requestEditAttendenceType,
   postRegulariseRequest,
 } from "@/app/api/Allapi";
-import { toast } from "react-toastify";
+// import { toast } from "react-toastify";
+import toast from "react-hot-toast";
 import React from "react";
 import { useRouter } from "next/navigation";
 import { useUserDetailsContext } from "@/context/UserDetailsContext";
 
-
-
 export default function AttendanceModule() {
   const router = useRouter();
-  const {userDetails, setUserDetails}:any = useUserDetailsContext(); 
-  const [userName, setUserName] = useState(userDetails?.firstName + " " + userDetails?.lastName);
+  const { userDetails, setUserDetails }: any = useUserDetailsContext();
+  const [userName, setUserName] = useState(
+    userDetails?.firstName + " " + userDetails?.lastName,
+  );
   const [attendanceData, setAttendanceData] = useState<any[]>([]);
   const [userId, setUserId] = useState<any>(userDetails?.esslId);
   const [startDate, setStartDate] = useState("");
@@ -37,7 +38,8 @@ export default function AttendanceModule() {
   const [year, setYear] = useState("2024");
   const [expandedDate, setExpandedDate] = useState<string | null>(null);
   const [showRegularizeModal, setShowRegularizeModal] = useState(false);
-  const [showAttendencetypeEditModel, setShowAttendencetypeEditModel] = useState(false);   
+  const [showAttendencetypeEditModel, setShowAttendencetypeEditModel] =
+    useState(false);
   const [attendenceTypeDate, setAttendanceTypeDate] = useState("");
   const [attendenceType, setAttendanceType] = useState("Present");
   const [attendanceTypeFieldId, setAttendanceTypeFieldId] = useState("");
@@ -57,7 +59,7 @@ export default function AttendanceModule() {
     type: "both",
     reason: "",
   });
-  
+
   const [isLoading, setIsLoading] = useState(false);
   const [weekoOff, setWeekOff] = useState<any>();
 
@@ -237,7 +239,6 @@ export default function AttendanceModule() {
     checkIn: any,
     checkOut: any,
   ) => {
-
     setOldSessionInfo({
       date: date,
       esslId: checkIn.esslId,
@@ -261,13 +262,13 @@ export default function AttendanceModule() {
     setShowRegularizeModal(true);
   };
 
-  const handleRequestRegularizeSubmit = async (event:any) => {
+  const handleRequestRegularizeSubmit = async (event: any) => {
     // Here you would typically send this data to your backend
     try {
       const data = {
         userName: userName,
         applyDate: currentDate,
-        oldSessionInfo:oldSessionInfo,
+        oldSessionInfo: oldSessionInfo,
         newSessionInfo: regularizeForm,
       };
       const response = await postRegulariseRequest(data);
@@ -279,10 +280,13 @@ export default function AttendanceModule() {
       }
     } catch (error) {
       console.error("Error during Request sent:", error);
-      toast.error("An error occurred while Regularise Request sent, Please try again.", {
-        position: "top-right",
-      });
-    } 
+      toast.error(
+        "An error occurred while Regularise Request sent, Please try again.",
+        {
+          position: "top-right",
+        },
+      );
+    }
     setShowRegularizeModal(false);
   };
 
@@ -598,49 +602,6 @@ export default function AttendanceModule() {
                 </table>
               </div>
               {/* Pagination */}
-              {/* <div className="mt-4 flex items-center justify-between">
-                <div className="flex items-center">
-                  <span className="text-sm text-gray-700">
-                    Showing <span className="font-medium">{indexOfFirstItem + 1}</span> to{' '}
-                    <span className="font-medium">{Math.min(indexOfLastItem, attendanceData.length)}</span> of{' '}
-                    <span className="font-medium">{attendanceData.length}</span> results
-                  </span>
-                </div>
-                <div>
-                  <nav className="relative z-0 inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
-                    <button
-                      onClick={() => paginate(currentPage - 1)}
-                      disabled={currentPage === 1}
-                      className="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50"
-                    >
-                      <span className="sr-only">Previous</span>
-                      <ChevronLeftIcon className="h-5 w-5" aria-hidden="true" />
-                    </button>
-                    {Array.from({ length: Math.ceil(attendanceData.length / itemsPerPage) }).map((_, index) => (
-                      <button
-                        key={index}
-                        onClick={() => paginate(index + 1)}
-                        className={`relative inline-flex items-center px-4 py-2 border text-sm font-medium ${
-                          currentPage === index + 1
-                            ? 'z-10 bg-indigo-50 border-indigo-500 text-indigo-600'
-                            : 'bg-white border-gray-300 text-gray-500 hover:bg-gray-50'
-                        }`}
-                      >
-                        {index + 1}
-                      </button>
-                    ))}
-                    <button
-                      onClick={() => paginate(currentPage + 1)}
-                      disabled={currentPage === Math.ceil(attendanceData.length / itemsPerPage)}
-                      className="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50"
-                    >
-                      <span className="sr-only">Next</span>
-                      <ChevronRightIcon className="h-5 w-5" aria-hidden="true" />
-                    </button>
-                  </nav>
-                </div>
-              </div> */}
-
               <div className="mt-4 flex flex-col items-center justify-between sm:flex-row">
                 {/* Previous Button */}
                 <div className="mb-2 flex w-full justify-start sm:mb-0 sm:w-auto">
@@ -737,41 +698,6 @@ export default function AttendanceModule() {
                   <option value="checkOut">Check Out</option>
                 </select>
               </div>
-              {/* <div>
-                <label className="block text-sm font-medium text-gray-700">
-                  Check In
-                </label>
-                <input
-                  type="time"
-                  value={regularizeForm.checkInTime}
-                  onChange={(e) =>
-                    setRegularizeForm({
-                      ...regularizeForm,
-                      checkInTime: e.target.value,
-                    })
-                  }
-                  disabled={regularizeForm.type === "checkOut"}
-                  className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700">
-                  Check Out
-                </label>
-                <input
-                  type="time"
-                  value={regularizeForm.checkOutTime}
-                  onChange={(e) =>
-                    setRegularizeForm({
-                      ...regularizeForm,
-                      checkOutTime: e.target.value,
-                    })
-                  }
-                  disabled={regularizeForm.type === "checkIn"}
-                  className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
-                />
-              </div> */}
-
               <div>
                 <label className="block text-sm font-medium text-gray-700">
                   Check In
