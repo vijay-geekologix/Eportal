@@ -10,7 +10,7 @@ import { useUserDetailsContext } from "@/context/UserDetailsContext";
 
 export default function AttendanceModule() {
   const {userDetails, setUserDetails}:any = useUserDetailsContext();
-  if(userDetails.user_role == 'employee') return(<NotFoundPage/>);
+  if(userDetails?.user_role == 'employee') return(<NotFoundPage/>);
   const [attendanceData, setAttendanceData] = useState<any[]>([]);
   const [employeeData, setEmployeeData] = useState([]);
   const [userId, setUserId] = useState("");
@@ -58,7 +58,6 @@ export default function AttendanceModule() {
   //   try {
   //     const response = await AttendenceList(userId, startDate, endDate);
   //     setAttendanceData(response.data.result);
-  //     console.log('attendance ', response.data.result);
   //     if (response.data.result.length === 0) {
   //       setError("No data found");
   //     }
@@ -102,7 +101,7 @@ export default function AttendanceModule() {
         return acc;
       }, {});
 
-      const missingDateCount = Object.entries(dateMap).reduce((count, [date, day]) => {
+      const missingDateCount = Object.entries(dateMap).reduce((count, [date, day]:any) => {
         if (day.toLowerCase() === "friday") {
           const fridayDate = new Date(date);
           const mondayDate = new Date(fridayDate);
@@ -217,7 +216,6 @@ export default function AttendanceModule() {
   };
   const handleRegularizeSubmit = () => {
     // Here you would typically send this data to your backend
-    console.log("Regularize form submitted:", regularizeForm);
     setShowRegularizeModal(false);
   };
   // Pagination

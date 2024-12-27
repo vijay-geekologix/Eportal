@@ -7,6 +7,7 @@ import React, { useEffect, useState } from "react";
 import Loader from "@/components/common/Loader";
 import { Toaster } from "react-hot-toast";
 import {UserDetailsContextProvider} from '../context/UserDetailsContext'
+import { useRouter } from "next/navigation";
 
 
 export default function RootLayout({
@@ -16,12 +17,22 @@ export default function RootLayout({
 }>) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [loading, setLoading] = useState<boolean>(true);
+  const router = useRouter();
   // const pathname = usePathname();
-
 
   useEffect(() => {
     setTimeout(() => setLoading(false), 1000);
   }, []);
+
+// if user is not loged in so it'll redirect to login page  
+useEffect(()=>{
+  const authToken = localStorage.getItem('authToken');
+  if(authToken == undefined){
+    router.replace('/')
+  }else{
+    router.replace('/dashboard')
+  }
+},[])
 
   return (
     <html lang="en">

@@ -61,9 +61,9 @@ const ProfileBox = () => {
   const [tempSpecificEmployeeData, setTempSpecificEmployeeData] = useState<any>(
     {},
   );
-  const [esslId, setEsslId] = useState(userDetails.esslId);
-  const [userDbId, setUserDbId] = useState(userDetails._id);
-  const [userName, setUserName] = useState(userDetails.firstName + " " + userDetails.lastName);
+  const [esslId, setEsslId] = useState(userDetails?.esslId);
+  const [userDbId, setUserDbId] = useState(userDetails?._id);
+  const [userName, setUserName] = useState(userDetails?.firstName + " " + userDetails?.lastName);
 
   const [newPersonalInfo, setNewPersonalInfo] = useState<any>({});
   const [oldPersonalInfo, setOldPersonalInfo] = useState<any>({});

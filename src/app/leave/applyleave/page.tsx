@@ -14,8 +14,8 @@ function LeaveForm(){
   const date = new Date;
   const currentDate = `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`;
   const [formData, setFormData] = useState({
-    userName:userDetails.firstName + " " + userDetails.lastName,
-    esslId:userDetails.esslId,
+    userName:userDetails?.firstName + " " + userDetails?.lastName,
+    esslId:userDetails?.esslId,
     applyDate:currentDate,
     forPeriod:'',
     fromDate: "",
@@ -42,7 +42,6 @@ function LeaveForm(){
     e.preventDefault();
     router.push('/dashboard');
     const response = await postRequestLeave(formData);
-    console.log('helllllllo',formData , "naaa" , response);
   };
 
   const handleTotalDays = (e:any) =>{

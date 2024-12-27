@@ -12,7 +12,7 @@ import { useUserDetailsContext } from "@/context/UserDetailsContext";
 const EmployeeTable = () => {
     const router = useRouter();
     const {userDetails, setUserDetails}:any = useUserDetailsContext();
-    if(userDetails.user_role == 'employee') return(<NotFoundPage/>);
+    if(userDetails?.user_role == 'employee') return(<NotFoundPage/>);
 
     const [employeeData, setEmployeeData] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
@@ -33,7 +33,6 @@ const EmployeeTable = () => {
             //     draggable: true,
             //     progress: undefined,
             // });
-            console.log("res", response.data);
         } catch (error) {
             console.error("Error loading employee list:", error);
             toast.error("Failed to load employee list. Please try again.", {
@@ -73,9 +72,6 @@ const EmployeeTable = () => {
             }
         });
     };
-    useEffect(() => {
-        console.log("Selected Employee IDs:", selectedEmployeeIds);
-    }, [selectedEmployeeIds]);
 
     const handleDeleteSelected = async () => {
         if (selectedEmployeeIds.length === 0) {

@@ -55,7 +55,7 @@ interface FormData {
 const ProjectForm = () => {
     const router = useRouter()
     const {userDetails, setUserDetails}:any = useUserDetailsContext();
-    if(userDetails.user_role == 'employee') return(<NotFoundPage/>);
+    if(userDetails?.user_role == 'employee') return(<NotFoundPage/>);
     const [step, setStep] = useState(1)
     const [formData, setFormData] = useState<FormData>({
         personalInfo: { selectProject: '', projectName: '', projectType: '', source: '', representative: '', clientName: '', personName: '', personNumber: '', date1talk: '', details: '', sendEmail: false, sendWhatsapp: false },

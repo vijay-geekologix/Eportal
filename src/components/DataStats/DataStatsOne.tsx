@@ -509,7 +509,7 @@ const DataStatsOne: React.FC<dataStats> = () => {
 return (
 <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-4">
        {/* Card 1 */}
-   {userDetails.user_role=='employee' ? (
+   {userDetails?.user_role=='employee' ? (
   <div className="max-w-md w-full mx-auto rounded-lg shadow-lg bg-gradient-to-r from-blue-50 to-blue-100 border border-blue-200">
   <div className="px-6 py-5">
     <h1 className="font-bold text-2xl text-blue-800 mb-4">Important Notice</h1>

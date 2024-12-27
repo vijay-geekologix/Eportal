@@ -49,12 +49,9 @@ const EmployeeTable = () => {
             alert("No employees selected!");
             return;
         }
-        console.log("eele", selectedEmployeeIds)
         try {
             const data = { "_id": selectedEmployeeIds }
-            console.log('dfafaf',data)
             const response = await DeleteAttrition(data);
-            console.log("Deleted IDs:", selectedEmployeeIds);
             employeelist();
             setSelectedEmployeeIds([]);
             alert("Selected employees deleted successfully!");
@@ -139,7 +136,6 @@ const EmployeeTable = () => {
                                                         onChange={() => handleCheckboxChange(employee._id)}
                                                     />
                                                 </td>
-                                                {console.log('heyeyeeyyee',employee._id)}
                                                 <td className="border px-4 py-2 underline text-blue-500 hover:text-blue-700" onClick={()=>handleUserNameClick(employee._id ,employee.employee_name)}>{employee.employee_name}</td>
                                                 <td className="border px-4 py-2">{employee.joining_date}</td>
                                                 <td className="border px-4 py-2">{employee.email}</td>

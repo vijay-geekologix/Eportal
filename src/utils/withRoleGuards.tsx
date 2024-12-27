@@ -12,7 +12,7 @@
 // export function withRoleGuard(Component: any) {
 //     const {userDetails}:any = useUserDetailsContext();
 //     return function RoleGuardedComponent(props: any) {
-//     const role = userDetails.user_role;
+//     const role = userDetails?.user_role;
 //     const router = useRouter();
 
 //     useEffect(() => {
