@@ -149,7 +149,7 @@ const editAttendenceType = async (
   }
 };
 
-// leave Apply, change Attendence Leaves , change employee Details , Regularise requests  Api;
+// leave Apply, change Attendence Leaves , change employee Details , Regularise requests  Api , Leave Balance Records;
 // ------------------------------------------------->
 
 const requestEditAttendenceType = async (
@@ -400,6 +400,59 @@ const putAllRegulariseRequest = async (
 };
 
 
+// Leave Balance Records
+
+const postLeaveBalanceRecords = async (data: any): Promise<any> => {
+  
+  try {
+    const response = await api.post(
+      "/Employee/leaveBalanceRecords/records",
+      data,
+    );
+    return response.data;
+  } catch (err) {
+    console.log("Error during creating Regularise Request", err);
+  }
+};
+
+const getAllLeaveBalanceRecords = async (
+  employeeId?: string,
+  year?: string,
+): Promise<any> => {
+  try {
+    const params: Record<string, any> = {};
+    if (employeeId) params.employeeId = employeeId;
+    if (year) params.year = year;
+    const response = await api.get(
+      "/Employee/leaveBalanceRecords/records",
+      params,
+    );
+    return response;
+  } catch (error) {
+    console.error("Error fetching Regularise request list:", error);
+    throw error;
+  }
+};
+
+
+const putLeaveBalanceRecords = async (
+  requestData?: any[],
+  approvalType?: string,
+): Promise<any> => {
+  
+  try {
+    const params: Record<string, any> = {};
+    if (requestData) params.requestData = requestData;
+    if (approvalType) params.approvalType = approvalType;
+    const response = await api.put("/Employee/leaveBalanceRecords/records", params);
+    return response;
+  } catch (error) {
+    console.error("Error update Regularise request:", error);
+    throw error;
+  }
+};
+
+
 // ------------------------------------------------->
 
 const WeekHolday = async (
@@ -480,7 +533,6 @@ const getBiometricWorkingHour = async (): Promise<any> => {
 
 export {
   login,
-  verifyAuthToken,
   ProjectList,
   AttritionList,
   CreateAttrition,
@@ -504,6 +556,9 @@ export {
   postRegulariseRequest,
   getAllRegulariseRequest,
   putAllRegulariseRequest,
+  postLeaveBalanceRecords,
+  getAllLeaveBalanceRecords,
+  putLeaveBalanceRecords,
   getSpecificAttrition,
   DeleteAttrition,
   WeekHolday,
