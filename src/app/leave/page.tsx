@@ -1,24 +1,28 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { getAllrequestLeave } from "@/app/api/Allapi";
+import { getAllrequestLeave , getAllLeaveBalanceRecords } from "@/app/api/Allapi";
 import DefaultLayout from "@/components/Layouts/DefaultLaout";
 import Breadcrumb from "@/components/Breadcrumbs/Breadcrumb";
 import { useRouter } from "next/navigation";
 import { Link } from "react-router-dom";
 import { useUserDetailsContext } from "@/context/UserDetailsContext";
-// const {userDetails, setUserDetails}:any = useUserDetailsContext(); 
 
 const leaveTable = () => {
   const router = useRouter();
 const {userDetails, setUserDetails}:any = useUserDetailsContext(); 
-  const [data, setData] = useState([]);
+  const [leaveRequestData, setLeaveRequestData] = useState<any>([]);
   const [esslId, setEsslId] = useState<any>(userDetails?.esslId);
-
+  const [userid,setUserId] = useState<any>(userDetails._id);
+  const [leaveBalanceRecordsData , setLeaveBalanceRecordsData] = useState<any>([]);
+  const [monthRecords,setMonthRecords] = useState<any>({});
+  
   // Fetch data from the server
   useEffect(() => {
     const fetchData = async () => {
       try {
+
+        // first 4 parameter is undefined because getAllrequestLeave also used at pending-approval page so that's why this function required 5 arguments , 1) startDate 2) endDate 3) requestType 4) requestStatus 5) esslId
         const result = await getAllrequestLeave(
           undefined,
           undefined,
@@ -27,7 +31,14 @@ const {userDetails, setUserDetails}:any = useUserDetailsContext();
           esslId,
         );
 
-        setData(result.data.data);
+        setLeaveRequestData(result.data.data);
+        const result2 = await getAllLeaveBalanceRecords(
+          esslId,
+          '2024'
+        )
+        console.log('lkkimsd',result2.data.data);
+        setLeaveBalanceRecordsData(result2.data.data);
+        setMonthRecords(Object.entries(result2.data.data.monthlyRecords))
       } catch (error) {
         console.error("Error fetching data:", error);
       }
@@ -39,10 +50,9 @@ const {userDetails, setUserDetails}:any = useUserDetailsContext();
     router.push("/leave/applyleave");
   };
 
-  // useEffect(()=>{
-  //   alert(data);
-  //   console.log('dataaa',data);
-  // },[data])
+  useEffect(()=>{
+    console.log('dataaa',monthRecords);
+  },[monthRecords])
 
   return (
     <DefaultLayout>
@@ -92,8 +102,8 @@ const {userDetails, setUserDetails}:any = useUserDetailsContext();
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-200 bg-white">
-                      {data.length > 0 ? (
-                        data.map((item: any, index: any) => (
+                      {leaveRequestData.length > 0 ? (
+                        leaveRequestData.map((item: any, index: any) => (
                           <tr key={index} className="hover:bg-gray-50">
                             <td className="whitespace-nowrap border px-6 py-4 text-sm text-gray-500">
                               {item.applyDate || "N/A"}
@@ -182,23 +192,23 @@ const {userDetails, setUserDetails}:any = useUserDetailsContext();
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-200 bg-white">
-                      {data.length > 0 ? (
-                        data.map((item: any, index: any) => (
+                      {monthRecords.length > 0 ? (
+                        monthRecords.map((arrItem: any, index: any) => (
                           <tr key={index} className="hover:bg-gray-50">
                             <td className="whitespace-nowrap border px-6 py-4 text-sm text-gray-500">
-                              {item.month || "N/A"}
+                              {arrItem[0] || "N/A"}
                             </td>
                             <td className="whitespace-nowrap border px-6 py-4 text-sm text-gray-500">
-                              {item.openingBalance || "N/A"}
+                              {arrItem[1]?.openingBalance || "N/A"}
                             </td>
                             <td className="whitespace-nowrap border px-6 py-4 text-sm text-gray-500">
-                              {item.plBalance || "N/A"}
+                              {arrItem[1]?.credits || "N/A"}
                             </td>
                             <td className="whitespace-nowrap border px-6 py-4 text-sm text-gray-500">
-                              {item.consume || "N/A"}
+                              {arrItem[1]?.leavesTaken}
                             </td>
                             <td className="whitespace-nowrap border px-6 py-4 text-sm text-gray-500">
-                              {item.closingBalance || "N/A"}
+                              {arrItem[1]?.closingBalance || "N/A"}
                             </td>
                           </tr>
                           ))
