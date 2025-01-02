@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { useUserDetailsContext } from "@/context/UserDetailsContext";
 
+// this component is used in DataStats/DataStatsOne.tsx
 export default function BiometricWorkingHour({biometricApiData}){
 
    const {userDetails, setUserDetails} = useUserDetailsContext(); 

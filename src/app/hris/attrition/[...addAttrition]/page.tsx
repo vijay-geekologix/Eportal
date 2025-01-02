@@ -6,9 +6,9 @@ import { getSpecificAttrition ,CreateAttrition } from "@/app/api/Allapi";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
 
-const AttritionMaster = ({params:initialParams}) => {
+const AttritionMaster = ({params:initialParams}:any) => {
   const [params, setParams] = useState<any | null>(null);
-  const [specificAttritionData , setSpecificAttritionData] = useState([]);
+  const [specificAttritionData , setSpecificAttritionData] = useState<any>([]);
   const router = useRouter()
   const [formData, setFormData] = useState({
     employee_name: "",
@@ -83,7 +83,7 @@ const AttritionMaster = ({params:initialParams}) => {
 
   }, [params]);
 
-  const formatDateForInput = (isoString) => {
+  const formatDateForInput = (isoString:any) => {
     return isoString ? new Date(isoString).toISOString().split("T")[0] : "";
   };
 

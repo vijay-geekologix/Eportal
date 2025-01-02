@@ -11,7 +11,6 @@ export default function Home() {
   }
   return (
     <>
-      <Toaster position="top-right" reverseOrder={false} />
       <DefaultLayout>
         <ECommerce />
       </DefaultLayout>

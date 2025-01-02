@@ -13,7 +13,7 @@ const EmployeeTable = () => {
   const { userDetails, setUserDetails }: any = useUserDetailsContext();
   if (userDetails?.user_role == "employee") return <NotFoundPage />;
 
-  const [employeeData, setEmployeeData] = useState([]);
+  const [employeeData, setEmployeeData] = useState<any>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedEmployeeIds, setSelectedEmployeeIds] = useState<any>([]);
   const rowsPerPage = 10;
@@ -250,7 +250,6 @@ const EmployeeTable = () => {
                               employee._id,
                             )
                           }
-                          value={employee.firstName}
                         >
                           {employee.firstName}
                         </td>

@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { getAllrequestLeave , getAllLeaveBalanceRecords } from "@/app/api/Allapi";
+import { getAllrequestLeave , getLeaveBalanceRecords } from "@/app/api/Allapi";
 import DefaultLayout from "@/components/Layouts/DefaultLaout";
 import Breadcrumb from "@/components/Breadcrumbs/Breadcrumb";
 import { useRouter } from "next/navigation";
@@ -10,40 +10,41 @@ import { useUserDetailsContext } from "@/context/UserDetailsContext";
 
 const leaveTable = () => {
   const router = useRouter();
-const {userDetails, setUserDetails}:any = useUserDetailsContext(); 
+  const {userDetails, setUserDetails}:any = useUserDetailsContext(); 
   const [leaveRequestData, setLeaveRequestData] = useState<any>([]);
   const [esslId, setEsslId] = useState<any>(userDetails?.esslId);
   const [userid,setUserId] = useState<any>(userDetails._id);
   const [leaveBalanceRecordsData , setLeaveBalanceRecordsData] = useState<any>([]);
-  const [monthRecords,setMonthRecords] = useState<any>({});
+  const [monthRecords,setMonthRecords] = useState<any>([]);
+  const date = new Date();
+  const year = date.getFullYear();
   
   // Fetch data from the server
   useEffect(() => {
-    const fetchData = async () => {
+    ( async () => {
       try {
 
         // first 4 parameter is undefined because getAllrequestLeave also used at pending-approval page so that's why this function required 5 arguments , 1) startDate 2) endDate 3) requestType 4) requestStatus 5) esslId
-        const result = await getAllrequestLeave(
-          undefined,
-          undefined,
-          undefined,
-          undefined,
-          esslId,
-        );
-
-        setLeaveRequestData(result.data.data);
-        const result2 = await getAllLeaveBalanceRecords(
-          esslId,
-          '2024'
-        )
-        console.log('lkkimsd',result2.data.data);
-        setLeaveBalanceRecordsData(result2.data.data);
-        setMonthRecords(Object.entries(result2.data.data.monthlyRecords))
+        const [leaveRequest,leaveBalance] = await Promise.all([
+          getAllrequestLeave(
+           undefined,
+           undefined,
+           undefined,
+           undefined,
+           esslId,
+          ),
+          getLeaveBalanceRecords(
+           userid,
+           year,
+          )
+        ]);
+        setLeaveRequestData(leaveRequest.data.data);
+        setLeaveBalanceRecordsData(leaveBalance.data.data);
+        setMonthRecords(Object.entries(leaveBalance.data.data.monthlyRecords))
       } catch (error) {
         console.error("Error fetching data:", error);
       }
-    };
-    fetchData();
+    })();
   }, []);
 
   const handleApply = () => {
@@ -195,7 +196,7 @@ const {userDetails, setUserDetails}:any = useUserDetailsContext();
                       {monthRecords.length > 0 ? (
                         monthRecords.map((arrItem: any, index: any) => (
                           <tr key={index} className="hover:bg-gray-50">
-                            <td className="whitespace-nowrap border px-6 py-4 text-sm text-gray-500">
+                            <td className="whitespace-nowrap border px-6 py-4 text-sm text-gray-500 font-semibold">
                               {arrItem[0] || "N/A"}
                             </td>
                             <td className="whitespace-nowrap border px-6 py-4 text-sm text-gray-500">

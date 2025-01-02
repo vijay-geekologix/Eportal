@@ -17,36 +17,14 @@ import {
   putAllRegulariseRequest,
   updateAttendenceTypeByAdmin,
 } from "@/app/api/Allapi";
+import { log } from "console";
 
 export default function AttendanceModule() {
   const router = useRouter();
   const { userDetails, setUserDetails }: any = useUserDetailsContext();
   if (userDetails?.user_role == "employee") return <NotFoundPage />;
 
-  // const [attendanceData, setAttendanceData] = useState<any[]>([]);
   const [employeeData, setEmployeeData] = useState([]);
-  // const [userId, setUserId] = useState("");
-  // const [startDate, setStartDate] = useState("");
-  // const [endDate, setEndDate] = useState("");
-  // const [month, setMonth] = useState("November")
-  // const [year, setYear] = useState("2024")
-  // const [expandedDate, setExpandedDate] = useState<string | null>(null);
-  // const [showRegularizeModal, setShowRegularizeModal] = useState(false);
-  // const [AbsentCount, setAbsentCount] = useState<any>('')
-  // const [HalfDayCount, setHalfDayCount] = useState<any>('')
-  // const [PresentCount, setPresentCount] = useState<any>('')
-  // const [WorkingHours, setWorkingHours] = useState<any>('')
-  // const [regularizeForm, setRegularizeForm] = useState({
-  //   date: "",
-  //   checkIn: "",
-  //   checkOut: "",
-  //   type: "both"
-  // });
-  // const [isLoading, setIsLoading] = useState(false);
-  // const [weekoOff, setWeekOff] = useState<any>();
-  // const [error, setError] = useState<string | null>(null);
-  // const [currentPage, setCurrentPage] = useState(1);
-  // const [itemsPerPage, setItemsPerPage] = useState(10);
   const [userName, setUserName] = useState(
     userDetails?.firstName + " " + userDetails?.lastName,
   );
@@ -67,7 +45,7 @@ export default function AttendanceModule() {
   const [AbsentCount, setAbsentCount] = useState<any>("");
   const [HalfDayCount, setHalfDayCount] = useState<any>("");
   const [PresentCount, setPresentCount] = useState<any>("");
-  const [WorkingHours, setWorkingHours] = useState<any>("");
+  const [WorkingHours, setWorkingHours] = useState<any>({});
   const [regularizeForm, setRegularizeForm] = useState({
     date: "",
     esslId: "",
@@ -105,9 +83,11 @@ export default function AttendanceModule() {
   const fetchAttendanceData = async () => {
     setIsLoading(true);
     setError(null);
-
+    setAbsentCount(0);
+    setHalfDayCount(0);
+    setPresentCount(0);
+    setWeekOff(0)
     try {
-      // Define default dates
       const date = new Date();
       const startDate2 = startDate !== "" ? startDate : "2024-11-20";
       const endDate2 =
@@ -115,25 +95,21 @@ export default function AttendanceModule() {
           ? endDate
           : `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`;
 
-      // Fetch attendance data from API
       const response = await AttendenceList(userId, startDate2, endDate2);
       const attendanceData = response.data.result;
       const attendanceData1 = response.data.result;
 
-      // Validate attendance data
       if (!Array.isArray(attendanceData) || attendanceData.length === 0) {
         setError("No data found");
         toast.error("No attendance data available.");
         return;
       }
 
-      // Set the main state for attendanceData
       setAttendanceData(attendanceData);
       console.log("Attendance Data:", attendanceData);
 
-      // Process for missing dates (Fridays and Mondays logic)
       const dateMap = attendanceData.reduce((acc, record) => {
-        acc[record.date] = record.day; // Assuming `record.date` and `record.day` exist
+        acc[record.date] = record.day;
         return acc;
       }, {});
 
@@ -142,9 +118,8 @@ export default function AttendanceModule() {
           if (day.toLowerCase() === "friday") {
             const fridayDate = new Date(date);
             const mondayDate = new Date(fridayDate);
-            mondayDate.setDate(mondayDate.getDate() + 3); // Add 3 days to get Monday
+            mondayDate.setDate(mondayDate.getDate() + 3);
 
-            // Get all dates between Friday and Monday
             let currentDate = new Date(fridayDate);
             currentDate.setDate(currentDate.getDate() + 1);
 
@@ -161,33 +136,38 @@ export default function AttendanceModule() {
 
       console.log("Missing Dates Count:", missingDateCount);
       setWeekOff(missingDateCount);
-      // Initialize attendance counts and total working hours
       let absentCount = 0;
       let halfDayCount = 0;
       let presentCount = 0;
-      let totalWorkingSeconds = 0; // To store total working seconds
+      let totalWorkingSeconds = 0;
 
       if (Array.isArray(attendanceData1)) {
-        attendanceData1.forEach((record) => {
-          if (Array.isArray(record.records)) {
-            record.records.forEach((subRecord: any) => {
-              // Count attendance types
-              if (subRecord.attendenceType === "Absent") {
+        attendanceData1.forEach((record,index) => {
+          
+          let recordsLen = record.records.length - 1;
+          let recordsData = record.records;
+          console.log('recordssdsd',recordsData);
+
+          if (recordsData[recordsLen].attendenceType === "Absent") {
                 absentCount++;
-              } else if (subRecord.attendenceType === "Half Day") {
+                console.log('records',absentCount);
+                
+              } else if ( recordsData[recordsLen].attendenceType === "Half Day") {
                 halfDayCount++;
-              } else if (subRecord.attendenceType === "Present") {
+                // pervDate = subRecord.date;
+          console.log('counttt',halfDayCount);
+              } else if (recordsData[recordsLen].attendenceType === "Present") {
                 presentCount++;
               }
 
               // Sum up working hours (assuming workingHour is in seconds)
-              if (subRecord.workingHour) {
-                totalWorkingSeconds += parseInt(subRecord.workingHour, 10); // Convert to number
+              if (recordsData[recordsLen].workingHour) {
+                totalWorkingSeconds += parseInt(recordsData[recordsLen].workingHour, 10); // Convert to number
               }
-            });
-          }
-        });
-      }
+           
+      })}
+
+
 
       // Calculate total working time in hours and seconds
       const totalWorkingHours = Math.floor(totalWorkingSeconds / 3600); // Convert seconds to hours
@@ -201,17 +181,15 @@ export default function AttendanceModule() {
       console.log("Remaining Seconds:", remainingSeconds);
 
       // Optional: Scale attendance counts
-      let absent = absentCount / 2;
-      let halfday = halfDayCount / 2;
-      let present = presentCount / 2;
+      // let absent = absentCount / 2;
+      // let halfday = halfDayCount / 2;
+      // let present = Math.floor(presentCount / 2);
 
-      // Optional: Set counts in state
-      setAbsentCount(absent);
-      setHalfDayCount(halfday);
-      setPresentCount(present);
-
-      // Optional: Set working hours in state or a variable
+      setAbsentCount(absentCount);
+      setHalfDayCount(halfDayCount);
+      setPresentCount(presentCount);
       setWorkingHours({ totalWorkingHours, remainingSeconds });
+
       console.log("totalWorkingHours", totalWorkingHours);
     } catch (error) {
       console.error("Error fetching attendance data:", error);
@@ -222,167 +200,10 @@ export default function AttendanceModule() {
     }
   };
 
-  // useEffect(() => {
-  //   fetchAttendanceData();
-  // }, [employeeData]);
-
-  // const handleFilter = () => {
-  //   fetchAttendanceData();
-  // };
-
-  // const toggleSessionDetails = (date: string, index: any) => {
-  //   setExpandedDate(expandedDate === date ? null : date);
-  // };
-
-  // //   setRegularizeForm({
-  // //     date,
-  // //     checkIn: "09:00",
-  // //     checkOut: "18:00",
-  // //     type: "both"
-  // //   });
-  // //   setShowRegularizeModal(true);
-  // // };
-  // const handleRegularize = (date: string, checkIn: any, checkOut: any) => {
-  //   setRegularizeForm({
-  //     date,
-  //     checkIn: checkIn.time,
-  //     checkOut: checkOut.time,
-  //     type: "both"
-  //   });
-  //   setShowRegularizeModal(true);
-  // };
-  // const handleRegularizeSubmit = () => {
-  //   // Here you would typically send this data to your backend
-  //   setShowRegularizeModal(false);
-  // };
-  // // Pagination
-  // const indexOfLastItem = currentPage * itemsPerPage;
-  // const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  // const currentItems = attendanceData.slice(indexOfFirstItem, indexOfLastItem);
-  // const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
-
   useEffect(() => {
     fetchAttendanceData();
     fetchWeekHolidaData();
   }, []);
-  // const fetchAttendanceData = async () => {
-  //   setIsLoading(true);
-  //   setError(null);
-
-  //   try {
-  //     // Define default dates
-  //     const date = new Date();
-  //     const startDate2 = startDate !== "" ? startDate : "2024-11-20";
-  //     const endDate2 =
-  //       endDate !== ""
-  //         ? endDate
-  //         : `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`;
-
-  //     // Fetch attendance data from API
-  //     const response = await AttendenceList(userId, startDate2, endDate2);
-  //     const attendanceData = response.data.result;
-  //     const attendanceData1 = response.data.result;
-
-  //     // Validate attendance data
-  //     if (!Array.isArray(attendanceData) || attendanceData.length === 0) {
-  //       setError("No data found");
-  //       toast.error("No attendance data available.");
-  //       return;
-  //     }
-
-  //     // Set the main state for attendanceData
-  //     setAttendanceData(attendanceData);
-
-  //     // Process for missing dates (Fridays and Mondays logic)
-  //     const dateMap = attendanceData.reduce((acc, record) => {
-  //       acc[record.date] = record.day; // Assuming `record.date` and `record.day` exist
-  //       return acc;
-  //     }, {});
-
-  //     const missingDateCount: any = Object.entries(dateMap).reduce(
-  //       (count, [date, day]: any) => {
-  //         if (day.toLowerCase() === "friday") {
-  //           const fridayDate = new Date(date);
-  //           const mondayDate = new Date(fridayDate);
-  //           mondayDate.setDate(mondayDate.getDate() + 3); // Add 3 days to get Monday
-
-  //           // Get all dates between Friday and Monday
-  //           let currentDate = new Date(fridayDate);
-  //           currentDate.setDate(currentDate.getDate() + 1);
-
-  //           while (currentDate < mondayDate) {
-  //             const formattedDate = currentDate.toISOString().split("T")[0];
-  //             if (!dateMap[formattedDate]) count++;
-  //             currentDate.setDate(currentDate.getDate() + 1);
-  //           }
-  //         }
-  //         return count;
-  //       },
-  //       0,
-  //     );
-
-  //     console.log("Missing Dates Count:", missingDateCount);
-  //     setWeekOff(missingDateCount);
-  //     // Initialize attendance counts and total working hours
-  //     let absentCount = 0;
-  //     let halfDayCount = 0;
-  //     let presentCount = 0;
-  //     let totalWorkingSeconds = 0; // To store total working seconds
-
-  //     if (Array.isArray(attendanceData1)) {
-  //       attendanceData1.forEach((record) => {
-  //         if (Array.isArray(record.records)) {
-  //           record.records.forEach((subRecord: any) => {
-  //             // Count attendance types
-  //             if (subRecord.attendenceType === "Absent") {
-  //               absentCount++;
-  //             } else if (subRecord.attendenceType === "Half Day") {
-  //               halfDayCount++;
-  //             } else if (subRecord.attendenceType === "Present") {
-  //               presentCount++;
-  //             }
-
-  //             // Sum up working hours (assuming workingHour is in seconds)
-  //             if (subRecord.workingHour) {
-  //               totalWorkingSeconds += parseInt(subRecord.workingHour, 10); // Convert to number
-  //             }
-  //           });
-  //         }
-  //       });
-  //     }
-
-  //     // Calculate total working time in hours and seconds
-  //     const totalWorkingHours = Math.floor(totalWorkingSeconds / 3600); // Convert seconds to hours
-  //     const remainingSeconds = totalWorkingSeconds % 3600; // Remaining seconds after hours
-
-  //     // Log results
-  //     // console.log("Absent Count:", absentCount);
-  //     // console.log("Half Day Count:", halfDayCount);
-  //     // console.log("Present Count:", presentCount);
-  //     // console.log("Total Working Hours:", totalWorkingHours);
-  //     // console.log("Remaining Seconds:", remainingSeconds);
-
-  //     // Optional: Scale attendance counts
-  //     let absent = absentCount / 2;
-  //     let halfday = halfDayCount / 2;
-  //     let present = presentCount / 2;
-
-  //     // Optional: Set counts in state
-  //     setAbsentCount(absent);
-  //     setHalfDayCount(halfday);
-  //     setPresentCount(present);
-
-  //     // Optional: Set working hours in state or a variable
-  //     setWorkingHours({ totalWorkingHours, remainingSeconds });
-  //     console.log("totalWorkingHours", totalWorkingHours);
-  //   } catch (error) {
-  //     console.error("Error fetching attendance data:", error);
-  //     setError("Failed to fetch attendance data. Please try again.");
-  //     toast.error("Failed to fetch attendance data. Please try again.");
-  //   } finally {
-  //     setIsLoading(false);
-  //   }
-  // };
 
   const [totalCounts, setTotalCounts] = useState({
     attendance: 0,
