@@ -32,7 +32,7 @@ const DropdownUser = () => {
         </span>
 
         <span className="flex items-center gap-2 font-medium text-dark dark:text-dark-6">
-          <span className="hidden lg:block">Jhon Smith</span>
+          <span className="hidden lg:block">{`${userDetails.firstName} ${userDetails.lastName}`}</span>
 
           <svg
             className={`fill-current duration-200 ease-in ${dropdownOpen && "rotate-180"}`}
@@ -55,7 +55,7 @@ const DropdownUser = () => {
       {/* <!-- Dropdown Star --> */}
       {dropdownOpen && (
         <div
-          className={`absolute right-0 mt-7.5 flex w-[280px] flex-col rounded-lg border-[0.5px] border-stroke bg-white shadow-default dark:border-dark-3 dark:bg-gray-dark`}
+          className={`absolute right-0 mt-7.5 flex w-[auto] flex-col rounded-lg border-[0.5px] border-stroke bg-white shadow-default dark:border-dark-3 dark:bg-gray-dark`}
         >
           <div className="flex items-center gap-2.5 px-5 pb-5.5 pt-3.5">
             <span className="relative block h-12 w-12 rounded-full">
@@ -77,10 +77,11 @@ const DropdownUser = () => {
 
             <span className="block">
               <span className="block font-medium text-dark dark:text-white">
-                Jhon Smith
+                {userDetails.firstName}
               </span>
               <span className="block font-medium text-dark-5 dark:text-dark-6">
-                jonson@nextadmin.com
+                {/* {`${userDetails.email.slice(0,20)}...` } */}
+                {userDetails.email}
               </span>
               <span className="block mt-2 font-medium text-dark-5 dark:text-dark-6">
                 Employee code {userDetails?.esslId}

@@ -6,7 +6,6 @@ import { login } from "@/app/api/Allapi";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
 import { useUserDetailsContext } from "@/context/UserDetailsContext";
-import {verifyAuthToken} from '@/app/api/Allapi'
 
 const images = [
   "/gif/Developers Gif.gif",
@@ -164,17 +163,6 @@ export default function Signin() {
                   </button>
                 </div>
               </form>
-            </div>
-            <div className="flex justify-center border-t border-gray-200 bg-gray-50 px-8 py-4">
-              <p className="text-xs text-gray-600">
-                Don't have an account?{" "}
-                <a
-                  href="#"
-                  className="font-medium text-indigo-900 hover:text-indigo-600"
-                >
-                  Sign up
-                </a>
-              </p>
             </div>
           </div>
         </div>

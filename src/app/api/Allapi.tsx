@@ -399,9 +399,7 @@ const putAllRegulariseRequest = async (
   }
 };
 
-
 // Leave Balance Records
-
 const postLeaveBalanceRecords = async (data: any): Promise<any> => {
   
   try {
@@ -415,9 +413,9 @@ const postLeaveBalanceRecords = async (data: any): Promise<any> => {
   }
 };
 
-const getAllLeaveBalanceRecords = async (
+const getLeaveBalanceRecords = async (
   employeeId?: string,
-  year?: string,
+  year?: Number,
 ): Promise<any> => {
   try {
     const params: Record<string, any> = {};
@@ -434,16 +432,12 @@ const getAllLeaveBalanceRecords = async (
   }
 };
 
-
 const putLeaveBalanceRecords = async (
-  requestData?: any[],
-  approvalType?: string,
+  balanceRecordsData?: any[],
 ): Promise<any> => {
-  
   try {
-    const params: Record<string, any> = {};
-    if (requestData) params.requestData = requestData;
-    if (approvalType) params.approvalType = approvalType;
+    console.log('hnnnnn',balanceRecordsData);
+    const params:any = balanceRecordsData;
     const response = await api.put("/Employee/leaveBalanceRecords/records", params);
     return response;
   } catch (error) {
@@ -451,7 +445,6 @@ const putLeaveBalanceRecords = async (
     throw error;
   }
 };
-
 
 // ------------------------------------------------->
 
@@ -519,7 +512,8 @@ const CreateAttrition = async (data: any): Promise<any> => {
   }
 };
 
-// biometricBaseURL:"https://p4h4d07h-9000.inc1.devtunnels.ms/",
+// biometric server machine's port should be shared 
+// biometric machine port Base url: "https://p4h4d07h-9000.inc1.devtunnels.ms/",
 const getBiometricWorkingHour = async (): Promise<any> => {
   try {
     const response = await api.get(
@@ -557,7 +551,7 @@ export {
   getAllRegulariseRequest,
   putAllRegulariseRequest,
   postLeaveBalanceRecords,
-  getAllLeaveBalanceRecords,
+  getLeaveBalanceRecords,
   putLeaveBalanceRecords,
   getSpecificAttrition,
   DeleteAttrition,

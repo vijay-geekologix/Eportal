@@ -87,10 +87,10 @@ const ProjectList4 = () => {
 
               {/* Table for displaying projects */}
               <div className="text-right space-y-4 sm:space-y-0 sm:space-x-4  flex-col sm:flex-row mb-2">
-                <button onClick={()=> router.push('/projectTracker/projectForm')} className="px-6 py-2 rounded-lg border border-transparent bg-sky-600 text-white hover:bg-sky-700 focus:ring-2 focus:ring-sky-500 transition-all duration-300">
+                <button onClick={()=> router.push('/projectTracker/projectForm')} className="px-6 py-2 rounded-lg border border-transparent bg-indigo-600 text-white hover:bg-indigo-800 focus:ring-2 focus:ring-indigo-700 transition-all duration-300">
                   Create Project
                 </button>
-                <button className="px-6 py-2 rounded-lg border border-gray-300 bg-red text-white hover:bg-red-600 focus:ring-2 focus:ring-gray-400 transition-all duration-300">
+                <button className="px-6 py-2 rounded-lg border border-gray-300 bg-red-600 text-white hover:bg-red-600 focus:ring-2 focus:ring-gray-400 transition-all duration-300">
                   Delete
                 </button>
               </div>

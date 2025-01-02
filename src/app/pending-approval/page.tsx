@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import { CalendarIcon, Search, ChevronLeft, ChevronRight } from "lucide-react";
 import DefaultLayout from "@/components/Layouts/DefaultLaout";
-import {NotFoundPage} from '@/components/NotFoundPage/page'
+import { NotFoundPage } from "@/components/NotFoundPage/page";
 import Breadcrumb from "@/components/Breadcrumbs/Breadcrumb";
 import {
   getAllrequestsEditAttendenceType,
@@ -14,32 +14,33 @@ import {
   getAllRegulariseRequest,
   postRegulariseRequest,
   putAllRegulariseRequest,
+  putLeaveBalanceRecords,
 } from "../api/Allapi";
 import { useUserDetailsContext } from "@/context/UserDetailsContext";
 
 export default function PendingApprovalList() {
-  const {userDetails, setUserDetails}:any = useUserDetailsContext();
-  
-  if(userDetails?.user_role == 'employee') return(<NotFoundPage/>);
-  
-  const [startDate, setStartDate] = useState("");
-  const [endDate, setEndDate] = useState("");
-  // const [userId, setUserId] = useState<any>(localStorage.getItem("esslId"));
-  const [requestAttendanceTypeData, setRequestAttendanceTypeData] = useState(
+  const { userDetails, setUserDetails }: any = useUserDetailsContext();
+
+  if (userDetails?.user_role == "employee") return <NotFoundPage />;
+
+  const [startDate, setStartDate] = useState<any>("");
+  const [endDate, setEndDate] = useState<any>("");
+  const [requestAttendanceTypeData, setRequestAttendanceTypeData] = useState<any>(
     [],
   );
-  const [requestLeaveApplyData, setRequestLeaveApplyData] = useState([]);
-  const [requestEmployeeDetailsData, setRequestEmployeeDetailsData] = useState(
+  const [requestLeaveApplyData, setRequestLeaveApplyData] = useState<any>([]);
+  const [requestEmployeeDetailsData, setRequestEmployeeDetailsData] = useState<any>(
     [],
   );
-  const [requestRegulariseData, setRequestRegulariseData] = useState([]);
-  const [requestType, setRequestType] = useState("all");
-  const [requestStatus, setRequestStatus] = useState("pending");
+  const [requestRegulariseData, setRequestRegulariseData] = useState<any>([]);
+  const [requestType, setRequestType] = useState<any>("all");
+  const [requestStatus, setRequestStatus] = useState<any>("pending");
   const [attendenceRequestSelectedRows, setAttendenceRequestSelectedRows] =
     useState<string[]>([]);
   const [leaveRequestSelectedRows, setLeaveRequestSelectedRows] = useState<
     string[]
   >([]);
+  const [leaveBalanceSelectedRowData , setLeaveBalanceSelectedRowData] = useState<any>([]);
   const [
     employeeDetailsRequestSelectedRows,
     setEmployeeDetailsRequestSelectedRows,
@@ -153,13 +154,17 @@ export default function PendingApprovalList() {
     }
   };
 
-  const handleLeaveRequestsCheckboxChange = (id: any) => {
-    if (leaveRequestSelectedRows.includes(id)) {
+  const handleLeaveRequestsCheckboxChange = (id: any,leaveBalanceRecords:any) => {
+    if (leaveRequestSelectedRows.includes(id)){
       setLeaveRequestSelectedRows(
-        leaveRequestSelectedRows.filter((rowId) => rowId !== id),
+        leaveRequestSelectedRows.filter((rowId:any) => rowId !== id),
       );
+      setLeaveBalanceSelectedRowData(
+        leaveBalanceSelectedRowData.filter((obj:any)=>obj.rowId !== id),
+      )
     } else {
       setLeaveRequestSelectedRows([...leaveRequestSelectedRows, id]);
+      setLeaveBalanceSelectedRowData([...leaveBalanceSelectedRowData , leaveBalanceRecords]);
     }
   };
 
@@ -173,10 +178,20 @@ export default function PendingApprovalList() {
         leaveRequestSelectedRows,
         action,
       );
+
+      if (action === "approved") {
+        // employeeId, year, month, leavesTaken
+        const leaveBalanceResponse = await putLeaveBalanceRecords(leaveBalanceSelectedRowData);
+      }
       setLeaveRequestSelectedRows([]);
+      setLeaveBalanceSelectedRowData([]);
       fetchAttendenceTypeRequestData();
     }
   };
+
+  useEffect(()=>{
+    console.log('blakghj',leaveBalanceSelectedRowData);
+  },[leaveBalanceSelectedRowData])
 
   const handleAttendenceTypeCheckboxChange = (id: string) => {
     if (attendenceRequestSelectedRows.includes(id)) {
@@ -222,7 +237,6 @@ export default function PendingApprovalList() {
           (row) => !(row.rowId === rowId && row.informationType === type),
         );
       } else {
-        // Add new selection
         return [
           ...prev,
           {
@@ -253,7 +267,6 @@ export default function PendingApprovalList() {
   };
 
   const handleRegulariseCheckboxChange = (id: string, newSessionInfo: {}) => {
-    
     setregulariseRequestSelectedRows((prevSelectedRows) => {
       const isAlreadySelected = prevSelectedRows.some(
         (row: any) => row.rowId === id,
@@ -416,7 +429,7 @@ export default function PendingApprovalList() {
                     </button>
                   </div>
                 </div>
-                <div className="overflow-x-auto">
+                <div className="max-h-[400px] overflow-x-auto overflow-y-auto">
                   <table className="min-w-full divide-y divide-gray-200 border border-gray-300">
                     <thead className="bg-gray-50">
                       <tr>
@@ -471,7 +484,14 @@ export default function PendingApprovalList() {
                                   request._id,
                                 )}
                                 onChange={() =>
-                                  handleLeaveRequestsCheckboxChange(request._id)
+                                  handleLeaveRequestsCheckboxChange(request._id,{
+                                    rowId:request._id,
+                                    employeeId:request.userId,
+                                    esslId:request.esslId,
+                                    year:request.toDate.split('-')[0],
+                                    month:request.toDate.split('-')[1],
+                                    leavesTaken:request.totalDays,
+                                  })
                                 }
                               />
                             </td>
@@ -544,7 +564,7 @@ export default function PendingApprovalList() {
                     </button>
                   </div>
                 </div>
-                <div className="overflow-x-auto">
+                <div className="max-h-[400px] overflow-x-auto overflow-y-auto">
                   <table className="min-w-full border-collapse divide-y divide-gray-200 border border-gray-300">
                     <thead className="bg-gray-50">
                       <tr>
@@ -667,7 +687,7 @@ export default function PendingApprovalList() {
                   </div>
                 </div>
 
-                <div className="overflow-x-auto">
+                <div className="max-h-[400px] overflow-x-auto overflow-y-auto">
                   <table className="min-w-full border-collapse divide-y divide-gray-200 border border-gray-300">
                     <thead className="bg-gray-50">
                       <tr>
@@ -839,7 +859,7 @@ export default function PendingApprovalList() {
                   </div>
                 </div>
 
-                <div className="overflow-x-auto">
+                <div className="max-h-[400px] overflow-x-auto overflow-y-auto">
                   <table className="min-w-full border-collapse divide-y divide-gray-200 border border-gray-300">
                     <thead className="bg-gray-50">
                       <tr>
