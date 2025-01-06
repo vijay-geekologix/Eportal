@@ -432,6 +432,18 @@ const getLeaveBalanceRecords = async (
   }
 };
 
+const getAllLeaveBalanceRecords = async (
+): Promise<any> => {
+  try {
+    const response = await api.get(
+      "/Employee/leaveBalanceRecords/records/all");
+    return response;
+  } catch (error) {
+    console.error("Error fetching Regularise request list:", error);
+    throw error;
+  }
+};
+
 const putLeaveBalanceRecords = async (
   balanceRecordsData?: any[],
 ): Promise<any> => {
@@ -557,4 +569,5 @@ export {
   DeleteAttrition,
   WeekHolday,
   getBiometricWorkingHour,
+  getAllLeaveBalanceRecords
 };
