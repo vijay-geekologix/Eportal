@@ -7,12 +7,18 @@ import DefaultLayout from "@/components/Layouts/DefaultLaout";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { EmployeeList, getLeaveBalanceRecords, getAllLeaveBalanceRecords, putLeaveBalanceRecords, postLeaveBalanceRecords } from "@/app/api/Allapi";
+import { NotFoundPage } from "@/components/NotFoundPage/page";
+import { useUserDetailsContext } from "@/context/UserDetailsContext";
+
 // export const metadata: Metadata = {
 //   title: "Next.js Settings Page | NextAdmin - Next.js Dashboard c",
 //   description: "This is Next.js Settings page for NextAdmin Dashboard Kit",
 // };
 
 const Settings = () => {
+  const { userDetails, setUserDetails }: any = useUserDetailsContext();
+
+  if (userDetails?.user_role == "employee") return <NotFoundPage />;
   const [employeeData, setEmployeeData] = useState<any>([])
   const [selectedEmployee, setSelectedEmployee] = useState("");
   const [selectedYear, setSelectedYear] = useState("");
