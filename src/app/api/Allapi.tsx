@@ -28,16 +28,16 @@ const login = async (data: any): Promise<null|void> => {
   }
 };
 
-const verifyAuthToken = async (): Promise<null|void> =>{
-  // try{
-  //   const token:any = localStorage.getItem('authToken');
-  //   const response:any = await api.post("Employee/verifyToken", token);
-  //   return response;
-  // }catch(error){
-  //   console.error("Invalid Token!", error);
-  //   return null;
-  // }
-}
+// const verifyAuthToken = async (): Promise<null|void> =>{
+//   // try{
+//   //   const token:any = localStorage.getItem('authToken');
+//   //   const response:any = await api.post("Employee/verifyToken", token);
+//   //   return response;
+//   // }catch(error){
+//   //   console.error("Invalid Token!", error);
+//   //   return null;
+//   // }
+// }
 
 // Project Api
 const ProjectList = async (): Promise<any> => {
@@ -83,6 +83,16 @@ const CreateEmployee = async (data: any): Promise<any> => {
   }
 };
 
+const updateEmployee = async (data: any): Promise<any> => {
+  try {
+    const response = await api.put("/Employee/updateEmployee", data);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching project list:", error);
+    throw error;
+  }
+};
+
 const DeleteEmployee = async (data: any): Promise<any> => {
   try {
     const response = await api.post("/Employee/deleteEmployee", data);
@@ -101,7 +111,7 @@ const specificEmployee = async (esslId: any, _id: any): Promise<any> => {
     const response = await api.get("/Employee/specificEmployee", data);
     return response.data;
   } catch (error) {
-    console.error("Error fetching specificEmployee list:", error);
+    console.log("Error fetching specificEmployee list:", error);
     throw error;
   }
 };
@@ -401,7 +411,7 @@ const putAllRegulariseRequest = async (
 
 // Leave Balance Records
 const postLeaveBalanceRecords = async (data: any): Promise<any> => {
-  
+
   try {
     const response = await api.post(
       "/Employee/leaveBalanceRecords/records",
@@ -518,12 +528,22 @@ const DeleteAttrition = async (data: any): Promise<any> => {
 const CreateAttrition = async (data: any): Promise<any> => {
   try {
     const response = await api.post("/Employee/createAttrition", data);
+    return response;
   } catch (error) {
     console.error("Error fetching project list:", error);
     throw error;
   }
 };
 
+const updateAttrition = async (data: any): Promise<any> => {
+  try {
+    const response = await api.put("/Employee/updateAttrition", data);
+    return response;
+  } catch (error) {
+    console.error("Error updating Attrition Data:", error);
+    throw error;
+  }
+};
 // biometric server machine's port should be shared 
 // biometric machine port Base url: "https://p4h4d07h-9000.inc1.devtunnels.ms/",
 const getBiometricWorkingHour = async (): Promise<any> => {
@@ -543,6 +563,7 @@ export {
   AttritionList,
   CreateAttrition,
   CreateEmployee,
+  updateEmployee,
   DeleteEmployee,
   EmployeeList,
   specificEmployee,
@@ -567,6 +588,7 @@ export {
   putLeaveBalanceRecords,
   getSpecificAttrition,
   DeleteAttrition,
+  updateAttrition,
   WeekHolday,
   getBiometricWorkingHour,
   getAllLeaveBalanceRecords
