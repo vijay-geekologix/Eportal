@@ -2,16 +2,19 @@
 import Breadcrumb from "@/components/Breadcrumbs/Breadcrumb";
 import DefaultLayout from "@/components/Layouts/DefaultLaout";
 import { useEffect, useState } from "react";
-import { getSpecificAttrition ,CreateAttrition } from "@/app/api/Allapi";
+import { getSpecificAttrition ,CreateAttrition , EmployeeList, updateAttrition } from "@/app/api/Allapi";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
 
 const AttritionMaster = ({params:initialParams}:any) => {
   const [params, setParams] = useState<any | null>(null);
   const [specificAttritionData , setSpecificAttritionData] = useState<any>([]);
+  const [allEmployeeData,setAllEmployeeData] = useState<any>([]);
   const router = useRouter()
+  const [specificJoiningDate , setSpecificJoiningDate] = useState<any>('');
   const [formData, setFormData] = useState({
     employee_name: "",
+    employee_id:"",
     joining_date: "",
     resign_offer_date: "",
     left_date: "",
@@ -32,26 +35,64 @@ const AttritionMaster = ({params:initialParams}:any) => {
   };
 
   const handleChange = (e: any) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
+    if(e.target.name == 'employee_name'){
+      const [employee_id , employee_name , joining_date] = e.target.value.split('+');      
+      setSpecificJoiningDate(joining_date);
+      const name = employee_name.trim();
+      setFormData((prevState: any) => ({
+        ...prevState,
+        employee_id: employee_id,
+        employee_name: name,
+        joining_date: joining_date,
+    }));
+    }else{
+      const {name , value} = e.target;
+      setFormData({
+        ...formData,
+        [name]:value,
+      });
+    }
   };
 
   const handleSubmit = async (e: any) => {
-    // e.preventDefault();
-    // Handle form submission logic
-    const data = formData
+    e.preventDefault();
+    const data = formData;
     try {
       const response = await CreateAttrition(data)
       if (response.status == 200) {
-        router.push('hris/attrition')
+        router.replace('/hris/attrition')
         toast.success("Attrition Creatd Successfull")
       }
     } catch (error: any) {
       console.log(error, "Attrition is not Created")
       toast.error("Attrition is not Created")
     }
+  };
+
+  // update attrition code
+  const handleUpdate = async (e: any) => {
+    e.preventDefault();
+    const data = specificAttritionData;
+    try {
+      const response = await updateAttrition(data)
+      console.log('uuui',response);
+      if (response.status == 200) {
+        router.replace('/hris/attrition')
+        toast.success("Attrition data updated Successfull")
+      }
+    } catch (error: any) {
+      console.log(error, "Attrition Data is not updated")
+      toast.error("Attrition Data is not updated")
+    }
+  };
+
+  const handleUpdateChanges = async (event: any) => {
+    const { name, value } = event.target;
+      console.log('juyy',name);
+        setSpecificAttritionData((prev: any) => ({
+            ...prev,
+            [name]: value,
+        }));
   };
 
   useEffect(() => {
@@ -62,26 +103,40 @@ const AttritionMaster = ({params:initialParams}:any) => {
 
     resolveParams();
   }, [initialParams]);
-
-
+  
 
   useEffect(() => {
     if (!params || !params.addAttrition) return;
-    const fetchSpecifyEmployeeData = async () => {
+    (async () => {
       try {
         const response = await getSpecificAttrition(params.addAttrition[1], params.addAttrition[2]);
-        setSpecificAttritionData(response.data);
+        setSpecificAttritionData(response.data[0]);
       } catch (error) {
         console.error('Error fetching employee data:', error);
-        // toast.error('An error occurred while fetching attrition data. Please try again.', {
-        //   position: 'top-right',
-        // });
+        toast.error('An error occurred while fetching attrition data. Please try again.', {
+          position: 'top-right',
+        });
       }
-    };
-
-    fetchSpecifyEmployeeData();
-
+    })()
   }, [params]);
+
+    if(!params || !params?.addAttrition){
+      (async()=>{
+        try {
+          const response = await EmployeeList();
+          setAllEmployeeData(response.data);
+        } catch (error) {
+          console.error('Error fetching all employee name:', error);
+          toast.error('An error occurred while fetching All Employee Name. Please try again.', {
+            position: 'top-right',
+          });
+        }
+      })();
+    }
+
+    useEffect(()=>{
+     console.log('yeyeye',specificAttritionData)
+    },[specificAttritionData])
 
   const formatDateForInput = (isoString:any) => {
     return isoString ? new Date(isoString).toISOString().split("T")[0] : "";
@@ -103,7 +158,15 @@ const AttritionMaster = ({params:initialParams}:any) => {
                   <label htmlFor="employee_name" className="text-lg font-semibold">
                     Employee Name
                   </label>
-                  <input
+                  <select name="employee_name" id="employee_name"
+                     onChange={handleChange}
+                     className="mt-2 p-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
+                  > <option value="">Select Employee</option>
+                    {allEmployeeData.map((info:any,index:number)=>(
+                      <option key={index} value={`${info._id}+${info.firstName}+${info.joiningDate}`}>{info.firstName}</option>
+                    ))}
+                  </select>
+                  {/* <input
                     type="text"
                     id="employee_name"
                     name="employee_name"
@@ -111,7 +174,7 @@ const AttritionMaster = ({params:initialParams}:any) => {
                     onChange={handleChange}
                     className="mt-2 p-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                     required
-                  />
+                  /> */}
                 </div>
 
                 <div className="flex flex-col">
@@ -122,7 +185,7 @@ const AttritionMaster = ({params:initialParams}:any) => {
                     type="date"
                     id="joining_date"
                     name="joining_date"
-                    value={formData.joining_date}
+                    value={specificJoiningDate}
                     onChange={handleChange}
                     className="mt-2 p-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
@@ -186,8 +249,9 @@ const AttritionMaster = ({params:initialParams}:any) => {
                   id="noticePeriod"
                   name="noticePeriod"
                   value={formData.noticePeriod}
-                  readOnly
-                  className="mt-2 p-3 border rounded-md bg-gray-100 text-gray-500"
+                  // readOnly
+                  onChange={handleChange}
+                  className="mt-2 p-3 border rounded-md bg-white text-gray-500"
                 />
               </div>
 
@@ -215,8 +279,8 @@ const AttritionMaster = ({params:initialParams}:any) => {
                   type="text"
                   id="employee_name"
                   name="employee_name"
-                  value={specificAttritionData[0]?.employee_name}
-                  onChange={handleChange}
+                  value={specificAttritionData?.employee_name}
+                  onChange={handleUpdateChanges}
                   className="mt-2 p-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   required
                 />
@@ -230,8 +294,8 @@ const AttritionMaster = ({params:initialParams}:any) => {
                   type="date"
                   id="joining_date"
                   name="joining_date"
-                  value={formatDateForInput(specificAttritionData[0]?.joining_date)}
-                  onChange={handleChange}
+                  value={formatDateForInput(specificAttritionData?.joining_date)}
+                  onChange={handleUpdateChanges}
                   className="mt-2 p-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
               </div>
@@ -246,8 +310,8 @@ const AttritionMaster = ({params:initialParams}:any) => {
                   type="date"
                   id="resign_offer_date"
                   name="resign_offer_date"
-                  value={formatDateForInput(specificAttritionData[0]?.resign_offer_date)}
-                  onChange={handleChange}
+                  value={formatDateForInput(specificAttritionData?.resign_offer_date)}
+                  onChange={handleUpdateChanges}
                   onBlur={calculateNoticePeriod}
                   className="mt-2 p-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   required
@@ -262,8 +326,8 @@ const AttritionMaster = ({params:initialParams}:any) => {
                   type="date"
                   id="left_date"
                   name="left_date"
-                  value={formatDateForInput(specificAttritionData[0]?.left_date)}
-                  onChange={handleChange}
+                  value={formatDateForInput(specificAttritionData?.left_date)}
+                  onChange={handleUpdateChanges}
                   onBlur={calculateNoticePeriod}
                   className="mt-2 p-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   required
@@ -278,8 +342,8 @@ const AttritionMaster = ({params:initialParams}:any) => {
               <textarea
                 id="reason_of_leaving"
                 name="reason_of_leaving"
-                value={specificAttritionData[0]?.reason_of_leaving}
-                onChange={handleChange}
+                value={specificAttritionData?.reason_of_leaving}
+                onChange={handleUpdateChanges}
                 className="mt-2 p-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
 
               />
@@ -293,17 +357,17 @@ const AttritionMaster = ({params:initialParams}:any) => {
                 type="text"
                 id="noticePeriod"
                 name="noticePeriod"
-                value={"45 days"}
-                readOnly
+                value={specificAttritionData?.noticePeriod}
+                onChange={handleUpdateChanges}
                 className="mt-2 p-3 border rounded-md bg-gray-100 text-gray-500"
               />
             </div>
 
             <button
               className=" py-2 text-end px-4 mt-6 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none"
-              onClick={()=> router.push('/dashboard')}
+              onClick={handleUpdate}
             >
-              Save
+              Update
             </button>
           </form>
         </div>
